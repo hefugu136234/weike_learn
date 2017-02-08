@@ -1,0 +1,60 @@
+2015-10-28 数据库: resource增加字段 speakerId 关联表speaker
+
+2015-11-04 数据库user_reference 添加字段validDate 用于记录增加流量卡的时间
+
+2015-11-06 数据库新增user_expand
+
+2015-11-18 修改pdf默认图片数据库中coverTaskId 的字段长度，改为150。  默认图片为pdf的第一页，在修改状态的时候赋值
+
+2015-11-20 three_screen表 新增字段plays_metainfo（TEXT） 用于视频审核完成之后存储不同码率的视频格式
+
+2015-12-10 pdf_info 添加字段showType （int 默认值为0） 控制tv端显示的样式
+
+2016-1-14 服务器数据库中 表webchat_user更新了字符集编码为utf8mb4_general_ci（可扩展4bytes的存储空间） 用来存储微信昵称中含有emoji 表情的字符
+
+2016-1-18 新增活动模块  ，关联的SQL脚本为 activity160118.sql
+
+2016-1-21 tv_layout添加字段projectId和type
+
+2016-2-25 新增积分消耗 integral_consume.sql
+
+2016-3-14 activity新增字段 authentic (int default 1 是否需要实名认证) 、collected (int default 1 是否需要征集作品)
+
+2016-3-16 resource 新增字段 code(varchar 10)
+
+2016-3-23 intergral_consume 新增字段referId (int) default 0   userLimited (int) default 0
+
+2016-4-14 新增message表  updated/kalean/message2016414.sql
+
+2016-4-15 新增tmp_lottery_record表  updated/kalean/lottery_record2016415.sql
+
+2016-5-4 integral_consume表添加字段 sign int default 0
+
+2016-5-19 添加表resource_group , media_central 见 updated/kalean/added_20160519.sql
+
+2016-06-01 添加表normal_collect 见 updated/kalean/added_20160601.sql     修改表  media_central 添加字段 text(varchar255); number(float)  date(datetime)
+
+2016-06-08 resource_group_20160609.sql
+
+2016-06-08 以上的表同步测试服务器（以后从这个日期之前开始比对）
+2016-06-08 以上的表正式测试服务器（以后从这个日期之前开始比对）
+
+2016-06-12 修改表category 添加字段 left(int)  right(int)  hierarchy(int) sign(int) 
+
+2016-06-14 添加表notification  见 updated/kalean/notification_20160614.sql
+
+2016-07-05 添加qr_auth  见 updated/kalean/qr_auth_20160705.sql
+
+2016-07-25 添加qr_interact_channel 见updated/kalean/qr_interact_channel_20160725.sql
+
+2016-07-25 qr_interact_channel 增加字段 qrUrl(varchar 150)
+
+2016-07-27 normal_collect 添加字段  
+						ALTER TABLE `zhiliao`.`normal_collect` ADD COLUMN `grade` float DEFAULT NULL COMMENT '评分';
+						ALTER TABLE `zhiliao`.`normal_collect` ADD COLUMN `praise` int(11) DEFAULT NULL COMMENT '点赞总数';
+						ALTER TABLE `zhiliao`.`normal_collect` ADD COLUMN `numbers` int(11) DEFAULT NULL COMMENT '学习人总数';
+						ALTER TABLE `zhiliao`.`normal_collect` ADD COLUMN `price` float DEFAULT NULL;
+
+2016-08-01 添加表 common_praise 见 updated/kalean/common_praise2016-08-01.sql
+
+2016-08-05 以上的表同步测试服务器（以后从这个日期之前开始比对）

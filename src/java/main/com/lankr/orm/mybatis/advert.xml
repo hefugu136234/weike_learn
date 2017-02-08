@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adver">
+	<resultMap type="Advertisement" id="advertisementMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="content_type" column="content_type" />
+		<result property="res_url" column="res_url" />
+		<result property="limit_time" column="limit_time" />
+		<result property="status" column="status" />
+		<result property="name" column="name" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="advertisementPosition" column="advertisementPosistionId"
+			select="adver.searchAdPostionById" />
+		<association property="project" column="projectId"
+			select="project.getProjectById" />
+	</resultMap>
+
+	<resultMap type="AdvertisementPosition" id="advertisementPositionMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="name" column="name" />
+	</resultMap>
+
+	<select id="searchAdPostionById" parameterType="string"
+		resultMap="advertisementPositionMapper">
+		select * from advertisement_positon where id=#{id} and
+		isActive = 1
+	</select>
+
+	<select id="searchAllAdPostion" resultMap="advertisementPositionMapper">
+		select * from
+		advertisement_positon where
+		isActive = 1
+	</select>
+
+	<select id="searchAdverList" parameterType="SubParams"
+		resultMap="advertisementMapper">
+		SELECT * FROM advertisement
+		WHERE projectId=#{id} and name
+		LIKE "%"#{query}"%"
+		ORDER BY createDate
+		DESC
+	</select>
+
+	<select id="searchAdverByUuid" parameterType="string"
+		resultMap="advertisementMapper">
+		SELECT * FROM advertisement WHERE uuid=#{uuid}
+	</select>
+
+	<insert id="addAdver" parameterType="Advertisement">
+		INSERT INTO advertisement
+		(createDate,modifyDate,uuid,mark,content_type,res_url,limit_time,userId,status,advertisementPosistionId,projectId,name)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{mark},#{content_type},#{res_url},#{limit_time},#{user.id},#{status},#{advertisementPosition.id},#{project.id},#{name})
+	</insert>
+
+	<update id="updateAdver" parameterType="Advertisement">
+		UPDATE advertisement SET
+		modifyDate=NOW(),name=#{name},res_url=#{res_url},limit_time=#{limit_time},advertisementPosistionId=#{advertisementPosition.id},mark=#{mark}
+		WHERE id=#{id}
+	</update>
+
+	<update id="updateAdverToStatus" parameterType="Advertisement">
+		UPDATE
+		advertisement SET
+		modifyDate=NOW(),
+		status=#{status} WHERE id=#{id}
+	</update>
+
+</mapper>

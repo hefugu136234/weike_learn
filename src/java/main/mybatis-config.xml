@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- 这个配置使全局的映射器启用或禁用缓存 -->
+		<setting name="cacheEnabled" value="true" />
+		<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<!-- 配置默认的执行器。SIMPLE 执行器没有什么特别之处。REUSE 执行器重用预处理语句。BATCH 执行器重用语句和批量更新 -->
+		<setting name="defaultExecutorType" value="REUSE" />
+		<!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。 -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<!-- 当启用时，带有延迟加载属性的对象的加载与否完全取决于对任意延迟属性的调用 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!-- 设置超时时间，它决定驱动等待一个数据库响应的时间。 -->
+		<setting name="defaultStatementTimeout" value="25000" />
+	</settings>
+
+	<!-- 元素类型为 "typeAliases" 的内容必须匹配 "(typeAlias*,package*) 顺序必须一致 -->
+	<typeAliases>
+		<typeAlias alias="User" type="com.lankr.tv_cloud.model.User" />
+		<typeAlias alias="Role" type="com.lankr.tv_cloud.model.Role" />
+		<typeAlias alias="UserReference" type="com.lankr.tv_cloud.model.UserReference" />
+		<typeAlias alias="SubParams" type="com.lankr.tv_cloud.facade.impl.SubParams" />
+		<typeAlias alias="Project" type="com.lankr.tv_cloud.model.Project" />
+		<typeAlias alias="Advertisement" type="com.lankr.tv_cloud.model.Advertisement" />
+		<typeAlias alias="AdvertisementPosition"
+			type="com.lankr.tv_cloud.model.AdvertisementPosition" />
+		<typeAlias alias="Category" type="com.lankr.tv_cloud.model.Category" />
+		<typeAlias alias="Video" type="com.lankr.tv_cloud.model.Video" />
+		<typeAlias alias="Widget" type="com.lankr.tv_cloud.model.Widget" />
+		<typeAlias alias="NewsInfo" type="com.lankr.tv_cloud.model.NewsInfo" />
+		<typeAlias alias="Province" type="com.lankr.tv_cloud.model.Province" />
+		<typeAlias alias="City" type="com.lankr.tv_cloud.model.City" />
+		<typeAlias alias="District" type="com.lankr.tv_cloud.model.District" />
+		<typeAlias alias="pdfInfo" type="com.lankr.tv_cloud.model.PdfInfo" />
+		<typeAlias alias="webChatUser" type="com.lankr.tv_cloud.model.WebchatUser" />
+		<typeAlias alias="hospital" type="com.lankr.tv_cloud.model.Hospital" />
+		<typeAlias alias="departments" type="com.lankr.tv_cloud.model.Departments" />
+		<typeAlias alias="applicable_records"
+			type="com.lankr.tv_cloud.model.ApplicableRecords" />
+		<typeAlias alias="invitcode_record" type="com.lankr.tv_cloud.model.InvitcodeRecord" />
+		<typeAlias alias="my_collection" type="com.lankr.tv_cloud.model.MyCollection" />
+		<typeAlias alias="subscribe" type="com.lankr.tv_cloud.model.Subscribe" />
+		<typeAlias alias="categoryExpand" type="com.lankr.tv_cloud.model.CategoryExpand" />
+		<typeAlias alias="speaker" type="com.lankr.tv_cloud.model.Speaker" />
+		<typeAlias alias="manufacturer" type="com.lankr.tv_cloud.model.Manufacturer" />
+		<typeAlias alias="progroup" type="com.lankr.tv_cloud.model.ProductGroup" />
+		<typeAlias alias="activation" type="com.lankr.tv_cloud.model.ActivationCode" />
+		<typeAlias alias="praise" type="com.lankr.tv_cloud.model.Praise" />
+		<typeAlias alias="userExpand" type="com.lankr.tv_cloud.model.UserExpand" />
+		<typeAlias alias="threeScreen" type="com.lankr.tv_cloud.model.ThreeScreen" />
+		<typeAlias alias="sharingRes" type="com.lankr.tv_cloud.model.SharingRes" />
+		<typeAlias alias="viewSharing" type="com.lankr.tv_cloud.model.ViewSharing" />
+		<typeAlias alias="qrcode" type="com.lankr.tv_cloud.model.QrCode" />
+		<typeAlias alias="qrscene" type="com.lankr.tv_cloud.model.QrScene" />
+		<typeAlias alias="Activity" type="com.lankr.tv_cloud.model.Activity" />
+		<typeAlias alias="banner" type="com.lankr.tv_cloud.model.Banner" />
+		<typeAlias alias="tagChild" type="com.lankr.tv_cloud.model.TagChild" />
+		<typeAlias alias="tagParent" type="com.lankr.tv_cloud.model.TagParent" />
+		<typeAlias alias="activityapplication"
+			type="com.lankr.tv_cloud.model.ActivityApplication" />
+		<typeAlias alias="activityResource" type="com.lankr.tv_cloud.model.ActivityResource" />
+		<typeAlias alias="activityExpert" type="com.lankr.tv_cloud.model.ActivityExpert" />
+		<typeAlias alias="activityUser" type="com.lankr.tv_cloud.model.ActivityUser" />
+		<typeAlias alias="certification" type="com.lankr.tv_cloud.model.Certification" />
+		<typeAlias alias="integralConsume" type="com.lankr.tv_cloud.model.IntegralConsume" />
+		<typeAlias alias="broadcast" type="com.lankr.tv_cloud.model.Broadcast" />
+		<typeAlias alias="templeMessageRecord"
+			type="com.lankr.tv_cloud.model.TempleMessageRecord" />
+		<typeAlias alias="shake" type="com.lankr.tv_cloud.model.Shake" />
+		<typeAlias alias="broadcastUser" type="com.lankr.tv_cloud.model.BroadcastUser" />
+		<typeAlias alias="receiptAddress" type="com.lankr.tv_cloud.model.ReceiptAddress" />
+		<typeAlias alias="logisticsInfo" type="com.lankr.tv_cloud.model.LogisticsInfo" />
+		<typeAlias alias="activitySubject" type="com.lankr.tv_cloud.model.ActivitySubject" />
+		<typeAlias alias="award" type="com.lankr.tv_cloud.model.Award" />
+		<typeAlias alias="lottery" type="com.lankr.tv_cloud.model.Lottery" />
+		<typeAlias alias="lotteryRecord" type="com.lankr.tv_cloud.model.LotteryRecord" />
+		<typeAlias alias="qrcodeScanRecode" type="com.lankr.tv_cloud.model.QrcodeScanRecode" />
+		<typeAlias alias="wxSubject" type="com.lankr.tv_cloud.model.WxSubject" />
+		<typeAlias alias="questionnaire" type="com.lankr.tv_cloud.model.Questionnaire" />
+		<typeAlias alias="questionnaireAnswer"
+			type="com.lankr.tv_cloud.model.QuestionnaireAnswer" />
+		<typeAlias alias="pageRemain" type="com.lankr.tv_cloud.model.PageRemain" />
+		<typeAlias alias="qrInteractChannel" type="com.lankr.tv_cloud.model.QrInteractChannel" />
+		<typeAlias alias="commonPraise" type="com.lankr.tv_cloud.model.CommonPraise" />
+		<typeAlias alias="normalCollectQuestionnaire" type="com.lankr.tv_cloud.model.NormalCollectQuestionnaire" />
+		<typeAlias alias="normalCollectSchedule" type="com.lankr.tv_cloud.model.NormalCollectSchedule" />
+		<typeAlias alias="offlineActivity" type="com.lankr.tv_cloud.model.OfflineActivity" />
+		<typeAlias alias="projectCode" type="com.lankr.tv_cloud.model.ProjectCode" />
+		<typeAlias alias="signUpUser" type="com.lankr.tv_cloud.model.SignUpUser" />
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/lankr/orm/mybatis/base.xml" />
+		<mapper resource="com/lankr/orm/mybatis/user.xml" />
+		<mapper resource="com/lankr/orm/mybatis/project.xml" />
+		<mapper resource="com/lankr/orm/mybatis/advert.xml" />
+		<mapper resource="com/lankr/orm/mybatis/assets.xml" />
+		<mapper resource="com/lankr/orm/mybatis/widget.xml" />
+		<mapper resource="com/lankr/orm/mybatis/app_auth.xml" />
+		<mapper resource="com/lankr/orm/mybatis/register_tmp.xml" />
+		<mapper resource="com/lankr/orm/mybatis/media.xml" />
+		<mapper resource="com/lankr/orm/mybatis/news.xml" />
+		<mapper resource="com/lankr/orm/mybatis/province.xml" />
+		<mapper resource="com/lankr/orm/mybatis/pdf_info.xml" />
+		<mapper resource="com/lankr/orm/mybatis/resource.xml" />
+		<mapper resource="com/lankr/orm/mybatis/webchat_user.xml" />
+		<mapper resource="com/lankr/orm/mybatis/tv_auth.xml" />
+		<mapper resource="com/lankr/orm/mybatis/resource_vote.xml" />
+		<mapper resource="com/lankr/orm/mybatis/hospital.xml" />
+		<mapper resource="com/lankr/orm/mybatis/applicable.xml" />
+		<mapper resource="com/lankr/orm/mybatis/my_collection.xml" />
+		<mapper resource="com/lankr/orm/mybatis/subscribe.xml" />
+		<mapper resource="com/lankr/orm/mybatis/category_expand.xml" />
+		<mapper resource="com/lankr/orm/mybatis/speaker.xml" />
+		<mapper resource="com/lankr/orm/mybatis/tv_sub_widget.xml" />
+		<mapper resource="com/lankr/orm/mybatis/manufacturer.xml" />
+		<mapper resource="com/lankr/orm/mybatis/activation_code.xml" />
+		<mapper resource="com/lankr/orm/mybatis/praise.xml" />
+		<mapper resource="com/lankr/orm/mybatis/user_expand.xml" />
+		<mapper resource="com/lankr/orm/mybatis/three_screen.xml" />
+		<mapper resource="com/lankr/orm/mybatis/sharing_res.xml" />
+		<mapper resource="com/lankr/orm/mybatis/activationCodeMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/qrcode.xml" />
+		<mapper resource="com/lankr/orm/mybatis/activity.xml" />
+		<mapper resource="com/lankr/orm/mybatis/BannerMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/TagMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/activity_resource_application.xml" />
+		<mapper resource="com/lankr/orm/mybatis/certification.xml" />
+		<mapper resource="com/lankr/orm/mybatis/integral.xml" />
+		<mapper resource="com/lankr/orm/mybatis/integral_consume.xml" />
+		<mapper resource="com/lankr/orm/mybatis/broadcast.xml" />
+		<mapper resource="com/lankr/orm/mybatis/temple_message_record.xml" />
+		<mapper resource="com/lankr/orm/mybatis/ShakeMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/receipt_address.xml" />
+		<mapper resource="com/lankr/orm/mybatis/UserOverViewMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/GameMgrMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/message.xml" />
+		<mapper resource="com/lankr/orm/mybatis/wx_subject.xml" />
+		<mapper resource="com/lankr/orm/mybatis/media_central.xml" />
+		<mapper resource="com/lankr/orm/mybatis/questionnaire.xml" />
+		<mapper resource="com/lankr/orm/mybatis/normal_collection.xml" />
+		<mapper resource="com/lankr/orm/mybatis/page_remain.xml" />
+		<mapper resource="com/lankr/orm/mybatis/notification.xml" />
+		<mapper resource="com/lankr/orm/mybatis/qr_auth.xml" />
+		<mapper resource="com/lankr/orm/mybatis/qr_interact_channel.xml" />
+		<mapper resource="com/lankr/orm/mybatis/ResourceGroupMapper.xml" />
+		<mapper resource="com/lankr/orm/mybatis/CommonPraise.xml" />
+		<mapper resource="com/lankr/orm/mybatis/normalCollectQuestionnaire.xml" />
+		<mapper resource="com/lankr/orm/mybatis/normal_collect_schedule.xml" />
+		<mapper resource="com/lankr/orm/mybatis/offline_activity.xml" />
+		<mapper resource="com/lankr/orm/mybatis/project_code.xml" />
+		<mapper resource="com/lankr/orm/mybatis/signup_user.xml" />
+		<mapper resource="com/lankr/orm/mybatis/ResourceAccessIgnoreMapper.xml" />
+	</mappers>
+
+
+</configuration>

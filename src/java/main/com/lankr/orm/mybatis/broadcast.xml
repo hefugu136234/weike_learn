@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.BroadcastMapper">
+	<resultMap type="broadcast" id="broadcastMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="castShowJs" column="castShowJs" />
+		<result property="castAction" column="castAction" />
+		<result property="description" column="description" />
+		<result property="tvDescription" column="tvDescription" />
+		<result property="bookStartDate" column="bookStartDate" />
+		<result property="bookEndDate" column="bookEndDate" />
+		<result property="limitNum" column="limitNum" />
+		<result property="castType" column="castType" />
+		<result property="label" column="label" />
+		<result property="banner" column="banner" />
+		<result property="cover" column="cover" />
+		<result property="kv" column="kv" />
+		<result property="startDate" column="startDate" />
+		<result property="endDate" column="endDate" />
+		<result property="pincode" column="pincode" />
+		<result property="resourceUrl" column="resourceUrl" />
+		<result property="platFormType" column="platFormType" />
+		<result property="status" column="status" />
+		<association property="creatUser" column="creatUserId"
+			select="user.getUserById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+		<association property="speaker" column="speakerId"
+			select="com.lankr.orm.mybatis.mapper.SpeakerMapper.getSpeakerById" />
+	</resultMap>
+
+	<resultMap type="broadcastUser" id="broadcastUserMapper"
+		extends="base.baseModel">
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="broadcast" column="broadcastId"
+			select="getCastById" />
+	</resultMap>
+
+	<select id="getCastById" parameterType="int" resultMap="broadcastMapper">
+		select *
+		from broadcast where id=#{id} and
+		isActive = 1
+	</select>
+
+	<select id="getCastByUuid" parameterType="string" resultMap="broadcastMapper">
+		select * from broadcast where uuid=#{uuid} and
+		isActive = 1
+	</select>
+
+	<insert id="addBroadcast" parameterType="broadcast">
+		INSERT INTO broadcast
+		(createDate,modifyDate,uuid,name,pinyin,creatUserId,castShowJs,castAction,description,tvDescription,bookStartDate,bookEndDate,limitNum,castType,label,banner,
+		cover,kv,startDate,endDate,pincode,resourceId,resourceUrl,status,isActive,mark,platFormType,speakerId)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{name},#{pinyin},#{creatUser.id},#{castShowJs},#{castAction},#{description},#{tvDescription},#{bookStartDate},#{bookEndDate},#{limitNum},#{castType},#{label},#{banner},
+		#{cover},#{kv},#{startDate},#{endDate},#{pincode},#{resource.id},#{resourceUrl},#{status},#{isActive},#{mark},
+		#{platFormType},#{speaker.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateBroadcast" parameterType="broadcast">
+		UPDATE broadcast set
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},castShowJs=#{castShowJs},castAction=#{castAction},description=#{description},tvDescription=#{tvDescription},
+		bookStartDate=#{bookStartDate},bookEndDate=#{bookEndDate},limitNum=#{limitNum},castType=#{castType},label=#{label},startDate=#{startDate},
+		endDate=#{endDate},pincode=#{pincode},resourceUrl=#{resourceUrl},platFormType=#{platFormType},mark=#{mark},speakerId=#{speaker.id}
+		where id=#{id}
+	</update>
+
+	<update id="updateBroadcastRes" parameterType="broadcast">
+		UPDATE
+		broadcast
+		SET
+		modifyDate=NOW(),resourceId=#{resource.id},resourceUrl=#{resourceUrl}
+		WHERE id=#{id}
+	</update>
+
+	<update id="updateBroadcastStatus" parameterType="broadcast">
+		UPDATE
+		broadcast SET
+		modifyDate=NOW(),status=#{status}
+		WHERE id=#{id}
+	</update>
+
+	<update id="updateBroadcastCover" parameterType="broadcast">
+		UPDATE
+		broadcast
+		SET
+		modifyDate=NOW(),banner=#{banner},cover=#{cover},kv=#{kv}
+		WHERE
+		id=#{id}
+	</update>
+
+	<select id="searchBroadcastForTable" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive = 1 and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit #{1},#{2}
+	</select>
+
+	<insert id="addBroadcastUser" parameterType="broadcastUser">
+		INSERT INTO broadcast_user
+		(createDate,modifyDate,uuid,userId,broadcastId,status,isActive,mark)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{user.id},#{broadcast.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="searchBroadcastUserForTable" resultMap="broadcastUserMapper">
+		select
+		broad.* from
+		broadcast_user broad left join user u on broad.userId=u.id
+		where broad.isActive = 1 and broad.broadcastId=#{0} and (u.username
+		like
+		"%"#{1}"%"
+		or u.nickname
+		like
+		"%"#{1}"%" or u.phone like "%"#{1}"%")
+		order by broad.modifyDate desc limit #{2},#{3}
+	</select>
+
+	<update id="updateBroadcastUserStatus" parameterType="broadcastUser">
+		UPDATE
+		broadcast_user SET
+		modifyDate=NOW(),status=#{status},mark=#{mark}
+		WHERE
+		id=#{id}
+	</update>
+
+	<select id="searchBroadcastUserByUuid" resultMap="broadcastUserMapper">
+		select * from
+		broadcast_user where isActive=1 and uuid=#{0}
+	</select>
+
+	<select id="searchBroadcastUserByUserId" resultMap="broadcastUserMapper">
+		select * from
+		broadcast_user where isActive=1 and userId=#{0} and broadcastId=#{1}
+		order by modifyDate desc limit 1
+	</select>
+
+	<select id="broadcastBookCount" resultType="java.lang.Integer">
+		select count(id) from
+		broadcast_user where isActive=1 and status !=2 and broadcastId=#{1}
+	</select>
+
+	<select id="searchBroadcastByQrSence" resultMap="broadcastMapper">
+		select b.* from
+		broadcast b left join (select * from qrscene where type=3) q on
+		b.id=q.reflectId where b.isActive = 1 and b.status!=0 and q.id is null
+		and (b.name like
+		"%"#{0}"%"
+		or b.pinyin
+		like
+		"%"#{0}"%") order by
+		b.modifyDate desc limit 15
+	</select>
+
+	<select id="searchCastRecordPage" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive=1 and status=1 and endDate
+		&lt;#{2}
+		<!-- and resourceId is not null -->
+		and
+		createDate &lt; #{0} order by
+		createDate desc
+		limit #{1}
+	</select>
+
+	<select id="searchCastCarousel" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive=1 and status=1 and bookStartDate &lt;#{1}
+		and
+		endDate &gt;#{1} order by modifyDate desc limit #{0}
+	</select>
+
+	<select id="searchApiUseableBroadcast" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive = 1 and status=1 and (name like
+		"%"#{0}"%"
+		or
+		pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit 20
+	</select>
+
+	<select id="broadcastFrontList" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive=1 and status=1 and endDate
+		&lt;#{0} order by
+		createDate desc
+		limit #{1},#{2}
+	</select>
+
+	<!-- added by kalean 20160617 -->
+
+	<select id="searchRecentBeginBroadcast" resultMap="broadcastMapper">
+		select * from broadcast where isActive = 1 and status = 1 and startDate &gt; #{0}  order by startDate asc limit 1
+	</select>
+
+	<select id="searchBeginingBroadcastsInterval" resultMap="broadcastMapper">
+	    select * from broadcast where isActive = 1 and status = 1 and startDate &gt; #{0} and startDate &lt; #{1}
+	</select>
+	
+	<!-- end -->
+	
+	
+	<select id="searchBroadcastUserForMessage" resultMap="broadcastUserMapper">
+		select * from 
+			broadcast_user
+		where 
+			broadcastId=#{id} 
+		<if test=" index > 0 ">
+			and id &gt; #{index} 
+		</if>
+		and
+			isActive=1
+		and 
+			status=1
+		order by 
+			id asc
+		limit 100
+	</select>
+	
+	<select id="wxLiveComing" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive=1 and status=1 and bookStartDate &lt;#{0}
+		and
+		bookEndDate &gt;#{0} order by bookStartDate desc
+	</select>
+	
+	<select id="wxLiving" resultMap="broadcastMapper">
+		select * from
+		broadcast where isActive=1 and status=1 and startDate &lt;#{0}
+		and
+		endDate &gt;#{0} order by startDate desc
+	</select>
+	
+	<select id="WxLivedCount" resultType="java.lang.Integer">
+		select count(id) from
+		broadcast where isActive=1 and status=1 and endDate &lt;#{0}
+	</select>
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="applicable">
+	<resultMap type="applicable_records" id="applicableMapper"
+		extends="base.baseModel">
+		<result property="applyName" column="applyName" />
+		<result property="pingYin" column="pingYin" />
+		<result property="mobile" column="mobile" />
+		<result property="status" column="status" />
+		<association property="hospital" column="hospitalId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectHospitalById" />
+		<association property="departments" column="departmentsId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectDePatById" />
+		<association property="webchatUser" column="openId"
+			select="webChat.searchWebChatUserById" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<resultMap type="invitcode_record" id="invitcodeMapper"
+		extends="base.baseModel">
+		<result property="invitcode" column="invitcode" />
+		<result property="status" column="status" />
+		<result property="source" column="source" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="applicableRecords" column="applyId"
+			select="selectApplicableById" />
+	</resultMap>
+
+	<insert id="addApplicable" parameterType="applicable_records">
+		INSERT INTO applicable_records
+		(uuid,createDate,modifyDate,applyName,pingYin,mobile,hospitalId,departmentsId,status,isActive,mark,userId,openId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{applyName},#{pingYin},#{mobile},#{hospital.id},#{departments.id},#{status},#{isActive},#{mark},#{user.id},#{webchatUser.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectApplicableList" parameterType="string"
+		resultMap="applicableMapper">
+		select * from applicable_records where isActive=1 and
+		(applyName
+		like
+		"%"#{query}"%" or
+		pingYin
+		like "%"#{query}"%" or mobile
+		like "%"#{query}"%") order by
+		createDate
+		desc
+	</select>
+
+	<select id="selectApplicableById" parameterType="int"
+		resultMap="applicableMapper">
+		select * from applicable_records where id=#{id} and
+		isActive=1
+	</select>
+
+	<select id="selectApplicableByUuid" parameterType="string"
+		resultMap="applicableMapper">
+		select * from applicable_records where uuid=#{uuid} and
+		isActive=1
+	</select>
+	
+	<select id="selectApplicableByUserId" parameterType="int"
+		resultMap="applicableMapper">
+		select * from applicable_records where userId=#{id} and
+		isActive=1 order by createDate desc limit 1
+	</select>
+
+	<update id="updateApplicableStatus" parameterType="applicable_records">
+		update
+		applicable_records
+		set
+		modifyDate=NOW(),status=#{status} where id=#{id}
+	</update>
+
+
+	<insert id="addInvitcode" parameterType="invitcode_record">
+		INSERT INTO invitcode_record
+		(uuid,createDate,modifyDate,invitcode,userId,applyId,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{invitcode},#{user.id},#{applicableRecords.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<select id="selectInvitcodeByRecordId" parameterType="int" resultMap="invitcodeMapper">
+	    select * from invitcode_record where applyId=#{applyId} and
+		isActive=1
+	</select>
+
+	<select id="selectInvitcodeById" parameterType="int" resultMap="invitcodeMapper">
+		select * from invitcode_record where id=#{id} and
+		isActive=1
+	</select>
+
+	<select id="selectInvitcodeByUuid" parameterType="string"
+		resultMap="invitcodeMapper">
+		select * from invitcode_record where uuid=#{uuid} and
+		isActive=1
+	</select>
+
+	<select id="selectInvitcodeByCode" parameterType="string"
+		resultMap="invitcodeMapper">
+		select * from invitcode_record where invitcode=#{invitcode}
+		and
+		isActive=1
+	</select>
+	
+	<update id="updateInvitcodeStatus" parameterType="invitcode_record">
+		update
+		invitcode_record
+		set
+		modifyDate=NOW(),status=#{status} userId=#{user.id} where id=#{id}
+	</update>
+
+
+</mapper>

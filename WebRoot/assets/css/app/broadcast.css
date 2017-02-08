@@ -1,0 +1,56 @@
+/*broadcast list styles*/
+.broadcast-panel { padding: 10px; }
+.date-tag { position: relative; width: 100%; }
+.date-tag:before { position: absolute; z-index: 0; top: 50%; left: 0; width: 100%; height: 1px; background-color: #162339; content: ''; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.date-tag .tag { position: relative; z-index: 1; float: left; height: 20px; line-height: 20px; padding: 0 8px; border-radius: 10px; font-size: 12px; color: #fff; background-color: #162339; }
+.date-tag .tag .today { display: inline-block; position: relative; padding-left: 10px; margin: -2px 0 0 8px; vertical-align: middle; font-weight: bold; color: #ee8e30; }
+.date-tag .tag .today:before { position: absolute; top: 50%; left: 0; width: 6px; height: 6px; border-radius: 50%; background-color: #ee8e30; content: ''; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.broadcast-list .box { height: 80px; }
+.broadcast-list .img, .broadcast-list .img img { width: 120px; height: 80px; }
+.broadcast-list .info { padding-left: 130px; }
+.broadcast-list .info .deadline { margin-left: 20px; }
+
+/*broadcast cover styles*/
+.blur-background { position: fixed; z-index: 0; top: 0; right: 0; bottom: 0; left: 0; background-repeat: no-repeat; background-position: center; background-size: auto 100%; -webkit-filter: blur(32px); -moz-filter: blur(32px); -o-filter: blur(32px); -ms-filter: blur(32px); filter: blur(32px); animation: blur-background 20s linear infinite; -moz-animation: blur-background 20s linear infinite; -webkit-animation: blur-background 20s linear infinite; -ms-animation: blur-background 20s linear infinite; -o-animation: blur-background 20s linear infinite; }
+.broadcast-cover { position: fixed; z-index: 1; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; background-color: rgba(255, 255, 255, .1); }
+.broadcast-cover .free-tag { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; }
+.broadcast-summary { line-height: 24px; padding-top: 20%; text-align: center; font-size: 18px; color: #fff; }
+.broadcast-summary .tt { line-height: 32px; padding: 0 16px; margin-bottom: 20px; font-size: 24px; font-weight: bold; text-shadow: 3px 3px 3px #989898; }
+.broadcast-status-tt { margin: 16% auto 16px; text-align: center; font-size: 18px; color: #fff; }
+.broadcast-enter-btn { width: 73.5px; height: 88px; margin: 0 auto; background-image: url("/assets/img/app/live/enter_live.png"); background-repeat: no-repeat; background-size: cover; }
+.broadcast-enter-btn.begin { background-position: center -88px; }
+.broadcast-enter-btn.active { background-position: center top; }
+.broadcast-enter-btn.recorded { background-position: center -176px; }
+.broadcast-enter-btn.ing { background-position: center -264px; }
+.broadcast-enter-btn.end { background-position: center -352px; }
+.broadcast-status { margin-top: 6%; text-align: center; font-size: 18px; color: #fff; }
+.broadcast-status .icon { display: inline-block; margin: -4px 4px 0 0; vertical-align: middle; font-size: 20px; }
+.broadcast-status .users .num { font-size: 24px; }
+.broadcast-status .users .group { color: #ccc; }
+.broadcast-status .countdown { height: 24px; line-height: 24px; margin-top: 6%; }
+.broadcast-status .countdown .num { display: inline-block; width: 28px; height: 24px; line-height: 24px; padding: 0 4px; margin: -4px 2px 0 2px; border-radius: 2px; vertical-align: middle; background-color: rgba(0, 0, 0, .3); overflow: hidden; }
+.broadcast-intro { line-height: 24px; padding: 24px 20px 0; text-align: left; font-size: 15px; color: #fff; }
+
+/*broadcast detail styles*/
+.broadcast-page { padding: 174px 24px 24px; background-color: #203252; background-repeat: no-repeat; background-position: center top; background-size: 100% auto; }
+.broadcast-page .title { width: 100%; height: 30px; line-height: 30px; margin: 0 auto; text-align: center; font-size: 18px; font-weight: bold; color: #fff; background: url("/assets/img/app/live/tt_line.png") no-repeat center; background-size: 100% auto; }
+.broadcast-link { width: 100%; padding: 14px; margin: 8px auto 0; text-align: center; font-size: 15px; color: #fff; background-color: rgba(255, 255, 255, .3); }
+.broadcast-link .btn { display: inline-block; width: 158px; height: 34px; line-height: 34px; margin-top: 20px; border: none; border-radius: 4px 0 4px 0; box-shadow: 2px 2px 0 #0f78aa; font-size: 15px; color: #fff; background-color: #17b0e9; }
+.broadcast-link .btn .icon { display: inline-block; margin: -2px 8px 0 0; vertical-align: middle; }
+.broadcast-page .line-tag { margin-top: 26px; border-bottom: 1px solid #2a6da6; }
+.broadcast-page .line-tag .tt { float: left; padding: 0 60px 10px 0; border-bottom: 4px solid #2a6da6; font-size: 24px; font-weight: bold; color: #fff; }
+.broadcast-desc { line-height: 24px; padding: 16px 0 0; color: #fff; }
+.broadcast-desc img { max-width: 100%; }
+
+/*adaptive styles*/
+@media screen and (max-height:570px) {
+  .broadcast-status-tt { margin-top: 10%; }
+  .broadcast-status { margin-top: 4%; }
+  .broadcast-intro { padding-top: 16px; }
+}
+@media screen and (max-height:480px) {
+  .broadcast-summary { padding-top: 16%; }
+  .broadcast-status-tt { margin-top: 8%; }
+  .broadcast-status { margin-top: 2%; }
+  .broadcast-intro { padding-top: 10px; }
+}

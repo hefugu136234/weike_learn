@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ActivityMapper">
+	<!-- test -->
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+	<resultMap type="com.lankr.tv_cloud.model.Activity" id="activityMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="startDate" column="startDate" />
+		<result property="endDate" column="endDate" />
+		<result property="joinType" column="joinType" />
+		<result property="plimit" column="plimit" />
+		<result property="description" column="description" />
+		<result property="notification" column="notification" />
+		<result property="collected" column="collected" />
+		<result property="authentic" column="authentic" />
+		<result property="code" column="code" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+		<association property="config" column="id"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.selectConfigByActivityId" />
+	</resultMap>
+
+	<insert id="addActivity" parameterType="Activity">
+		INSERT INTO activity
+		(uuid,name,pinyin,createDate,modifyDate,startDate,endDate,categoryId,userId,joinType,plimit,status,isActive,mark,description,code,collected,authentic)
+		VALUES
+		(#{uuid},#{name},#{pinyin},NOW(),NOW(),#{startDate},#{endDate},#{category.id},#{user.id},#{joinType},#{plimit},#{status},1,#{mark},#{description},#{code},#{collected},#{authentic})
+	</insert>
+
+	<update id="updateActivity" parameterType="Activity">
+		UPDATE activity SET
+		name=#{name},pinyin=#{pinyin},modifyDate=NOW(),startDate=#{startDate},endDate=#{endDate},categoryId=#{category.id},
+		joinType=#{joinType},plimit=#{plimit},mark=#{mark},description=#{description},collected=#{collected},authentic=#{authentic}
+		where id=#{id}
+	</update>
+
+	<select id="getActivityByUuid" resultMap="activityMapper">
+		select * from activity
+		where uuid=#{0} and isActive=1
+	</select>
+
+	<select id="getActivityById" resultMap="activityMapper">
+		select * from activity
+		where id=#{0} and isActive=1
+	</select>
+
+	<select id="searchDatatableActivities" resultMap="activityMapper">
+		select * from
+		activity where isActive=1 and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit #{1},#{2}
+	</select>
+
+	<update id="changeStatus">
+		UPDATE activity SET status = #{1},modifyDate = NOW()
+		where id=#{0}
+	</update>
+
+	<select id="searchRecommendActivties" resultMap="activityMapper">
+		select * from
+		activity where isActive = 1 and status = 1 order by modifyDate
+		desc
+		limit #{0}
+	</select>
+
+	<!-- 活动配置 -->
+	<resultMap type="com.lankr.tv_cloud.model.ActivityConfig" id="activityConfigMapper"
+		extends="base.baseModel">
+		<result property="display" column="display" />
+		<result property="status" column="status" />
+		<result property="auto" column="auto" />
+		<result property="notification" column="notification" />
+		<result property="medias" column="medias" />
+	</resultMap>
+
+	<insert id="addActivityConfig" parameterType="com.lankr.tv_cloud.model.ActivityConfig">
+		insert into
+		activity_config
+		(uuid,createDate,modifyDate,activityId,display,mark,auto,status,notification,medias,isActive)
+		values
+		(#{uuid},NOW(),NOW(),#{activity.id},#{display},#{mark},#{auto},#{status},#{notification},#{medias},1)
+	</insert>
+
+	<update id="updateActivityConfig" parameterType="com.lankr.tv_cloud.model.ActivityConfig">
+		UPDATE
+		activity_config SET modifyDate=NOW(),
+		display=#{display},mark=#{mark},auto=#{auto},status=#{status},notification=#{notification},medias=#{medias}
+		where id = #{id}
+	</update>
+
+	<select id="selectConfigByActivityId" resultMap="activityConfigMapper">
+		SELECT * FROM
+		activity_config WHERE isActive = 1 AND
+		activityId=#{activityId} order
+		by modifyDate DESC LIMIT 1
+	</select>
+
+	<select id="selectActivityConfig" resultMap="activityConfigMapper">
+		select * from
+		activity_config where isActive = 1 and activityId = #{0} order
+		by
+		modifyDate desc limit 1
+	</select>
+
+	<!-- 活动资源 -->
+	<resultMap type="activityResource" id="activityResourceMapper">
+		<result property="name" column="name" />
+		<result property="status" column="status" />
+		<result property="viewCount" column="viewCount" />
+		<association property="activity" column="activityId"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.getActivityById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+	</resultMap>
+
+	<insert id="addActivityResource" parameterType="com.lankr.tv_cloud.model.ActivityResource">
+		insert into
+		activity_resource
+		(name,uuid,createDate,modifyDate,activityId,resourceId,status,isActive,mark)
+		values
+		(#{name},#{uuid},NOW(),NOW(),#{activity.id},#{resource.id},#{status},1,#{mark})
+	</insert>
+
+
+
+	<select id="searchResourceActivityUseIds" resultMap="activityResourceMapper">
+		select *
+		from activity_resource where activityId=#{0} and
+		resourceId=#{1} order
+		by modifyDate DESC LIMIT 1
+	</select>
+
+	<update id="updateResourceActivityUseIds">
+		update activity_resource set modifyDate=NOW() where
+		isActive = 1 and
+		activityId=#{0} and resourceId=#{1}
+	</update>
+
+
+	<select id="wonderActivites" resultMap="activityMapper">
+		select * from
+		activity
+		where isActive = 1 and status = 1 and createDate &lt; #{0} order by
+		createDate desc limit #{1}
+	</select>
+
+	<select id="searchActivitieResForDatatable" resultMap="activityResourceMapper">
+		select *
+		from
+		activity_resource where isActive=1
+		and activityId=#{0}
+		and (name
+		like "%"#{1}"%") order by recommendDate desc
+		limit #{2},#{3}
+	</select>
+
+	<select id="getActivityResourceByUuid" resultMap="activityResourceMapper">
+		select * from
+		activity_resource
+		where uuid=#{0} and isActive=1
+	</select>
+
+	<update id="deleteActivityResource" parameterType="com.lankr.tv_cloud.model.ActivityResource">
+		UPDATE
+		activity_resource SET modifyDate=NOW(), isActive=0
+		where id = #{id}
+	</update>
+
+	<update id="updateActivityResState" parameterType="com.lankr.tv_cloud.model.ActivityResource">
+		update
+		activity_resource
+		set
+		modifyDate=NOW(), status=#{status}
+		where
+		id=#{id}
+	</update>
+
+	<select id="getActivityResourceById" resultMap="activityResourceMapper">
+		select * from
+		activity_resource
+		where id=#{0} and isActive=1
+	</select>
+
+	<update id="changeActivityResStatus">
+		UPDATE activity_resource SET status = #{1},modifyDate
+		= NOW()
+		where id=#{0}
+	</update>
+
+	<update id="changeIsActive">
+		UPDATE activity_resource SET isActive =
+		#{1},modifyDate = NOW()
+		where id=#{0}
+	</update>
+
+	<update id="recommendResource" parameterType="com.lankr.tv_cloud.model.ActivityResource">
+		update
+		activity_resource
+		set
+		recommendDate=NOW(), modifyDate=NOW()
+		where
+		id=#{id}
+	</update>
+
+	<update id="recommendResourceUndo" parameterType="com.lankr.tv_cloud.model.ActivityResource">
+		update
+		activity_resource
+		set
+		recommendDate=NULL, modifyDate=NOW()
+		where
+		id=#{id}
+	</update>
+
+	<select id="getRecommendResourceCount" parameterType="com.lankr.tv_cloud.model.ActivityResource"
+		resultType="int">
+		select count(*) from
+		activity_resource
+		where recommendDate is
+		not NULL
+	</select>
+
+	<!-- 活动成员 -->
+	<resultMap type="com.lankr.tv_cloud.model.ActivityUser" id="activityUserMapper">
+		<result property="status" column="status" />
+		<association property="activity" column="activityId"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.getActivityById" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<select id="searchActivitieUserForDatatable" resultMap="activityUserMapper">
+		select *
+		from
+		activity_user where activityId=#{0}
+		and isActive=1
+		and (mark like "%"#{1}"%")
+		order by modifyDate desc limit #{2},#{3}
+	</select>
+
+	<select id="getActivityUserByUuid" resultMap="activityUserMapper">
+		select * from
+		activity_user
+		where uuid=#{0}
+	</select>
+
+	<!-- <update id="deleteActivityUser" parameterType="com.lankr.tv_cloud.model.ActivityUser"> 
+		UPDATE activity_user SET modifyDate=NOW(), isActive=0 where id = #{id} </update> -->
+
+	<select id="getActivityUserById" resultMap="activityUserMapper">
+		select * from
+		activity_user
+		where id=#{id}
+	</select>
+
+	<update id="updateActivityUserIsAvtive">
+		UPDATE activity_user SET isActive = #{1},modifyDate =
+		NOW()
+		where id=#{0}
+	</update>
+
+	<insert id="addActivityUser" parameterType="activityUser">
+		INSERT INTO activity_user
+		(uuid,createDate,modifyDate,userId,activityId,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{user.id},#{activity.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getActivityUserByUserId" resultMap="activityUserMapper">
+		select * from activity_user
+		where activityId=#{1} and
+		userId=#{0} order by createDate desc limit 1
+	</select>
+
+	<select id="searchActivityByCateId" parameterType="list"
+		resultMap="activityMapper">
+		select * from activity
+		where isActive = 1 and status = 1 and categoryId
+		in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<update id="updateResourceActivityRelate" parameterType="activityResource">
+		UPDATE
+		activity_resource SET modifyDate=NOW(), isActive=1
+		where id = #{id}
+	</update>
+
+	<select id="getResActivityBYchat" resultMap="activityResourceMapper">
+		select * from
+		activity_resource where isActive=1 and
+		status=1 and activityId=#{0} and
+		createDate &lt; #{1}
+		order by createDate desc limit #{2}
+	</select>
+
+	<select id="oupsRankingByActivityResId" parameterType="int"
+		resultMap="activityResourceMapper">
+		select * from activity_resource as a left join resource as r
+		on a.resourceId=r.id
+		where a.isActive=1 and a.status=1 and
+		a.activityId=#{id} and r.status=1
+		order by r.viewCount desc limit 10
+	</select>
+
+	<update id="updateActivtyResourceActive" parameterType="activityResource">
+		update
+		activity_resource set
+		modifyDate=NOW(),isActive=1,status=#{status},mark=#{mark}
+		where
+		activityId=#{activity.id} and resourceId=#{resource.id} limit 30
+	</update>
+
+	<update id="updateActivityUserStatus" parameterType="com.lankr.tv_cloud.model.ActivityUser">
+		UPDATE
+		activity_user SET modifyDate =NOW(),isActive =
+		#{isActive},status=#{status}
+		where id=#{id}
+	</update>
+
+	<select id="recommendActivityVideo" parameterType="int"
+		resultMap="activityResourceMapper">
+		select * from activity_resource where isActive=1 and
+		status=1 and activityId=#{id} and recommendDate is not null
+		order by
+		recommendDate desc limit 10
+	</select>
+
+	<select id="collecteActivites" resultMap="activityMapper">
+		select * from
+		activity
+		where isActive = 1 and status = 1 and collected=1 and createDate &lt; #{0} order by
+		createDate desc limit #{1}
+	</select>
+	
+	<select id="searchActivitieUserForMessage" resultMap="activityUserMapper">
+		select * from 
+			activity_user
+		where 
+			activityId=#{id} 
+		<if test=" index > 0 ">
+			and id &gt; #{index} 
+		</if>
+		and
+			isActive=1
+		and 
+			status=1
+		order by 
+			id asc
+		limit 100
+	</select>
+
+
+	<!-- 2016-4-7 新增活动学科分类 -->
+	<resultMap type="activitySubject" id="activitySubjectMapper">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="status" column="status" />
+		<association property="activity" column="activityId"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.getActivityById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+	</resultMap>
+
+	<insert id="addActivitySubject" parameterType="activitySubject">
+		INSERT INTO activity_subject
+		(uuid,createDate,modifyDate,name,pinyin,activityId,categoryId,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{name},#{pinyin},#{activity.id},#{category.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getActivitySubjectById" parameterType="int"
+		resultMap="activitySubjectMapper">
+		select *
+		from activity_subject where id=#{id}
+	</select>
+
+	<select id="getActivitySubjectByUuid" resultMap="activitySubjectMapper">
+		select *
+		from
+		activity_subject where uuid=#{0}
+	</select>
+
+	<update id="updateActivitySubject" parameterType="activitySubject">
+		UPDATE
+		activity_subject SET
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},categoryId=#{category.id}
+		WHERE id=#{id}
+	</update>
+
+	<update id="deteleActivitySubject" parameterType="activitySubject">
+		UPDATE
+		activity_subject SET
+		modifyDate=NOW(),isActive=0
+		WHERE id=#{id}
+	</update>
+
+	<select id="searchActivitySubjectForWx" resultMap="activitySubjectMapper">
+		select *
+		from
+		activity_subject where isActive=1 and status=1 and activityId=#{0}
+		order by modifyDate desc
+	</select>
+
+	<select id="searchActivitySubjectForTable" resultMap="activitySubjectMapper">
+		select *
+		from
+		activity_subject where isActive = 1 and activityId=#{1} and (name
+		like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit
+		#{2},#{3}
+	</select>
+	<!-- 2016-4-7 新增活动学科分类 -->
+
+	<select id="searchActivityByQrSence" resultMap="activityMapper">
+		select a.* from
+		activity a left join (select * from qrscene where type=1) q on
+		a.id=q.reflectId where a.isActive = 1 and a.status!=0 and (a.name like
+		"%"#{0}"%"
+		or a.pinyin
+		like
+		"%"#{0}"%") order by a.modifyDate desc limit
+		15
+
+	</select>
+
+	<select id="queryApiUseableActivities" resultMap="activityMapper">
+		select * from
+		activity a where a.isActive=1 and a.status=1 and (a.name like
+		"%"#{0}"%"
+		or
+		a.pinyin
+		like
+		"%"#{0}"%") order by id desc limit 20
+	</select>
+	
+	<select id="searchActivityByWxSubject" resultMap="activityMapper">
+		select * from activity where isActive = 1 and status=1 and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit 15
+	</select>
+	
+	<!-- 20160603 活动_专家 -->
+	<resultMap type="activityExpert" id="activityExpertMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<association property="activity" column="activityId"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.getActivityById" />
+		<association property="speaker" column="speakerId"
+			select="com.lankr.orm.mybatis.mapper.SpeakerMapper.getSpeakerById" />
+	</resultMap>
+	
+	<select id="searchActivitieExpertForDatatable" resultMap="activityExpertMapper">
+		select  activity_expert.id, activity_expert.uuid, activity_expert.speakerId, 
+				activity_expert.activityId, activity_expert.status, 
+				activity_expert.createDate, activity_expert.modifyDate,
+				activity_expert.isActive, activity_expert.mark
+		from 
+			activity_expert 
+		left join 
+			speaker 
+		on 
+			activity_expert.speakerId = speaker.id 
+		where 
+			activity_expert.isActive=1 and speaker.isActive=1 and activity_expert.activityId = #{0}
+		and 
+			(speaker.name like "%"#{1}"%" or speaker.pinyin like "%"#{1}"%")
+		order by 
+			recommendDate desc
+		limit #{2},#{3}
+	</select>
+	
+	<update id="updateActivityExpertStatus" parameterType="activityExpert">
+		UPDATE 
+			activity_expert 
+		SET
+			status=#{status},modifyDate=NOW(),isActive=#{isActive},mark=#{mark}
+			<!-- status=#{status},modifyDate=NOW(),isActive=#{isActive},mark=#{mark},speakerId=#{speaker.id},activityId=#{activity.id} -->
+		where id=#{id}
+	</update>
+	
+	<select id="getActivityExpertByUuid" parameterType="activityExpert" 
+												resultMap="activityExpertMapper">
+		SELECT * FROM activity_expert where uuid=#{0}
+	</select>
+
+	<insert id="saveActivityExpert" parameterType="activityExpert">
+		INSERT INTO activity_expert
+			(uuid,createDate,modifyDate,speakerId,activityId,status,isActive,mark)
+		VALUES
+			(#{uuid},NOW(),NOW(),#{speaker.id},#{activity.id},#{status},1,#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<select id="getActivityExpertBySpeakerIdAndActivityId" resultMap="activityExpertMapper">
+		SELECT * FROM activity_expert where speakerId=#{speaker.id} and activityId=#{activity.id}
+	</select>
+	
+	<select id="searchExpertByWx" resultMap="activityExpertMapper">
+		SELECT * FROM activity_expert where isActive=1 and status=1 and activityId=#{0}  and createDate &lt; #{1} order by recommendDate
+		desc limit #{2}
+	</select>
+	
+	<update id="recommendExpert" parameterType="com.lankr.tv_cloud.model.ActivityExpert">
+		update
+			activity_expert
+		set
+			recommendDate=NOW(), modifyDate=NOW()
+		where
+			id=#{id}
+	</update>
+	
+	<select id="allActivityCount" resultType="java.lang.Integer">
+		select count(id) from activity
+		where isActive=1 and status=1
+	</select>
+	
+</mapper>

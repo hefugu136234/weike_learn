@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.TvAuthenticationMapper">
+<resultMap type="com.lankr.tv_cloud.model.TvAuthentication"
+		id="tvAuthenticationMapper" extends="base.baseModel">
+		<result property="token" column="token" />
+		<result property="remoteIp" column="remoteIp" />
+		<result property="device" column="device"/>
+		<association property="user" column="userId" select="user.getUserById"/>
+		
+	</resultMap>
+
+	<insert id="addTvAuth" parameterType="com.lankr.tv_cloud.model.TvAuthentication">
+		insert into
+		tv_authentication
+		(createDate,modifyDate,token,remoteIp,isActive,userId,device) values
+		(NOW(),NOW(),#{token},#{remoteIp},1,#{user.id},#{device})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<update id="disableUserAuths" parameterType="com.lankr.tv_cloud.model.TvAuthentication">
+		<![CDATA[	update tv_authentication set isActive = 0, modifyDate = NOW() where userId = #{user.id} and device=#{device} and id <> #{id}]]>
+	</update>
+
+	<select id="getTvAuthByToken" parameterType="string"
+		resultMap="tvAuthenticationMapper">
+		select * from tv_authentication where token = #{token}
+	</select>
+</mapper>

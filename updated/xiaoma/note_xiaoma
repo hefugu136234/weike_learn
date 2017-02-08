@@ -1,0 +1,94 @@
+2015-12-31 15:07 -->	banner 表添加 validDate 字段，类型：bigint  时间单位: seconds
+2016-01-04 14:21 -->	banner 表 type 字段说明：		1，tv		2，app		3，wechat
+2016-01-06 15:09 -->	banner 表添加 taskId 字段 类型：varchar	长度：45
+
+2016-01-27 17:23 -->	新增 ‘标签资源中间表’ sql脚本: ./2016-01-27tags_resource.sql
+
+--------------------------------------------------------------------------------------------------------
+2016-02-24 11:36 -->	新增 ‘实名认证记录表' sql脚本: ./certification.sql
+
+2016-02-24 17:12 -->	speaker 表添加 userid 字段 ：int(11)
+						ALTER TABLE `zhiliao`.`speaker` 
+						ADD COLUMN `userId` INT(11) NULL AFTER `isActive`;
+
+2016-03-14 13:00 -->	activity_resource 表添加 recommendDate 字段，类型 DATETIME，默认 NULL
+
+2016-04-11 15:30 -->	news_info 更改qrTaskId字段长度
+						ALTER TABLE `zhiliao`.`news_info` 
+						CHANGE COLUMN `qrTaskId` `qrTaskId` VARCHAR(200) NULL DEFAULT NULL ;
+						
+2016-04-12 13:21 -->	tmp_lottery 添加page字段，存储页面
+						ALTER TABLE `zhiliao`.`tmp_lottery` 
+						ADD COLUMN `page` TEXT NULL DEFAULT NULL AFTER `isActive`;
+						tmp_award 移除page字段
+						ALTER TABLE `zhiliao`.`tmp_award` 
+						DROP COLUMN `page`;
+						tmp_arard 添加conditional字段，存贮该奖品可被抽中的概率
+						ALTER TABLE `zhiliao`.`tmp_award` 
+						ADD COLUMN `conditional` DOUBLE NULL DEFAULT 0.00 AFTER `mark`;
+						
+2016-04-14 15:28 -->	tmp_award 移除字段
+
+						ALTER TABLE `zhiliao`.`tmp_award` 
+						DROP COLUMN `toNumber`,
+						DROP COLUMN `fromNumber`,
+						DROP COLUMN `baseNumber`;
+
+2016-04-18 16:35 -->	最新lottery，award /dreamtale/updated/xiaoma/tmp_award.sql
+										  /dreamtale/updated/xiaoma/tmp_lottery.sql
+										  
+2016-04-18 17:00 -->	tmp_lottery 添加 pinyin 字段
+						ALTER TABLE `zhiliao`.`tmp_lottery` 
+						ADD COLUMN `pinyin` VARCHAR(150) NULL AFTER `name`;
+						
+2016-04-19 12:35 -->	ALTER TABLE `zhiliao`.`tmp_lottery_record` 
+						CHANGE COLUMN `awardId` `awardId` INT(11) NULL DEFAULT 0 ;	
+						
+2016-04-21 17:25 -->	ALTER TABLE `zhiliao`.`category_expand` 
+						CHANGE COLUMN `appTaskId` `appTaskId` VARCHAR(200) NULL DEFAULT NULL ,
+						CHANGE COLUMN `wxTaskId` `wxTaskId` VARCHAR(200) NULL DEFAULT NULL ,
+						CHANGE COLUMN `tvTaskId` `tvTaskId` VARCHAR(200) NULL DEFAULT NULL ,
+						CHANGE COLUMN `webTaskId` `webTaskId` VARCHAR(200) NULL DEFAULT NULL ;		
+						
+2016-04-22 17:51 -->	ALTER TABLE `zhiliao`.`tmp_lottery` 
+						ADD COLUMN `templateId` INT(11) NULL AFTER `mark`,
+						ADD COLUMN `rules` text NULL AFTER `templateId`;	
+						
+2016-05-05 15:00 -->	ALTER TABLE `zhiliao`.`integral_consume` 
+						ADD COLUMN `sign` INT NULL DEFAULT 0 AFTER `userLimited`;
+						
+2016-06-06 14:17 -->	添加活动专家表 脚本--> ./activity_expert.sql
+
+2016-06-08 以上的表同步测试服务器（以后从这个日期之前开始比对）
+2016-06-08 以上的表同步正式服务器（以后从这个日期之前开始比对）
+
+2016-06-12 13:21 -->	ALTER TABLE `zhiliao`.`activity_expert` 
+						ADD COLUMN `recommendDate` DATETIME NULL AFTER `mark`;
+						
+2016-07-01 14:34 --> 	ALTER TABLE `zhiliao`.`wx_subject` 
+						ADD COLUMN `recommendDate` DATETIME NULL AFTER `mark`;
+						
+2016-07-20 10:56 -->	ALTER TABLE `zhiliao`.`tmp_lottery` 
+						CHANGE COLUMN `rules` `rules` TEXT NULL DEFAULT NULL ;
+						
+2016-08-01 10:10 -->	ALTER TABLE `zhiliao`.`normal_collect` 
+						ADD COLUMN `position` INT(11) NOT NULL DEFAULT 0 AFTER `price`;
+						
+2016-08-01 16:33 -->	ALTER TABLE `zhiliao`.`resource_group` 
+						CHANGE COLUMN `mark` `mark` VARCHAR(350) NULL DEFAULT NULL COMMENT '描述' ;
+						
+2016-08-01 17:03 --> 	ALTER TABLE `zhiliao`.`normal_collect` 
+						DROP COLUMN `position`,
+						ADD COLUMN `recommendDate` DATETIME NULL DEFAULT NULL AFTER `price`;
+							
+						ALTER TABLE `zhiliao`.`resource_group` 
+						DROP COLUMN `position`,
+						ADD COLUMN `recommendDate` DATETIME NULL DEFAULT NULL AFTER `viewCount`;
+
+2016-08-05 以上的表同步测试服务器（以后从这个日期之前开始比对）
+
+2016-12-06 10:47 -->	新建表zhiliao.resource_access_ignore
+												
+
+						
+						

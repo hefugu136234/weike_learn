@@ -1,0 +1,9 @@
+/*about container styles*/
+.about-container { padding-bottom: 60px; }
+.about-container .title { position: static; padding-top: 6%; margin: 0; text-align: center; }
+.about-container .img { margin-top: 4%; text-align: center; }
+.about-container .info { line-height: 20px; padding: 4% 20px 0; }
+.about-container .info p { text-indent: 1em; color: #333; }
+.about-container .company { padding: 10%; text-align: center; }
+.about-container .company p { margin-bottom: 6px; }
+.about-container .company p.copyright { font-size: 12px; }

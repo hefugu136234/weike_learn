@@ -1,0 +1,6 @@
+.reg-panel .title-tag { margin-bottom: 16px; }
+.reg-panel .separate-line { margin-right: -15px; margin-left: -15px; }
+.reg-panel .default-form { position: relative; padding-bottom: 2px; }
+.reg-panel .default-form .long-btn { padding-right: 60px; padding-left: 60px; }
+.reg-panel .qr-code { position: absolute; top: 0; right: 80px; width: 162px; text-align: center; }
+.reg-panel .qr-code .tt { margin-top: 8px; font-size: 14px; }

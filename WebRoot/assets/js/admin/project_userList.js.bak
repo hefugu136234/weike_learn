@@ -1,0 +1,240 @@
+jQuery.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
+	return {
+		"iStart" : oSettings._iDisplayStart,
+		"iEnd" : oSettings.fnDisplayEnd(),
+		"iLength" : oSettings._iDisplayLength,
+		"iTotal" : oSettings.fnRecordsTotal(),
+		"iFilteredTotal" : oSettings.fnRecordsDisplay(),
+		"iPage" : oSettings._iDisplayLength === -1 ? 0 : Math
+				.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+		"iTotalPages" : oSettings._iDisplayLength === -1 ? 0 : Math
+				.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+	};
+};
+
+$(document).ready(function() {
+	showActive([ 'pro_user_list_nav', 'holder_project' ]);
+	$('#project_user_list_table').dataTable({
+		"bProcessing" : true,
+		"bServerSide" : true,
+		"bStateSave" : false,
+		"aLengthMenu" : [ [ 10, 15, 20, 30 ], [ "10", "15", "20", "30" ] ],
+		"fnDrawCallback" : function(oSettings) {
+		},
+		"iDisplayLength" : 10,
+		"iDisplayStart" : 0,
+		"sAjaxSource" : "/project/userReference/user/datatable",
+		"aoColumns" : [ {
+			"mData" : "username",
+			"orderable" : false
+		}, {
+			"mData" : "nickname",
+			"orderable" : false
+		},{
+			"mData" : "wxNickName",
+			"orderable" : false
+		}, {
+			"mData" : "createDate",
+			"orderable" : false
+		}, {
+			"mData" : "phoneNumber",
+			"orderable" : false
+		}, {
+			"mData" : "validDate",
+			"orderable" : false
+		}, {
+			"mData" : "roleName",
+			"orderable" : false
+		}, {
+			"mData" : "isActive",
+			"orderable" : false
+		},{
+			"mData" : "uuid",
+			"orderable" : false,
+			"fnCreatedCell" : function(nTd, sData, oData, iRow, iCol) {
+				loadAddLink(nTd,sData,oData);
+			}
+		} ]
+	});
+})
+
+var table=$('');
+var modelBoby=$('#userCardTable');
+
+function loadAddLink(cell,uuid,oData){
+	var parent = $(cell);
+	var stats=$(parent.parent().children()[7]);
+	parent.empty();
+	stats.empty();
+	var item = '';
+	var statItem='';
+	//modified by mayuan -->点击查看备注,和卡记录
+	var mark = $('<a href="#">备注</a>');
+	var cardLog = $('<a href="#" data-toggle="modal" data-target="#userCardListModal">卡记录</a>');
+	
+	var user_isActive=oData['isActive'];
+	if (user_isActive == 1) {
+		item = $('<a href="#">禁用</a>');
+		statItem='<span style="color: green;">已启用</span>';
+	} else{
+		item = $('<a href="#">启用</a>');
+		statItem = '<span style="color: #FF9933;">已禁用</span>'
+	} 
+	item.click(function() {
+		$.post('/project/manage/isAction/user', {
+			uuid : uuid
+		}, function() {
+		}).done(function() {
+
+		}).fail(function() {
+
+		}).always(function(data) {
+			//				0---禁用   1---启用
+			if (data.status==1||data.status==0) {
+				refreshItem(parent.parent().children(), data, uuid, oData);
+			}else{
+				alert("permission denied");
+			}
+		});
+	});
+	
+	//modified by mayuan -->添加备注按钮点击事件
+	mark.click(function(){
+		var mark = oData['mark'];
+		if(mark){
+			alert(mark);
+		}else{
+			alert("暂无相关备注！");
+		}
+	});
+	
+	//modified by mayuan -->添加卡记录点击事件
+	cardLog.click(function(){
+		$.get('/userCard/list/page/data', {
+			uuid : uuid
+		}, function(data) {
+			var result_data = data.aaData;
+			console.log(result_data);
+			buildData(result_data);
+		})
+	})
+	modelBoby.empty();
+	table.empty();
+	
+	$('#select_confirm_btn_search').click(function(){
+		$('#userCardListModal').modal('hide');
+	})
+	
+	stats.append(statItem);
+	parent.append(item).append('   ').append(mark).append('   ').append(cardLog);
+	
+	/**	编辑
+	var edit = $('<a style="margin-left:10px" href="#">编辑</a>')
+	edit.click(function() {
+		$('#videoEditModal').attr("data-id", uuid);
+		edit_row = parent.parent();
+		$('#videoEditModal').modal('show');
+	})
+	parent.append(edit);
+	**/
+}
+
+//刷新链接
+function refreshItem(tds, data, uuid, oData) {
+	//0---禁用   1---启用
+	var parent = $(tds[8]);
+	parent.empty();
+	var stats=$(tds[7]);
+	stats.empty();
+	var item = '';
+	var statItem='';
+	var dataId=data.status;
+	//modified by mayuan -->点击查看备注
+	var mark = $('<a href="#">备注</a>');
+	var cardLog = $('<a href="#" data-toggle="modal" data-target="#userCardListModal">卡记录</a>');
+	
+	if (dataId == 1) {
+		item = $('<a href="#">启用</a>');
+		statItem = '<span style="color: #FF9933;">已禁用</span>'
+	} else{ 
+		item = $('<a href="#">禁用</a>');
+		statItem='<span style="color: green;">已启用</span>';
+	} 
+	item.click(function() {
+		$.post('/project/manage/isAction/user', {
+			uuid : uuid
+		}, function() {
+		}).done(function() {
+
+		}).fail(function() {
+
+		}).always(function(data) {
+			console.log(data);
+			//				0---启用   1---禁用
+			if (data.status==1||data.status==0) {
+				refreshItem(parent.parent().children(), data, uuid, oData);
+			}else{
+				alert("permission denied");
+			}
+		});
+	});
+	
+	//modified by mayuan -->添加备注按钮点击事件
+	mark.click(function(){
+		var mark = oData['mark'];
+		if(mark){
+			alert(mark);
+		}else{
+			alert("暂无相关备注！");
+		}
+	});
+	
+	//modified by mayuan -->添加卡记录点击事件
+	cardLog.click(function(){
+		$.get('/userCard/list/page/data', {
+			uuid : uuid
+		}, function(data) {
+			var result_data = data.aaData;
+			console.log(result_data);
+			buildData(result_data);
+		})
+	})
+	modelBoby.empty();
+	table.empty();
+	
+	$('#select_confirm_btn_search').click(function(){
+		$('#userCardListModal').modal('hide');
+	})
+	
+	stats.append(statItem);
+	parent.append(item).append('   ').append(mark).append('   ').append(cardLog);
+}
+
+//modified by mayuan --> 绘制html显示流量卡记录
+function buildData(result_data){
+	table=$('<table border=1 width=100%>'+
+				'<tr>'+
+					'<th width=25%>卡号</th>'+
+					'<th width=25%>厂商</th>'+
+					'<th width=25%>时长(天)</th>'+
+					'<th width=25%>激活时间</th>'+
+				'</tr>'+
+			'</table>');
+	if(result_data.length==0){
+		table.empty();
+		table=$('<table width=100%><tr><td width=100%><font color="red" size=4>该用户暂无流量卡信息</fong></td></tr></table>');
+	}else{
+		$.each(result_data,function(index,element){
+			var deadLine='';
+			if(!!element.duration){
+				//TODO 秒转换成对应的月数
+				deadLine=element.duration/(3600*24)
+				console.log(deadLine);
+			}
+			var tr=$('<tr><td>'+element.cardNum+'</td><td>'+element.manufacturerName+'</td><td>'+deadLine+'</td><td>'+element.activationDate+'</td></tr>');	
+			table.append(tr);
+		})
+	}
+	modelBoby.empty();
+	modelBoby.append(table);
+}

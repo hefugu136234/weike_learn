@@ -1,0 +1,12 @@
+/*upload styles*/
+.upload-video { position: relative; z-index: 100; background-color: #808080; }
+.video-upload-ing { padding-top: 80px; text-align: center; color: #fff; }
+.video-upload-ing .icon { margin-bottom: 16px; font-size: 40px; font-weight: bold; }
+.video-upload-ing .info { line-height: 28px; font-size: 18px; }
+.upload-success { padding-top: 24%; background: #283b6b url("/assets/img/app/upload/success_bg.jpg") no-repeat center top; background-size: 100% auto; }
+.upload-success .user-name { text-align: center; font-size: 15px; color: #7e7e7e; }
+.upload-success .user-name .name { margin-right: 8px; font-size: 24px; font-weight: bold; color: #333; }
+.upload-video-info { padding-top: 40%; text-align: center; font-size: 15px; font-weight: bold; color: #fff; }
+.upload-video-info .big { margin: 8px 0 20px; font-size: 24px; }
+.upload-success .enter-button { position: absolute; bottom: 40px; right: 20px; left: 20px; font-size: 15px; font-weight: bold; color: #fff; background-color: #30b2ee; }
+.comments-content-text.alert { background-color: rgba(255, 227, 210, 1); -webkit-animation: twinkling 0.5s ease-in-out; }

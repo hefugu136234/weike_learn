@@ -1,0 +1,43 @@
+2016-04-19 修改qrscene场景表
+存于2016-04-19-sql.sql
+
+2016-04-19 新建表qrcode_scan_recode
+存于2016-04-19-sql.sql
+
+2016-04-25 新建表 wx_subject
+存于 2016-04-25-sql.sql
+
+2016-05-20 新建表 questionnaire和questionnaire_answer 
+存于 2016-05-20-sql.sql
+
+2016-05-25 修改表 broadcast 添加字段
+       tvDescription （text） tv和web版详情
+ 
+2016-06-08 以上的表同步测试服务器（以后从这个日期之前开始比对）
+2016-06-08 以上的表正式测试服务器（以后从这个日期之前开始比对）
+
+2016-06-13 新建表 page_remain
+存于存于 2016-06-13-sql.sql
+
+2016-08-04 修改表 questionnaire_answer 字段 score （int->float）修改字段类型
+
+2016-08-04 新建表 normal_collect_schedule 存于 2016-08-04-sql.sql
+
+2016-08-05 以上的表同步测试服务器（以后从这个日期之前开始比对）
+
+2016-08-11 修改表broadcast 增加speakerId(int) 字段
+
+2016-08-18 修改表 normal_collect_questionnaire，增加字段
+                 collectTime(int) collectNum(int)
+                 
+2016-08-19 给表base_integral 添加一条基础数据
+           sql : INSERT INTO `base_integral` (`id`, `uuid`, `createDate`, `modifyDate`, `action`, `value`, `isActive`, `status`, `mark`) VALUES (15, '205b6a2d-d934-11e5-875c-c55b794e1b9d', '2016-02-22 15:16:02', '2016-02-22 15:16:02', 15, 5, 1, 1, '用户评论资源');
+           
+2016-08-26 开发线下活动
+                  新建表 offline_activity,signup_user,project_code
+         存于2016-08-26-sql.sql
+         
+2017-01-09 vr视频新增 asset 字段
+           videoType  int(1) 默认值 0
+               修改 fileId 的长度，改为：60
+           

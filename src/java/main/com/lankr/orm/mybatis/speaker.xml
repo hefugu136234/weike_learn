@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.SpeakerMapper">
+	<resultMap type="speaker" id="speakerMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="status" column="status" />
+		<result property="position" column="position" />
+		<result property="sex" column="sex" />
+		<result property="resume" column="resume" />
+		<result property="birthday" column="birthday" />
+		<result property="mail" column="mail" />
+		<result property="phone" column="phone" />
+		<result property="mobile" column="mobile" />
+		<result property="avatar" column="avatar" />
+		<association property="hospital" column="hospitalId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectHospitalById" />
+		<association property="department" column="departmentsId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectDePatById" />
+		<association property="user" column="userId"
+			select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addSpeaker" parameterType="speaker">
+		INSERT INTO speaker
+		(createDate,modifyDate,name,pinyin,uuid,mobile,phone,birthday,mail,avatar,hospitalId,departmentsId,position,resume,sex,status,isActive,userId)
+		VALUES
+		(NOW(),NOW(),#{name},#{pinyin},#{uuid},#{mobile},#{phone},#{birthday},#{mail},#{avatar},#{hospital.id},#{department.id},#{position},#{resume},#{sex},#{status},#{isActive},#{user.id})
+	</insert>
+
+	<update id="updateSpeaker" parameterType="speaker">
+		update speaker set
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},mobile=#{mobile},hospitalId=#{hospital.id},departmentsId=#{department.id},position=#{position},sex=#{sex},resume=#{resume},avatar=#{avatar}
+		where id=#{id}
+	</update>
+
+	<select id="getSpeakerByUuid" resultMap="speakerMapper"
+		parameterType="string">
+		select * from speaker where isActive = 1 and
+		uuid=#{uuid}
+	</select>
+	
+	<update id="updateSpeakerStatus" parameterType="speaker">
+		update speaker set
+		modifyDate=NOW(),status=#{status}
+		where id=#{id}
+	</update>
+	
+	<update id="updateSpeakerCleanUser" parameterType="speaker">
+		update speaker set
+		modifyDate=NOW(),userId=NULL
+		where id=#{id}
+	</update>
+	
+
+	<select id="searchSpeakerPagination" resultMap="speakerMapper">
+		select * from speaker where isActive=1 and (name
+		like
+		"%"#{2}"%"
+		or pinyin like "%"#{2}"%") order by modifyDate desc limit #{0},#{1}
+	</select>
+	<select id="getSpeakerById" resultMap="speakerMapper" parameterType="int">
+	    select * from speaker where id=#{id}
+	</select>
+	
+	<select id="getUseableSpeakerById" resultMap="speakerMapper" parameterType="int">
+	    select * from speaker where id=#{id} and isActive=1 and status=1
+	</select>
+	
+	<select id="searchSpeakerListByQ" parameterType="string" resultMap="speakerMapper">
+		select * from speaker where isActive=1 and status=1 and (name
+		like
+		"%"#{query}"%" or
+		pinyin
+		like "%"#{query}"%") order by
+		createDate limit 10
+	</select>
+	
+	<select id="searchSpeakerList" resultMap="speakerMapper">
+		select * from speaker where isActive=1 and status=1  order by
+		createDate limit 10
+	</select>
+	
+	<update id="speakerAssociationUser" parameterType="speaker">
+		update speaker set
+		modifyDate=NOW(),userId=#{user.id}
+		where id=#{id}
+	</update>
+	
+	<select id="getSpeakerByUserId" resultMap="speakerMapper"
+		parameterType="int">
+		select * from speaker where isActive = 1 and
+		userId=#{0}
+	</select>
+
+</mapper>

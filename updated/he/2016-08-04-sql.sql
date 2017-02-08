@@ -1,0 +1,21 @@
+CREATE TABLE `normal_collect_schedule` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`uuid` VARCHAR(60) NULL DEFAULT NULL,
+	`createDate` DATETIME NULL DEFAULT NULL,
+	`modifyDate` DATETIME NULL DEFAULT NULL,
+	`status` INT(11) NULL DEFAULT NULL COMMENT '0=未学习 1=已学习',
+	`isActive` INT(11) NULL DEFAULT NULL,
+	`mark` VARCHAR(100) NULL DEFAULT NULL,
+	`learnSchedule` INT(11) NULL DEFAULT NULL,
+	`referType` INT(11) NULL DEFAULT NULL,
+	`referId` INT(11) NULL DEFAULT NULL,
+	`learnTime` INT(11) NULL DEFAULT NULL COMMENT '秒',
+	`userId` INT(11) NULL DEFAULT NULL,
+	`checkStatus` INT(11) NULL DEFAULT NULL COMMENT '考核状态',
+	`studyStatus` INT(11) NULL DEFAULT NULL COMMENT '学习状态',
+	PRIMARY KEY (`id`)
+)
+COMMENT='合集的学习进度'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;

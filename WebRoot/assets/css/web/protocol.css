@@ -1,0 +1,8 @@
+.protocol-con { line-height: 24px; padding: 20px; font-size: 14px; }
+.protocol-con .tt { margin-bottom: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+.protocol-con .tag { margin: 20px 0; font-size: 16px; font-weight: bold; }
+.protocol-con p { text-indent: 2em; }
+.protocol-con p.indent_2 { text-indent: 4em; }
+.protocol-con p strong { color: #338bca; }
+.protocol-con p a { color: #333; }
+.protocol-con p a:hover { text-decoration: underline; }

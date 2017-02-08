@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.CategoryExpandMapper">
+	<resultMap type="categoryExpand" id="CategoryExpandMapper" extends="base.baseModel">
+		<result property="affect" column="affect" />
+		<result property="appTaskId" column="appTaskId" />
+		<result property="wxTaskId" column="wxTaskId" />
+		<result property="tvTaskId" column="tvTaskId"/>
+		<result property="webTaskId" column="webTaskId"/>
+		<result property="byname" column="byname"/>
+		<result property="status" column="status"/>
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+	</resultMap>
+
+	<select id="selectExpandById" parameterType="int" resultMap="CategoryExpandMapper">
+		select * from category_expand where id=#{id}
+	</select>
+
+	<select id="selectExpandByUuid" parameterType="string" resultMap="CategoryExpandMapper">
+		select * from category_expand where isActive=1 and status=1 and uuid=#{uuid} 
+	</select>
+
+	<insert id="addExpand" parameterType="categoryExpand">
+		insert into category_expand
+		(uuid,createDate,modifyDate,affect,categoryId,appTaskId,wxTaskId,tvTaskId,webTaskId,byname,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{affect},#{category.id},#{appTaskId},#{wxTaskId},#{tvTaskId},#{webTaskId},#{byname},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateExpand" parameterType="categoryExpand">
+		update category_expand set
+		modifyDate=NOW(),appTaskId=#{appTaskId},wxTaskId=#{wxTaskId},tvTaskId=#{tvTaskId},webTaskId=#{webTaskId} where id=#{id}
+	</update>
+
+	<update id="updateExpandStatus" parameterType="categoryExpand">
+		update category_expand set
+		status=#{status},modifyDate=NOW() where id=#{id}
+	</update>
+	
+	<select id="selectExpandByCateId" parameterType="int" resultMap="CategoryExpandMapper">
+		select * from category_expand where isActive=1 and status=1 and categoryId=#{categoryId} limit 1
+	</select>
+	
+	<select id="selectExpandBycateType" parameterType="SubParams" resultMap="CategoryExpandMapper">
+		select * from category_expand where isActive=1 and status=1 and categoryId=#{id} and typeId=#{userId}
+	</select>
+
+</mapper>

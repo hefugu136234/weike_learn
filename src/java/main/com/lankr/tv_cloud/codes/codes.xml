@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codes>
+	<!--added by kalean.xiang -->
+	<!-- 积分code -->
+	<code id="0" name="code_ok" message="正常" />
+
+	<code id="200" name="code_qr_scan_loop" message="" status="success" />
+	<code id="201" name="code_qr_scaned" message="客户端已经扫描,等待授权,请不要关闭窗口~"
+		status="success" />
+	<code id="207" name="code_qr_search" message="客户端已经选择播放资源，请稍后"
+		status="success" />
+	<code id="208" name="code_qr_authed" message="用户已经授权" status="success" />
+	<code id="209" name="code_qr_search_scaned" message="客户端已经扫描,等待投影资源,请不要关闭窗口~"
+		status="success" />
+	<code id="210" name="code_qr_search_shadow" message="客户端投影成功"
+		status="success" />
+
+	<code id="400" name="code_qr_scan_error" message="携带参数不正确" />
+	<code id="401" name="code_qr_invalid" message="二维码已过期" />
+	<code id="402" name="code_qr_login_timeout" message="登录已超时" />
+	<code id="403" name="code_qr_authed" message="已经授权" />
+	<code id="404" name="code_qr_not_found" message="网络环境不稳定，未能找获取到连接通道" />
+	<code id="405" name="code_qr_again_scan" message="二维码已被扫描使用，请重新刷新二维码，再扫码" />
+	<code id="406" name="code_qr_user_invalid" message="二维码搜索页面过期，请刷新二维码，再扫码进入" />
+	<code id="407" name="code_qr_in_interact" message="此交互已锁定设备，请重新退出并扫描二维码" />
+
+
+	<code id="510" name="code_ticket_not_found" message="授权码不存在" />
+	<code id="511" name="code_user_unauthed" message="用户未授权" />
+	<code id="512" name="code_ticket_invalidate" message="授权码已经失效" />
+	<code id="513" name="code_ticket_in_used" message="授权码已经被使用" />
+
+	<code id="-1000" name="code_unknow" message="未知状态" />
+	<code id="-1001" name="code_consume_less" message="积分不够" />
+	<code id="-1002" name="code_consume_user_uncertificated" message="仅限实名用户兑换" />
+	<code id="-1003" name="code_consume_over_number" message="物品兑换已达上限" />
+	<code id="-1004" name="code_consume_over_user_limited" message="个人兑换次数达到上限" />
+
+	<code id="-1100" name="code_media_save_error" message="保存图片失败" />
+	<code id="-1110" name="code_product_qr_auth_error" message="生成二维码登录场景失败" />
+	<code id="-1111" name="code_qr_save_error" message="保存失败" />
+
+	<!-- 用户code -->
+	<code id="-2001" name="code_user_invalid" message="无效用户" />
+	<code id="-2002" name="code_user_unbind_wechat" message="注销微信失败" />
+	<code id="-2003" name="code_user_permission_denied" message="用户已被限制使用" />
+	<code id="-2010" name="code_user_not_vip" message="用户VIP流量不足" />
+
+	<!-- 后台code -->
+	<code id="-3001" name="code_backstage_add" message="新增失败" />
+	<code id="-3002" name="code_backstage_update" message="更新失败" />
+	<code id="-3003" name="code_backstage_update_status" message="状态更新失败" />
+	<code id="-3004" name="code_backstage_Questionnaire_status"
+		message="问卷不存在" />
+	<code id="-3005" name="code_backstage_pull_answer_status" message="问卷网拉取答案失败" />
+
+	<!-- 合集课程code -->
+	<code id="-4001" name="code_collect_empty" message="合集或课程 为空值" />
+	<code id="-4002" name="code_collect_save_error" message="合集或课程 保存异常" />
+	<code id="-4003" name="code_collect_save_error" message="合集或课程 保存失败" />
+
+</codes>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.UserExpandMapper">
+	<resultMap type="userExpand" id="userExpandMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="professor" column="professor" />
+		<result property="sex" column="sex" />
+		<result property="resume" column="resume" />
+		<result property="birthday" column="birthday" />
+		<result property="classId" column="classId" />
+		<result property="receipt" column="receipt" />
+		<result property="type" column="type" />
+		<result property="qualificationId" column="qualificationId" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="city" column="cityId"
+			select="com.lankr.orm.mybatis.mapper.ProvinceMapper.selectCtiById" />
+		<association property="hospital" column="hospitalId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectHospitalById" />
+		<association property="departments" column="departmentId"
+			select="com.lankr.orm.mybatis.mapper.HospitalMapper.selectDePatById" />
+		<association property="manufacturer" column="company"
+			select="manufact.selectManufacturerById" />
+	</resultMap>
+
+
+	<!-- 9-25 新的医生扩展 -->
+	<insert id="addUserExpand" parameterType="userExpand">
+		insert into user_expand
+		(uuid,userId,createDate,modifyDate,status,isActive,mark,cityId,hospitalId,departmentId,professor,sex,resume,birthday,classId,qualificationId,company,receipt,type)
+		values
+		(#{uuid},#{user.id},NOW(),NOW(),#{status},#{isActive},#{mark},#{city.id},#{hospital.id},#{departments.id},
+		#{professor},#{sex},#{resume},#{birthday},#{classId},#{qualificationId},#{manufacturer.id},#{receipt},#{type})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectUserExpandById" parameterType="int"
+		resultMap="userExpandMapper">
+		select * from user_expand where userId=#{id} order by createDate desc limit 1
+	</select>
+
+	
+
+	<update id="updateUserExpand" parameterType="userExpand">
+		update
+		user_expand set
+		modifyDate=#{modifyDate},cityId=#{city.id},hospitalId=#{hospital.id},departmentId=#{departments.id},professor=#{professor},
+		sex=#{sex},resume=#{resume},classId=#{classId},qualificationId=#{qualificationId},birthday=#{birthday},company=#{manufacturer.id},receipt=#{receipt},type=#{type} where id=#{id}
+	</update>
+	
+	<update id="updateReceiptExpand" parameterType="userExpand">
+		update
+		user_expand set
+		modifyDate=#{modifyDate},receipt=#{receipt} where id=#{id}
+	</update>
+	
+	<update id="updateSexExpand" parameterType="userExpand">
+		update
+		user_expand set
+		modifyDate=NOW(),sex=#{sex} where id=#{id}
+	</update>
+
+	
+
+
+	
+
+</mapper>

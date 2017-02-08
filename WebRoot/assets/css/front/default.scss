@@ -1,0 +1,118 @@
+@charset "utf-8";
+
+/* CSS Document */
+body, dl, dd, h1, h2, h3, h4, h5, h6, p, form { margin: 0; }
+ol, ul, textarea { margin: 0; padding: 0; }
+body { font: 14px "黑体", Arial, Helvetica, sans-serif; line-height: normal !important; color: #000; background-color: #fff; }
+dl, dt, dd, ul, ol, li { list-style-type: none; }
+h5, h6 { font-size: 100%; font-weight: normal; }
+address, caption, cite, code, dfn, em, th, var { font-style: normal; font-weight: 500; }
+select, input { font-size: 12px; vertical-align: middle; _vertical-align: baseline; outline: none; }
+input { padding: 0; border-radius: 0; -webkit-appearance: none; }
+input[type="checkbox"] { -webkit-appearance: checkbox; }
+input[type="radio"] { -webkit-appearance: radio; }
+textarea { resize: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+table { border-collapse: collapse; border-spacing: 0; }
+img { border: none; }
+a { color: #fff; text-decoration: none; }
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block; }
+audio, canvas, video { display: inline-block; }
+audio:not([controls]) { display: none; }
+input[type="reset"]::-moz-focus-inner, input[type="button"]::-moz-focus-inner, input[type="submit"]::-moz-focus-inner, input[type="file"] > input[type="button"]::-moz-focus-inner { border: none; padding: 0; }
+
+/*firefox input text-align center*/
+.clearfix:after { content: "."; display: block; clear: both; height: 0; visibility: hidden; }
+.clearfix { zoom: 1; }
+
+/*
+**styles reset end && page style begin**
+*/
+.content { width: 100%; }
+.container { position: relative; width: 1000px; margin: 0 auto; }
+
+/*top style*/
+#top { position: fixed; z-index: 100; width: 100%; height: 70px; background-color: rgba(0, 108, 255, .0); -webkit-transition: all 0.7s ease-out; -moz-transition: all 0.7s ease-out; -o-transition: all 0.7s ease-out; transition: all 0.7s ease-out; }
+#top.current { background-color: rgba(79, 83, 93, .8); }
+#top.current .nav li.active a { background-color: #55B5EE; }
+#logo { height: 58px; padding: 12px 24px; margin-right: 20px; }
+.nav { height: 70px; }
+.nav li { float: left; font-size: 18px; color: #fff; }
+.nav li a { display: block; width: 128px; height: 70px; line-height: 70px; text-align: center; }
+.nav li a:hover { background-color: #55B5EE; }
+
+/*index style*/
+.indexBanner { position: relative; min-height: 766px; background: image_url("web/index_banner.jpg") no-repeat center top; background-size: cover; }
+.indexBanner .inner { padding-top: 120px; text-align: center; }
+.indexBanner .tag1 { display: none; padding-top: 120px; text-align: center; }
+.indexBanner .tag2 { display: none; padding-top: 90px; text-align: center; }
+.indexBanner .subscribeBtn { position: absolute; bottom: 50px; left: 50%; width: 238px; height: 46px; line-height: 46px; margin-left: -119px; border: 1px solid #fff; border-radius: 4px; text-align: center; font-size: 20px; color: #fff; background-color: rgba(255, 255, 255, .2); cursor: pointer; }
+#tvBox { display: none; position: absolute; top: 260px; left: 50%; width: 517px; height: 300px; padding: 7px 6px 34px; margin-left: -264px; background: image-url("web/tv.png") no-repeat center top; }
+.indexProduct { min-height: 512px; background: #ebebeb image-url("web/index_product.jpg") no-repeat center bottom; }
+.indexProduct .tt, .indexFollow .tt { padding-top: 70px; margin-bottom: 30px; }
+.indexProduct .btn, .indexFollow .btn { display: inline-block; width: 238px; height: 46px; line-height: 46px; margin-top: 16px; border-radius: 6px; box-shadow: 0 6px 0 #d3d3d3; text-align: center; font-size: 20px; cursor: pointer; }
+.indexProduct .subscribeBtn { border: 1px solid #ff7326; color: #fff; background-color: #ff7326; }
+.indexProduct .detailBtn, .indexFollow .detailBtn { border: 1px solid #89421b; color: #89421b; }
+.indexFollow { min-height: 512px; background: #eff2f7 image-url("web/index_follow.jpg") no-repeat center bottom; }
+.indexFollow .container { text-align: right; }
+.indexFollow .downloadBtn { border: 1px solid #216cc0; color: #fff; background-color: #216cc0; }
+.indexFollow .followBtn { border: 1px solid #47c021; color: #fff; background-color: #47c021; }
+.indexQrCode { min-height: 512px; background: #55b5ed image-url("web/index_qr_bg.png") no-repeat center; }
+.indexQrCode .qrTT { padding-top: 70px; text-align: center; font-size: 36px; color: #fff; }
+.indexQrCode .qrImg { position: absolute; top: 170px; left: 50%; width: 180px; height: 180px; padding: 14px; margin: 0 0 0 -102px; background-color: #fff; }
+
+/*aboutBox style*/
+#aboutBg { display: none; position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 100%; background: image_url("web/bg_p80.png") repeat; }
+
+/*float form style*/
+#floatForm { display: none; position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 100%; background: image_url("web/bg_p80.png") repeat; }
+.floatFormBox { position: absolute; top: 20%; left: 50%; width: 956px; padding: 24px; margin-left: -478px; background-color: #fff; }
+.floatFormBox .formBanner { position: relative; width: 440px; height: 272px; overflow: hidden; }
+.floatFormBox .formBanner .hd { position: absolute; right: 4px; bottom: 12px; z-index: 1; height: 14px; overflow: hidden; }
+.floatFormBox .formBanner .hd ul { overflow: hidden; zoom: 1; float: left; }
+.floatFormBox .formBanner .hd ul li { float: left; margin-right: 8px; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
+.floatFormBox .formBanner .hd ul li.on { background: #0a9dde; }
+.floatFormBox .formBanner .bd { position: relative; height: 100%; z-index: 0; }
+.floatFormBox .formBanner .bd li { zoom: 1; vertical-align: middle; }
+.floatFormBox .formBanner .bd img { width: 440px; height: 272px; }
+.floatFormBox .formBanner .prev, .floatFormBox .formBanner .next { position: absolute; left: 3%; top: 50%; margin-top: -25px; display: block; width: 32px; height: 40px; background: url("../slider-arrow.png") -110px 5px no-repeat; filter: alpha(opacity=50); opacity: 0.5; cursor: pointer; }
+.floatFormBox .formBanner .next { left: auto; right: 3%; background-position: 8px 5px; }
+.floatFormBox .formBanner .prev:hover, .floatFormBox .formBanner .next:hover { filter: alpha(opacity=100); opacity: 1; }
+.floatFormBox .formBanner .prevStop { display: none; }
+.floatFormBox .formBanner .nextStop { display: none; }
+.floatFormBox .formMain { width: 474px; }
+.floatFormBox .formMain .lineTitle { padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid #e6e6e6; font-size: 18px; color: #216cc0; }
+.floatFormBox .formMain .tips { margin-bottom: 14px; color: #216cc0; }
+.form-group { padding: 10px 0; }
+.form-group .label_tag { display: inline-block; width: 54px; height: 42px; line-height: 42px; padding-left: 16px; vertical-align: middle; color: #323232; }
+.form-group .input_box { position: relative; display: inline-block; width: 320px; height: 40px; padding: 0 8px; border: 1px solid #cdcdcd; border-radius: 4px; vertical-align: middle; overflow: hidden; }
+.form-group .input_box .form-control { width: 100%; height: 40px; line-height: 40px; border: none; }
+.form-group .input_box .input_code { margin-right: 88px; }
+.floatFormBox .close { position: absolute; z-index: 1; top: 10px; right: 10px; width: 18px; height: 17px; background: image_url("web/close_btn.png") no-repeat center; cursor: pointer; }
+.floatFormBox #nextBtn { width: 150px; height: 40px; margin: 30px 0 0 70px; border: 1px solid #fff; border-radius: 4px; font-size: 18px; color: #fff; background-color: #47c021; cursor: pointer; }
+.floatFormBox #submitBtn { width: 150px; height: 40px; margin: 20px 0 0 70px; border: 1px solid #fff; border-radius: 4px; font-size: 18px; color: #fff; background-color: #47c021; cursor: pointer; }
+.successInfo { padding: 20px 0; text-align: center; font-size: 18px; color: #323232; }
+.successInfo p { margin-top: 16px; }
+#step2 .formMain { width: 100%; }
+#step2 .form-group { padding-left: 50px; }
+#step2 .form-group.protocol { padding-left: 120px; }
+#step3 .formMain { width: 100%; }
+#codeBtn { position: absolute; top: 0; right: 0; width: 88px; height: 40px; border: none; color: #fff; background-color: #0a9dde; cursor: pointer; }
+#nextBtn.disabled { background-color: gray; cursor: default; }
+#finishBtn { line-height: 35px; display: inline-block; width: 150px; height: 35px; margin-top: 20px; border: 1px solid #fff; border-radius: 4px; font-size: 18px; color: #fff; background-color: #47c021; cursor: pointer; }
+
+/*
+**page style end && class reset begin**
+*/
+.hide { display: none; }
+.show { display: block; }
+.bfL { float: left; }
+.bfR { float: right; }
+.txtL { text-align: left; }
+.txtC { text-align: center; }
+.txtR { text-align: right; }
+
+/*
+**class reset end**
+*/

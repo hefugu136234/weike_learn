@@ -1,0 +1,21 @@
+CREATE TABLE `wx_subject` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`createDate` DATETIME NULL DEFAULT NULL,
+	`modifyDate` DATETIME NULL DEFAULT NULL,
+	`uuid` VARCHAR(60) NULL DEFAULT NULL,
+	`name` VARCHAR(80) NULL DEFAULT NULL,
+	`pinyin` VARCHAR(150) NULL DEFAULT NULL,
+	`rootType` INT(2) NULL DEFAULT NULL,
+	`reflectId` INT(11) NULL DEFAULT NULL,
+	`typeProperty` TEXT NULL COMMENT '当前分类下的一些特性，用json表示',
+	`isRoot` INT(1) NULL DEFAULT '0' COMMENT '1=根目录，0=不是',
+	`parentId` INT(11) NULL DEFAULT NULL COMMENT '父亲节点',
+	`status` INT(1) NULL DEFAULT NULL,
+	`isActive` INT(1) NULL DEFAULT NULL,
+	`mark` VARCHAR(150) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COMMENT='微信学科管理'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;

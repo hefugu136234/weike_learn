@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.NormalCollectQuestionnaireMapper">
+	<!-- test -->
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+	<resultMap type="com.lankr.tv_cloud.model.NormalCollectQuestionnaire" id="normalCollectQuestionnaireMapper"
+		extends="base.baseModel">
+		<result property="normalCollectId" column="normalCollectId" />
+		<result property="type" column="type" />
+		<result property="position" column="position" />
+		<result property="name" column="name" />
+		<result property="cover" column="cover"/>
+		<result property="status" column="status" />
+		<result property="collectTime" column="collectTime" />
+		<result property="collectNum" column="collectNum" />
+		<association property="questionnaire" column="questionnaireId" select="com.lankr.orm.mybatis.mapper.QuestionnaireMapper.selectQuestionnaireById" />
+	</resultMap>
+
+	<insert id="addNormalCollectQuestionnaire" parameterType="com.lankr.tv_cloud.model.NormalCollectQuestionnaire">
+		INSERT INTO normal_collect_questionnaire
+		(uuid,createDate,modifyDate,normalCollectId,type,status,position,isActive,questionnaireId,name,mark,cover,collectTime,collectNum)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{normalCollectId},#{type},#{status},#{position},#{isActive},#{questionnaire.id},#{name},#{mark},#{cover},#{collectTime},#{collectNum})
+	</insert>
+
+	<select id="selectNormalCollectQuestionnaireByNormalCollectId" resultMap="normalCollectQuestionnaireMapper">
+	    select * from normal_collect_questionnaire
+	    where normalCollectId=#{0} and type=#{1} and isActive=1
+	    order by modifyDate desc;
+	</select>
+	
+	<select id="selectByCollectAndQuestionnaire" resultMap="normalCollectQuestionnaireMapper">
+	    select * from normal_collect_questionnaire
+	    where normalCollectId=#{0} and questionnaireId=#{1} and type=#{2}
+	    order by modifyDate desc;
+	</select>
+
+	<update id="updateNormalCollectQuestionnaire" parameterType="com.lankr.tv_cloud.model.NormalCollectQuestionnaire">
+		update normal_collect_questionnaire set
+		modifyDate=NOW(),status=#{status},isActive=#{isActive},type=#{type},position=#{position},name=#{name},mark=#{mark},cover=#{cover},collectTime=#{collectTime},collectNum=#{collectNum}
+		where id=#{id}
+	</update>
+	
+	<select id="selectQuestionnaireOne" resultMap="normalCollectQuestionnaireMapper">
+	    select * from normal_collect_questionnaire
+	    where normalCollectId=#{chapterId} and type=#{type} and isActive=1
+	    order by createDate desc limit 1;
+	</select>
+	
+	<select id="selectQuestionnaireOneByUuid" resultMap="normalCollectQuestionnaireMapper">
+	    select * from normal_collect_questionnaire
+	    where uuid=#{0} and isActive=1
+	</select>
+
+</mapper>

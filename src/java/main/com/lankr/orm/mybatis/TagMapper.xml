@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.TagMapper">
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+
+	<!-- 新增父标签操作 -->
+	<insert id="saveParentTag" parameterType="tagParent">
+		insert into
+		tags_parent
+		(name, pingyin, uuid ,createDate, modifyDate, mark,
+		isActive)
+		values
+		(#{name}, #{pingyin}, #{uuid}, NOW(), NOW(), #{mark},
+		#{isActive})
+	</insert>
+
+	<!-- 查询所有父标签 -->
+	<select id="queryParentTagLit" parameterType="subParams"
+		resultType="tagParent">
+		select * from tags_parent where isActive=1
+		<if test="query !=null and query != '' ">
+			and (name like "%"#{query}"%" or mark like "%"#{query}"%")
+		</if>
+		<!-- 默认按修改时间排序 -->
+		order by modifyDate desc
+		limit #{start},#{size}
+	</select>
+
+	<!-- 查询指定父标签对应的子标签 -->
+	<select id="queryChildTagLit" parameterType="subParams"
+		resultType="tagChild">
+		select * from tags_child where isActive=1 and parentId = #{id}
+		<if test="query !=null and query != '' ">
+			and (name like "%"#{query}"%" or mark like "%"#{query}"%")
+		</if>
+		<!-- 默认按修改时间排序 -->
+		order by modifyDate desc
+		limit #{start},#{size}
+	</select>
+
+	<!-- 根据 uuid 查询父标签 -->
+	<select id="selectParentTagByUuid" parameterType="string"
+		resultType="tagParent">
+		select * from tags_parent
+		where
+		tags_parent.uuid = #{uuid}
+		and
+		isActive = 1
+	</select>
+
+	<!-- 删除父标签 -->
+	<update id="deleteParentTag" parameterType="tagParent">
+		update tags_parent
+		set isActive=0
+		where
+		tags_parent.uuid=#{uuid}
+	</update>
+
+	<!-- 新增子标签操作 -->
+	<insert id="saveChildTag" parameterType="tagChild">
+		insert into
+		tags_child
+		(name, pingyin, uuid , parentId, createDate, modifyDate,
+		mark,
+		isActive)
+		values
+		(#{name}, #{pingyin}, #{uuid}, #{parent_id},
+		NOW(),
+		NOW(), #{mark}, #{isActive})
+	</insert>
+
+	<!-- 根据 uuid 查询子标签 -->
+	<select id="selectChildTagByUuid" parameterType="string"
+		resultType="tagChild">
+		select * from tags_child
+		where
+		tags_child.uuid = #{uuid}
+		and
+		isActive = 1
+	</select>
+
+	<!-- 删除子标签 -->
+	<update id="deleteChildTag" parameterType="tagChild">
+		update tags_child
+		set
+		isActive=0
+		where
+		tags_child.uuid=#{uuid}
+	</update>
+
+	<!-- 编辑父标签 -->
+	<update id="updateParentTag" parameterType="tagParent">
+		update tags_parent
+		set name=#{name}, pingyin=#{pingyin}, mark=#{mark}, modifyDate=NOW()
+		where tags_parent.id=#{id}
+	</update>
+
+	<!-- 编辑子标签 -->
+	<update id="updateChildTag" parameterType="tagParent">
+		update tags_child
+		set
+		name=#{name}, pingyin=#{pingyin}, mark=#{mark}, modifyDate=NOW()
+		where
+		tags_child.id=#{id}
+	</update>
+
+	<!-- 根据标签名查找父标签 -->
+	<select id="selectParentTagByName" parameterType="string"
+		resultType="tagParent">
+		select id from tags_parent where
+		name=#{tagName}
+	</select>
+
+	<!-- 根据标签名查找子标签 -->
+	<select id="selectChildTagByName" parameterType="string"
+		resultType="tagChild">
+		select id from tags_parent where name=#{tagName}
+	</select>
+
+	<!-- 查询所有父标签(无分页) -->
+	<select id="queryParentTagLitWithoutPageOption" resultType="tagParent">
+		select * from tags_parent where isActive=1
+		order by modifyDate desc
+	</select>
+
+	<!-- 查询指定父标签对应的子标签 -->
+	<select id="queryChildTagListWithoutPageOption" resultType="tagChild">
+		select * from tags_child where isActive=1 and parentId = #{id}
+		order by
+		modifyDate desc
+	</select>
+
+	<select id="getTagsByResourceId" resultType="tagChild">
+		select
+		tags_child.id, tags_child.name, tags_child.pingyin, tags_child.uuid,
+		tags_child.parentId, tags_child.createDate, tags_child.modifyDate, tags_child.mark, tags_child.isActive from
+		tags_resource join tags_child on tags_resource.tagsId=tags_child.id
+		where tags_child.isActive=1 and tags_resource.resourceId = #{id}
+	</select>
+
+</mapper>

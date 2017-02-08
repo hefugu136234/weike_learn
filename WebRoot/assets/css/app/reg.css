@@ -1,0 +1,34 @@
+/*reg styles*/
+.reg-process { padding: 0 10px; text-align: center; }
+.reg-process .box { float: left; position: relative; width: 50%; text-align: center; }
+.reg-process .box:before { position: absolute; top: 16px; left: 0; width: 42%; height: 1px; content: ''; background-color: rgba(255, 255, 255, .3); overflow: hidden; }
+.reg-process .box:after { position: absolute; top: 16px; right: 0; width: 42%; height: 1px; content: ''; background-color: rgba(255, 255, 255, .3); overflow: hidden; }
+.reg-process .box .icon { display: inline-block; width: 26px; height: 32px; line-height: 32px; margin-bottom: 4px; font-size: 20px; color: #0e1a59; background: url('/assets/img/app/reg/process_icon_bg.png') no-repeat center top; background-size: 100% 64px; }
+.reg-process .box.current .icon { background-position: center bottom; }
+.reg-process .box .tt { font-size: 12px; color: #606688; }
+.reg-process .box.current .tt { color: #fff; }
+#protocol_modal { display: none; z-index: 10; }
+
+/*reg banner styles*/
+#reg_banner_page { z-index: 10; }
+.reg-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.reg-banner .swiper-slide { position: relative; background-repeat: no-repeat; background-position: center top; background-size: 100% auto; }
+.reg-banner .swiper-slide.bg1 { background-image: url('/assets/img/app/reg/banner1.jpg'); }
+.reg-banner .swiper-slide.bg2 { background-image: url('/assets/img/app/reg/banner2.jpg'); }
+.reg-banner .swiper-slide .tt { margin-top: 8%; text-align: center; color: #194a97; }
+.reg-banner .swiper-slide .tt h5 { margin-bottom: 8px; font-size: 18px; font-weight: bold; }
+.reg-banner .swiper-slide .tt p { font-size: 24px; }
+.reg-banner .swiper-slide .bottom-area { position: absolute; bottom: 0; left: 0; width: 100%; line-height: 30px; padding: 6% 0 24% 0; font-size: 18px; color: #fff; background: url('/assets/img/app/reg/banner_bt_bg.png') no-repeat center top; background-size: cover; }
+.reg-banner .swiper-slide .bottom-area .info { width: 100%; padding-left: 24%; }
+.reg-banner .swiper-slide .bottom-area .info .num { font-size: 30px; }
+.reg-banner .swiper-slide .bottom-area .btn { width: 160px; height: 40px; line-height: 36px; margin: 30px auto 0; border: 2px solid #fff; border-radius: 20px; text-align: center; font-size: 18px; color: #fff; }
+.reg-banner .swiper-pagination { bottom: 6%; }
+.reg-banner .swiper-pagination-bullet { background-color: #909eb1; opacity: 1; }
+.reg-banner .swiper-pagination-bullet-active { border: 1px solid #4cbceb; background-color: #fff; }
+.reg-banner .code-box-area { position: absolute; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); }
+
+/*adaptive styles*/
+@media screen and (max-height:480px) {
+  .reg-banner .swiper-slide .bottom-area { padding-bottom: 10%; }
+  .reg-banner .swiper-pagination { bottom: 3%; }
+}

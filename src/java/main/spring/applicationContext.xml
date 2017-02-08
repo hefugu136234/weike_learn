@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation=" http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee.xsd
+	http://www.springframework.org/schema/jdbc
+	http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<bean id="configs" class="com.lankr.tv_cloud.SpringPropertiesUtil">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:config/env.properties</value>
+				<value>classpath:config/general_config.properties</value>
+				<value>classpath:config/template_message_config.properties</value>
+				<value>classpath:config/wenjuan_config.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<import resource="config.xml" />
+	<import resource="template_message_config.xml" />
+	<import resource="wenjuan_config.xml" />
+
+	<bean id="mysqlDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxPoolSize" value="${cpool.maxPoolSize}" />
+		<property name="minPoolSize" value="${cpool.minPoolSize}" />
+		<property name="initialPoolSize" value="${cpool.initialPoolSize}" />
+		<property name="maxIdleTime" value="${cpool.maxIdleTime}" />
+		<property name="maxStatements" value="${cpool.maxStatements}" />
+		<property name="testConnectionOnCheckin" value="true" />
+	</bean>
+	<bean id="accessLogDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.log.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxPoolSize" value="${cpool.maxPoolSize}" />
+		<property name="minPoolSize" value="${cpool.minPoolSize}" />
+		<property name="initialPoolSize" value="${cpool.initialPoolSize}" />
+		<property name="maxIdleTime" value="${cpool.maxIdleTime}" />
+		<property name="maxStatements" value="${cpool.maxStatements}" />
+		<property name="testConnectionOnCheckin" value="true" />
+	</bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="mysqlDataSource" />
+	</bean>
+	<bean id="accessLogJdbc" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="accessLogDataSource" />
+	</bean>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="dataSource" ref="mysqlDataSource" />
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.lankr.orm.mybatis.mapper" />
+	</bean>
+
+	<!-- 配置定时任务 -->
+	<!-- <task:annotation-driven /> -->
+	<task:scheduled-tasks>
+		<task:scheduled ref="wxIntegralTask" method="integralTask"
+			cron="0 0 12 ? * TUE" />
+		<!-- 0 0 12 * * ? * -->
+		<task:scheduled ref="broadcastNotification" method="schedule"
+			cron="*/5 * * * * ?" />
+
+	</task:scheduled-tasks>
+	<bean id="wxIntegralTask" class="com.lankr.tv_cloud.task.WxIntegralTask"></bean>
+	<bean id="broadcastNotification" class="com.lankr.tv_cloud.task.BroadcastNotificationTask"
+		init-method="registerActive" />
+	<!-- 配置定时任务 -->
+	<!--简单事物处理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="mysqlDataSource" />
+	</bean>
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="userDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.User" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="projectDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Project" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="roleDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Role" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="userReferenceDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.UserReference" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="categoryDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Category" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="widgetDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Widget" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="videoDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Video" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="adverDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Advertisement" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="adPostionDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass"
+			value="com.lankr.tv_cloud.model.AdvertisementPosition" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="boxDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.TvBox" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="tvAuthDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.TvAuthentication" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="newsInfoDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.NewsInfo" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="pdfInfoDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.PdfInfo" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="webChatDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.WebchatUser" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="applicableDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.ApplicableRecords" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="inviteDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.InvitcodeRecord" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="subscribeDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Subscribe" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="groupDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.ProductGroup" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="manufacturerDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.Manufacturer" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="activationDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.ActivationCode" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<bean id="threeScreenDao"
+		class="com.lankr.tv_cloud.common.dao.impl.CommonPersistenceImpl">
+		<property name="entityClass" value="com.lankr.tv_cloud.model.ThreeScreen" />
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	<!-- facade configure -->
+	<bean id="absFacade" abstract="true"
+		class="com.lankr.tv_cloud.facade.impl.FacadeBaseImpl">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="userDao" ref="userDao" />
+		<property name="projectDao" ref="projectDao" />
+		<property name="roleDao" ref="roleDao" />
+		<property name="userReferenceDao" ref="userReferenceDao" />
+		<property name="categoryDao" ref="categoryDao" />
+		<property name="widgetDao" ref="widgetDao" />
+		<property name="videoDao" ref="videoDao" />
+		<property name="adverDao" ref="adverDao" />
+		<property name="adPostionDao" ref="adPostionDao" />
+		<property name="boxDao" ref="boxDao" />
+		<property name="tvAuthDao" ref="tvAuthDao" />
+		<property name="newsInfoDao" ref="newsInfoDao" />
+		<property name="pdfInfoDao" ref="pdfInfoDao" />
+		<property name="webChatDao" ref="webChatDao" />
+		<property name="applicableDao" ref="applicableDao" />
+		<property name="inviteDao" ref="inviteDao" />
+		<property name="subscribeDao" ref="subscribeDao" />
+		<property name="groupDao" ref="groupDao" />
+		<property name="manufacturerDao" ref="manufacturerDao" />
+		<property name="activationDao" ref="activationDao" />
+		<property name="threeScreenDao" ref="threeScreenDao" />
+	</bean>
+	<bean id="userFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.UserFacadeImpl" />
+	<bean id="projectFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ProjectFacadeImpl" />
+	<bean id="assetFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.AssetFacadeImpl" />
+	<bean id="letvSupport" class="com.lankr.tv_cloud.support.LetvCloudV1">
+		<constructor-arg name="userUnique" value="d046ed9f0c" />
+		<constructor-arg name="secretKey"
+			value="e04c42262f70bfaaa9b8eb0138faefdd" />
+	</bean>
+	<bean id="apiFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.APIFacadeImpl" />
+	<bean id="adverFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.AdverFacadeImpl" />
+	<bean id="newsFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.NewsFacadeImpl" />
+	<bean id="pdfFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.PdfFacadeImp" />
+	<bean id="webchatFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.WebchatFacadeImp" />
+	<bean id="accessLogFacade" class="com.lankr.tv_cloud.facade.impl.AccessLogFacadeImp">
+		<property name="accessLogJdbc" ref="accessLogJdbc" />
+	</bean>
+	<bean id="resourceFacade" class="com.lankr.tv_cloud.facade.impl.ResourceFacadeImp"
+		parent="absFacade" />
+	<bean id="applicableFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ApplicableFacadeImp" />
+	<bean id="myCollectionFacade" class="com.lankr.tv_cloud.facade.impl.MyCollectionFacadeImp" />
+	<bean id="subscribeFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.SubscribeFacadeImpl" />
+	<bean id="groupFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.GroupFacadeImp" />
+	<bean id="activationFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ActivationCodeFacadeImp" />
+	<bean id="praiseFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.PraiseFacadeImp" />
+	<bean id="threeScreenFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ThreeScreenFacadeImp" />
+	<bean id="qrCodeFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.QrCodeFacadeImp" />
+	<bean id="activityFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ActivityFacadeImpl" />
+	<bean id="bannerFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.BannerFacadeImpl" />
+	<bean id="tagFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.TagFacadeImpl" />
+	<bean id="activityOpusFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ActivityOpusFacadeImp" />
+	<bean id="integralFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.IntegralFacadeImpl" />
+	<bean id="certificationFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.CertificationFacadeImpl" />
+
+	<bean id="broadcastFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.BroadcastFacadeImp" />
+
+	<bean id="hospitalMgrFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.HospitalMgrFacadeImpl" />
+
+	<bean id="wxModelMessageFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.WxModelMessageFacadeImp" />
+
+	<bean id="wxUndueModelMessageFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.WxUndueModelMessageFacadeImp" />
+
+	<bean id="luckyTmpFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.LuckyTmpFacadeImpl" />
+
+	<bean id="receiptAddressFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ReceiptAddressFacadeImp" />
+
+	<bean id="gameMgrFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.GameMgrFacadeImpl" />
+
+	<bean id="messageFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.MessageFacadeImpl" />
+
+	<bean id="wxSubjectFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.WxSubjectFacadeImp" />
+
+	<bean id="mediaCentralFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.MediaCentralFacadeImpl" />
+
+	<bean id="questionnaireFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.QuestionnaireFacadeImp" />
+
+	<bean id="notificationFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.NotificationFacadeImpl" />
+
+	<bean id="normalCollectFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.NormalCollectFacadeImpl" />
+
+	<bean id="pageRemainFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.PageRemainFacadeImp" />
+
+	<bean id="qrAuthFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.QrAuthFacadeImpl" />
+
+	<bean id="resourceGroupFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ResourceGroupFacadeImpl" />
+	
+	<bean id="commonPraiseFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.CommonPraiseFacadeImpl" />
+	
+	<bean id="normalCollectQuestionnaireFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.NormalCollectQuestionnaireFacadeImpl" />
+	
+	<bean id="normalCollectScheduleFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.NormalCollectScheduleFacadeImp" />
+	
+	<bean id="offlineActivityFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.OfflineActivityFacadeImp" />
+	
+	<bean id="projectCodeFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ProjectCodeFacadeImp" />
+	
+	<bean id="resourceAccessIgnoreFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.ResourceAccessIgnoreFacadeImpl" />
+	
+	<bean id="signUpUserFacade" parent="absFacade"
+		class="com.lankr.tv_cloud.facade.impl.SignUpUserFacadeImp" />
+
+	<import resource="cache_support.xml" />
+	<bean name="codeProvider" class="com.lankr.tv_cloud.codes.CodeProvider"
+		init-method="init" />
+
+	<bean name="pageCacheConfig" class="com.lankr.tv_cloud.cache.page.PageCacheConfig"
+		init-method="config" />
+
+	<bean class="com.lankr.tv_cloud.utils.SpringContextHolder"
+		lazy-init="false" />
+</beans>
+
+

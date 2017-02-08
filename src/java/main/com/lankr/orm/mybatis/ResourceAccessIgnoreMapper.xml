@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ResourceAccessIgnoreMapper">
+	<resultMap type="com.lankr.tv_cloud.model.ResourceAccessIgnore" id="resAccessIgnoreMapper"
+		extends="base.baseModel">
+		<result property="detail" column="detail" />
+		<result property="status" column="status" />
+		<association property="resource"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById"
+			column="resourceId" />
+	</resultMap>
+
+	<insert id="add" parameterType="com.lankr.tv_cloud.model.ResourceAccessIgnore">
+		insert into
+		resource_access_ignore
+		(uuid, createDate, modifyDate, resourceId,
+		detail, status, isActive,
+		mark)
+		values
+		(#{uuid}, NOW(), NOW(),
+		#{resource.id}, #{detail},
+		#{status}, #{isActive}, #{mark})
+	</insert>
+
+	<update id="update" parameterType="com.lankr.tv_cloud.model.ResourceAccessIgnore">
+		update
+		resource_access_ignore
+		set
+		modifyDate=NOW(),
+		resourceId=#{resource.id}, detail=#{detail},
+		status=#{status},
+		isActive=#{isActive}, mark=#{mark} where
+		id=#{id}
+	</update>
+
+	<select id="getByResourceId" resultMap="resAccessIgnoreMapper">
+		select * from
+		resource_access_ignore where resourceId=#{id} and isActive=1
+	</select>
+</mapper>

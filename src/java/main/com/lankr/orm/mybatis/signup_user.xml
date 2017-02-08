@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.SignUpUserMapper">
+	<resultMap type="signUpUser" id="signUpUserMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="referId" column="referId" />
+		<result property="referType" column="referType" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addSignUpUser" parameterType="signUpUser">
+		INSERT INTO signup_user
+		(uuid,createDate,modifyDate,status,isActive,mark,referId,referType,userId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{status},#{isActive},#{mark},#{referId},#{referType},#{user.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectSignUpUserById" parameterType="int"
+		resultMap="signUpUserMapper">
+		select * from signup_user where isActive = 1 and id=#{id}
+	</select>
+
+	<select id="selectSignUpUserByUuid" parameterType="string"
+		resultMap="signUpUserMapper">
+		select * from signup_user where isActive = 1 and
+		uuid=#{uuid}
+	</select>
+
+	<update id="updateSignUpUserStatus" parameterType="signUpUser">
+		update
+		signup_user set modifyDate=NOW(),status=#{status},mark=#{mark} where
+		id=#{id}
+	</update>
+
+	<select id="selectSignUpUserByUser" resultMap="signUpUserMapper">
+		select * from
+		signup_user where isActive = 1 and referId=#{referId}
+		and
+		referType=#{referType} and userId=#{userId} order by createDate desc
+		limit 1
+	</select>
+
+	<select id="selectSignUpUserForTable" resultMap="signUpUserMapper">
+		select s.* from
+		signup_user s left join user u on s.userId=u.id
+		where s.isActive = 1
+		and s.referId=#{referId}
+		and s.referType=#{referType}
+		and (u.username
+		like
+		"%"#{searchValue}"%"
+		or u.nickname
+		like
+		"%"#{searchValue}"%" or
+		u.phone like "%"#{searchValue}"%") order
+		by
+		modifyDate desc
+		limit
+		#{from},#{size}
+	</select>
+
+	<select id="bookCountUser" resultType="java.lang.Integer">
+		select count(id) from
+		signup_user where isActive = 1 and referId=#{referId}
+		and
+		referType=#{referType}
+	</select>
+
+	<select id="wxbookUserList" resultMap="signUpUserMapper">
+		select * from
+		signup_user
+		where isActive = 1 and referId=#{referId}
+		and
+		referType=#{referType} and
+		createDate &lt; #{startTime}
+		order by createDate desc limit #{size}
+	</select>
+
+	<select id="countBookOfModelByUser" resultType="java.lang.Integer">
+		select count(id)
+		from
+		signup_user where isActive = 1 and status=#{status}
+		and
+		referType=#{referType} and userId=#{userId}
+	</select>
+
+	<select id="webbookUserList" resultMap="signUpUserMapper">
+		select * from signup_user
+		where isActive = 1 and referId=#{referId}
+		and
+		referType=#{referType}
+		order by
+		createDate desc
+		limit #{from},#{size}
+	</select>
+
+
+
+
+</mapper>

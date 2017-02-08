@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.QrInteractChannelMapper">
+	<resultMap type="qrInteractChannel" id="qrInteractChannelMapper"
+		extends="base.baseModel">
+		<result property="referType" column="referType" />
+		<result property="referId" column="referId" />
+		<result property="ip" column="ip" />
+		<result property="device" column="device" />
+		<result property="lastScanDate" column="lastScanDate"/>
+		<result property="ticket" column="ticket"/> 
+		<result property="sign" column="sign"/> 
+		<result property="qrUrl" column="qrUrl" />
+		<result property="status" column="status" />
+		<association property="scanUser" column="scanUser" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addQrInteractChannel" parameterType="qrInteractChannel">
+		insert into
+		qr_interact_channel
+		(uuid,createDate,modifyDate,scanUser,referType,referId,`ip`,`device`,lastScanDate,ticket,`sign`,qrUrl,status,isActive,mark)
+		values
+		(#{uuid},#{createDate},#{modifyDate},#{scanUser.id},#{referType},#{referId},#{ip},#{device},#{lastScanDate},#{ticket},#{sign},#{qrUrl},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<select id="getQrInteractChannelByUuid" resultMap="qrInteractChannelMapper">
+		select *
+		from qr_interact_channel where
+		isActive=1 and uuid=#{0}
+	</select>
+
+	<select id="getQrInteractChannelByTicket" resultMap="qrInteractChannelMapper">
+		select * from qr_interact_channel where
+		isActive=1 and ticket=#{0}
+	</select>
+
+	<update id="updateQrInteractChannel" parameterType="qrInteractChannel">
+		update qr_interact_channel set
+		modifyDate=NOW(),status=#{status},lastScanDate=#{lastScanDate},scanUser=#{scanUser.id},referId=#{referId}
+		where id=#{id}
+	</update>
+
+</mapper>

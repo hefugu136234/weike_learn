@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ThreeScreenMapper">
+
+	<resultMap type="threeScreen" id="threeScreenMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="fileId" column="fileId" />
+		<result property="videoCover" column="videoCover" />
+		<result property="videoTime" column="videoTime" />
+		<result property="pdfTaskId" column="pdfTaskId" />
+		<result property="pdfNum" column="pdfNum" />
+		<result property="plays_metainfo" column="plays_metainfo" />
+		<result property="coverTaskId" column="coverTaskId" />
+		<result property="division" column="division" />
+		<result property="status" column="status" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+		<association property="resource"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.findResourceByThreeScreenId"
+			column="id" />
+	</resultMap>
+
+	<select id="getThreeScreenById" parameterType="int"
+		resultMap="threeScreenMapper">
+		select * from three_screen where id=#{id}
+	</select>
+
+	<insert id="addThreeScreen" parameterType="threeScreen">
+		insert into
+		three_screen
+		(uuid,name,pinyin,createDate,modifyDate,fileId,videoCover,videoTime,pdfTaskId,pdfNum,coverTaskId,categoryId,division,status,isActive,mark)
+		values
+		(#{uuid},#{name},#{pinyin},NOW(),NOW(),#{fileId},#{videoCover},#{videoTime},#{pdfTaskId},#{pdfNum},#{coverTaskId},#{category.id},#{division},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectThreeScreenList" parameterType="string"
+		resultMap="threeScreenMapper">
+		select * from three_screen where isActive=1 and (name
+		like
+		"%"#{query}"%" or
+		pinyin
+		like "%"#{query}"%") order by
+		createDate
+		desc
+	</select>
+
+	<select id="selectThreeScreenByUuid" parameterType="string"
+		resultMap="threeScreenMapper">
+		select * from three_screen where uuid=#{uuid} and
+		isActive=1
+	</select>
+
+	<update id="updateThreeScreen" parameterType="threeScreen">
+		update
+		three_screen
+		set
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},mark=#{mark},categoryId=#{category.id},coverTaskId=#{coverTaskId}
+		where id=#{id}
+	</update>
+	
+	<update id="updateThreeScreenRelation" parameterType="threeScreen">
+		update
+		three_screen
+		set
+		modifyDate=NOW(),division=#{division}
+		where id=#{id}
+	</update>
+
+	<update id="updateThreeScreenStatus" parameterType="threeScreen">
+		update
+		three_screen
+		set
+		modifyDate=NOW(),status=#{status},videoCover=#{videoCover},videoTime=#{videoTime},pdfNum=#{pdfNum}
+		where id=#{id}
+	</update>
+
+	<update id="addPlaysInfo">
+		update three_screen set plays_metainfo=#{1} where id=#{0}
+	</update>
+
+</mapper>

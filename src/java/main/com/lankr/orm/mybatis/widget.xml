@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="widget">
+	<resultMap type="Widget" id="widgetMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="x" column="x" />
+		<result property="y" column="y" />
+		<result property="offset_x" column="offset_x" />
+		<result property="offset_y" column="offset_y" />
+		<result property="version" column="version" />
+		<result property="tv_cover" column="tv_cover" />
+		<result property="taskId" column="taskId" />
+		<association property="project" column="projectId" select="project.getProjectById" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="category" column="categoryId" select="asset.getCategoryById" />
+	</resultMap>
+	
+	<insert id="addWidget" parameterType="Widget">
+		insert into widget
+		(createDate,modifyDate,mark,uuid,isActive,projectId,userId,categoryId,x,y,offset_x,offset_y,version,tv_cover,taskId)
+		values
+		(NOW(),NOW(),#{mark},#{uuid},1,#{project.id},#{user.id},#{category.id},#{x},#{y},#{offset_x},#{offset_y},#{version},#{tv_cover},#{taskId})
+	</insert>
+
+	<select id="selectProjectWidgets" parameterType="int"
+		resultMap="widgetMapper">
+		select * from widget where projectId=#{id} and version =
+		(select max(version)
+		from widget where projectId=#{id})
+	</select>
+	
+</mapper>

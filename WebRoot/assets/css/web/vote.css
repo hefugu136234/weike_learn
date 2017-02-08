@@ -1,0 +1,17 @@
+.vote-panel .panel-body { padding: 0; }
+.vote-panel .box { padding: 24px 60px; border-bottom: 1px solid #e5ebef; }
+.vote-panel .box .tt { line-height: 24px; font-size: 14px; font-weight: bold; }
+.vote-panel .box .tt .type { color: #f17918; }
+.vote-panel .answer-list { padding: 16px 0; margin-bottom: 0; }
+.vote-panel .answer-list .item { line-height: 24px; padding: 0 120px 0 0; margin: 14px 0; border: none; font-size: 14px; color: #7f7f7f; }
+.vote-panel .answer-list .item .iradio_square-blue, .vote-panel .answer-list .item .icheckbox_square-blue { margin: -2px 12px 0 0; vertical-align: middle; }
+.vote-panel .answer-list .item:last-child, .vote-panel .answer-list .item:first-child { border-radius: 0; }
+.vote-panel .answer-list .item .badge { display: none; position: absolute; top: 50%; right: 0; height: 24px; margin-top: -12px; border-radius: 0; text-align: center; font-size: 18px; font-weight: bold; color: #333; background-color: transparent; }
+.vote-panel .answer-list .item .badge .num { font-size: 14px; font-style: normal; color: #7f7f7f; }
+.vote-panel .answer-list.result .item { font-weight: normal; color: #333; }
+.vote-panel .answer-list.result .item .tt { padding-left: 8px; }
+.vote-panel .answer-list.result .item .badge { display: block; }
+.vote-panel .answer-list.result .item.checked { font-weight: bold; color: #29abe0; }
+.vote-panel .answer-list.result .item.checked .badge, .vote-panel .answer-list .item.checked .badge .num { color: #29abe0; }
+.vote-panel .sub-btn { padding: 20px 0; text-align: center; }
+.vote-panel .sub-btn .btn { width: 240px; }

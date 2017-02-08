@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.UserOverViewMapper">
+
+	<resultMap type="com.lankr.tv_cloud.model.Resource" id="resourceMapper"
+														extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="rate" column="rate" />
+		<result property="viewCount" column="viewCount" />
+		<result property="coverTaskId" column="coverTaskId" />
+		<result property="qrTaskId" column="qrTaskId" />
+		<result property="updated_at" column="updated_at" />
+		<association property="video" column="assetId" select="asset.getVideoById" />
+		<association property="pdf" column="pdfId"
+			select="pdf_info.getPdfInfoById" />
+		<association property="threeScreen" column="threeScreenId"
+			select="com.lankr.orm.mybatis.mapper.ThreeScreenMapper.getThreeScreenById" />
+		<association property="news" column="newsId"
+			select="com.lankr.orm.mybatis.mapper.NewsMaper.selectInfoById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+		<association property="collectionNum" column="id"
+			select="com.lankr.orm.mybatis.mapper.MyCollectionMapper.selectCountByReId" />
+		<association property="speaker"
+			select="com.lankr.orm.mybatis.mapper.SpeakerMapper.getUseableSpeakerById"
+			column="speakerId" />
+	</resultMap>
+	
+	<select id="searchUserWorksRecordPagination" resultMap="resourceMapper" >
+		SELECT 
+		    r.*
+		FROM
+		    user u
+		LEFT JOIN
+		    speaker s ON u.id = s.userId
+		INNER JOIN
+		    resource r ON s.id = r.speakerId
+		WHERE
+		    u.id = #{0}
+		AND
+			(r.name like "%"#{1}"%" or
+			r.mark like "%"#{1}"%" or
+			r.pinyin like "%"#{1}"%")
+		LIMIT
+			#{2},#{3}
+	</select>
+
+</mapper>

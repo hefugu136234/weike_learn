@@ -1,0 +1,7 @@
+.share-process-modal .modal-header { border-bottom: none; }
+.share-process-modal .modal-body { padding: 0; }
+.share-process-modal .con { padding: 20px 60px 40px; }
+.share-process-modal .con .code { float: left; width: 180px; }
+.share-process-modal .con .code img { width: 180px; height: 180px; }
+.share-process-modal .con .info { line-height: 24px; padding: 20px 0 0 200px; font-size: 14px; }
+.share-process-modal .process { padding: 14px 0 30px; text-align: center; background-color: #e5ebef; }

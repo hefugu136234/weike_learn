@@ -1,0 +1,12 @@
+2016-07-25 修改表message 添加字段parentId(int)
+ALTER TABLE `zhiliao`.`message` ADD COLUMN `parentId` int(11) AFTER `referType`;
+
+2016-08-03 添加表 normal_collect_questionnaire 见 updated/wangxiong/normal_collect_questionnaire2016-08-03.sql
+
+2016-08-05 修改表 normal_collect_questionnaire 添加字段name
+ALTER TABLE `zhiliao`.`normal_collect_questionnaire` ADD COLUMN `name` varchar(250) AFTER `modifyDate`;
+
+2016-08-05 以上的表同步测试服务器（以后从这个日期之前开始比对）
+
+2016-08-08 修改表 normal_collect_questionnaire 添加字段cover
+ALTER TABLE `zhiliao`.`normal_collect_questionnaire` ADD COLUMN `cover` varchar(500) AFTER `modifyDate`;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="     http://www.springframework.org/schema/aop     http://www.springframework.org/schema/aop/spring-aop.xsd     http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/context     http://www.springframework.org/schema/context/spring-context.xsd     http://www.springframework.org/schema/jee     http://www.springframework.org/schema/jee/spring-jee.xsd     http://www.springframework.org/schema/jdbc     http://www.springframework.org/schema/jdbc/spring-jdbc.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<bean class="com.lankr.tv_cloud.TemplateMessgaeId" init-method="init">
+	    <!--
+	    <property name="message_swich" value="false" />
+	     微信测试的模板消息id
+		<property name="broadCastBook_id" value="JXM8Qv1fkS9pbrpdbMP0x2dVx9dhFyR5IE_KgmmaTtQ" />
+		<property name="broadCastBookCheck_id" value="8ChHwVntCaCTM3yzIQBHIisErlU6wskwbM1Qismk4XU" />
+		<property name="realNameNotice_id" value="8ChHwVntCaCTM3yzIQBHIisErlU6wskwbM1Qismk4XU" />
+		<property name="oupsCheck_id" value="8ChHwVntCaCTM3yzIQBHIisErlU6wskwbM1Qismk4XU" />
+		<property name="registerSuccess_id" value="J03lRWHNgJK3OQc2ffRRXyyDT5C2xe0u5jtQrDLGKdk" />
+		<property name="realNameSubmit_id" value="M4qfbAoracluOYwRrkeItTqhAlNbWAKMheCGWWwtsN4" />
+		<property name="exchageGoods_id" value="o1A7Bjz_UZ8vYIQgg_U6mW6yWYKUMPIjgFLk7yf9zm8" />
+		<property name="deliverGoods_id" value="cvO3Ezt8OWgQrZzGAA3Isf6dMY83H1IyuL96VIEVACg" />
+		<property name="oupsSubmit_id" value="8j1ssuTZrmvsz41HN2ZJ3F97ebtKmh8qmGilHcVbgV8" />
+		<property name="integralDaily_id" value="RwwNJSb40TVtwpDQCEchqzxyM3tYUU20hB92nzZlJ1E" />
+		<property name="vipDeliverGoods_id" value="cvO3Ezt8OWgQrZzGAA3Isf6dMY83H1IyuL96VIEVACg" />
+		<property name="onActivityResourceChanged_id" value="k8yE_j8VL8GaqdVaQwV1-YNaJ_196Ira1Xynm9kNTgk" />
+		<property name="beforeHourBroadcast_id" value="cvO3Ezt8OWgQrZzGAA3Isf6dMY83H1IyuL96VIEVACg" />
+		 -->
+		<!-- 微信测试的模板消息id -->
+		
+		<!-- 微信正式的模板消息id 
+		<property name="broadcast_id" value="XjIL1gccBoR8ny-kp8rPMoTfahLClEol7Ec4GoDAepg" />
+		<property name="broadcastcheck_id" value="59hZ3Kj5U8ssOF3i0o74oC2RzKmD-ptSTtsVWGxudy8" />
+		<property name="realName_id" value="59hZ3Kj5U8ssOF3i0o74oC2RzKmD-ptSTtsVWGxudy8" />
+		<property name="oupsCheck_id" value="59hZ3Kj5U8ssOF3i0o74oC2RzKmD-ptSTtsVWGxudy8" />
+		<property name="registerSuccess_id" value="hM4ueVf1Q31HOvOFtXjs0VdmBQap12mWU4g7jzOxqUQ" />
+		<property name="realNameSubmit_id" value="G28NLWz406sHMDtie4hKJCA7bll9eMb3TYsO1HhJyQ4" />
+		<property name="exchageGoods_id" value="zv2fILd26VVzqGMqYIrlU_R_Nv4VtvZo7B8a-lvXyT0" />
+		<property name="oupSSubmit_id" value="SNTMdXzWgEgcJUJ3EpPZTWh_QQvS-QbWZlZjN02g8KM" />
+		<property name="integralDaily_id" value="qJZbXMMqC6EwqYLPJQrJnxCO-d5AI-XNIHWMHvHzT24" />
+		<property name="deliverGoods_id" value="YTXfPUqN_17eNgQhr4ihwgG4mnUXcQEVwOhuUy4axFg" />
+		<property name="activityChange_id" value="QQGJoVz5mz-miMwwCJD20lMhKRSSXqg14DCAD0V0Rsc" />
+		-->
+		<!-- 微信正式的模板消息id -->
+		
+		<!-- 过度时期使用微信正式的模板消息id 
+		<property name="broadCastBook_id" value="XjIL1gccBoR8ny-kp8rPMoTfahLClEol7Ec4GoDAepg" />
+		<property name="broadCastBookCheck_id" value="0s39jTJDnsYVkqlT61gD9Vg18hffbSMpS_ZOEopmAZk" />
+		<property name="realNameNotice_id" value="0s39jTJDnsYVkqlT61gD9Vg18hffbSMpS_ZOEopmAZk" />
+		<property name="oupsCheck_id" value="0s39jTJDnsYVkqlT61gD9Vg18hffbSMpS_ZOEopmAZk" />
+		<property name="registerSuccess_id" value="CJ6INxR0W95UpvESbkriBzamOgWd2SfoWmziV5b6uVY" />
+		<property name="realNameSubmit_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="exchageGoods_id" value="sVylkncADeiQ_wSzzCzfPQMw7DnoHXge6KKrkeUB7sw" />
+		<property name="deliverGoods_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="oupsSubmit_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="integralDaily_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="vipDeliverGoods_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="onActivityResourceChanged_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		<property name="beforeHourBroadcast_id" value="0u5tu39GtoeKl6Rwcn7q74DRyvvHrrSqtu10Th1DXV0" />
+		-->
+		<!-- 微信正式的模板消息id -->
+
+	</bean>
+</beans>

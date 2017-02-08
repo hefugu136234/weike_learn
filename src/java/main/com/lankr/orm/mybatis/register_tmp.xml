@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.RegisterTmpMapper">
+	<resultMap type="com.lankr.tv_cloud.model.RegisterTmp" id="registerTmpModel"
+		extends="base.baseModel">
+		<result column="mobile" property="mobile" />
+		<result column="smsCode" property="smsCode" />
+		<result column="device" property="device" />
+		<result column="ip" property="ip" />
+		<result column="type" property="type" />
+	</resultMap>
+
+	<insert id="addRegisterTmp" parameterType="com.lankr.tv_cloud.model.RegisterTmp">
+		insert into
+		register_tmp (createDate,isActive,mobile,smsCode,device,ip,uuid,type)
+		values
+		(NOW(),1,#{mobile},#{smsCode},#{device},#{ip},#{uuid},#{type})
+	</insert>
+
+	<select id="getLatestRegisterByPhoneNumber" resultMap="registerTmpModel">
+		select *
+		from register_tmp where type=#{0} and mobile =
+		#{1} and
+		isActive=1 order
+		by
+		createDate desc limit 1
+	</select>
+
+	<select id="getRegisterTmpByUuid" resultMap="registerTmpModel"
+		parameterType="string">
+		select * from register_tmp where uuid=#{uuid}
+	</select>
+
+	<select id="searchRegisterTmpBycode" resultMap="registerTmpModel">
+		select * from
+		register_tmp where smsCode=#{0} and
+		mobile=#{1} and type=#{2} and
+		isActive=1 order by
+		createDate desc limit 1
+	</select>
+	
+	<update id="updateRegisterTmp" parameterType="com.lankr.tv_cloud.model.RegisterTmp">
+		update
+		register_tmp
+		set
+		isActive=#{isActive} where id=#{id}
+	</update>
+
+</mapper>

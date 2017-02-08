@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.PraiseMapper">
+	<resultMap type="praise" id="praiseMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+
+	<insert id="addPraise" parameterType="praise">
+		INSERT INTO praise
+		(uuid,createDate,modifyDate,resourceId,userId,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{resource.id},#{user.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectPraiseById" parameterType="int" resultMap="praiseMapper">
+		select * from praise where isActive=1 and
+		id=#{id}
+	</select>
+
+	<select id="selectPraiseByUuid" parameterType="string"
+		resultMap="praiseMapper">
+		select * from praise where isActive=1 and
+		uuid=#{uuid}
+	</select>
+
+	<select id="selectPraiseByReIdAndUserId" parameterType="SubParams"
+		resultMap="praiseMapper">
+		select * from praise where resourceId=#{id} and
+		userId=#{userId}
+		and
+		isActive=1
+	</select>
+
+	<select id="selectCountByReId" parameterType="int" resultType="java.lang.Integer">
+		select count(id) from praise where resourceId=#{id} and status=1 and
+		isActive=1
+	</select>
+
+	<update id="updatePraiseStatus" parameterType="praise">
+		update
+		praise
+		set
+		modifyDate=NOW(),status=#{status} where id=#{id}
+	</update>
+
+	<select id="getUserPraiseRecord" resultMap="praiseMapper">
+		SELECT * FROM
+		praise p
+		LEFT JOIN
+		resource r on r.id=p.resourceId
+		WHERE
+		p.userId=#{0}
+		AND
+		p.status=1
+		AND
+		p.isActive=1
+		AND
+		r.status=1
+		AND
+		r.isActive=1
+		AND
+		(r.name like "%"#{1}"%" or r.mark like "%"#{1}"%" or r.pinyin like
+		"%"#{1}"%")
+		LIMIT #{2}, #{3}
+	</select>
+	
+	<select id="getPraiseUserRecord" resultMap="praiseMapper">
+		SELECT * FROM
+		praise p
+		LEFT JOIN
+		user u on u.id=p.userId
+		WHERE
+		p.resourceId=#{0}
+		AND
+		p.status=1
+		AND
+		p.isActive=1
+		AND
+		u.isActive=1
+		AND
+		(u.nickname like "%"#{1}"%" or u.pinyin like
+		"%"#{1}"%")
+		LIMIT #{2}, #{3}
+	</select>
+</mapper>

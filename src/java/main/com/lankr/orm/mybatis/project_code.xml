@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ProjectCodeMapper">
+	<resultMap type="projectCode" id="projectCodeMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="projectCode" column="projectCode" />
+		<result property="referId" column="referId" />
+		<result property="referType" column="referType" />
+		<result property="codeType" column="codeType" />
+		<result property="activeTime" column="activeTime" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addProjectCode" parameterType="projectCode">
+		INSERT INTO project_code
+		(uuid,createDate,modifyDate,projectCode,status,isActive,mark,referId,referType,codeType,userId,activeTime)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{projectCode},#{status},#{isActive},#{mark},#{referId},#{referType},#{codeType},#{user.id},#{activeTime})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectProjectCodeById" parameterType="int"
+		resultMap="projectCodeMapper">
+		select * from project_code where isActive = 1 and id=#{id}
+	</select>
+
+	<select id="selectProjectCodeByUuid" parameterType="string"
+		resultMap="projectCodeMapper">
+		select * from project_code where isActive = 1 and
+		uuid=#{uuid}
+	</select>
+
+	<update id="updateProjectCode" parameterType="projectCode">
+		update project_code
+		set modifyDate=NOW(),status=#{status},userId=#{user.id},activeTime=#{activeTime}
+	</update>
+
+	<select id="projectCodeByParma" resultMap="projectCodeMapper">
+		select * from
+		project_code where isActive = 1 and
+		referId=#{referId} and
+		referType=#{referType} and
+		codeType=#{codeType} and projectCode=#{projectCode}
+		order by createDate desc limit 1
+	</select>
+	
+	<select id="selectProjectCodeForTable" resultMap="projectCodeMapper">
+		select * from
+		project_code where isActive = 1 and
+		referId=#{referId} and
+		referType=#{referType} and
+		codeType=#{codeType} and projectCode like "%"#{searchValue}"%"
+		order by modifyDate desc limit #{from},#{size}
+	</select>
+
+
+
+
+</mapper>

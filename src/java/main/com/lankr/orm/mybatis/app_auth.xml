@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.AppAuthenticationMapper">
+	<resultMap type="com.lankr.tv_cloud.model.AppAuthentication"
+		id="appAuthenticationMapper" extends="base.baseModel">
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addAppAuthentication" parameterType="com.lankr.tv_cloud.model.AppAuthentication">
+		insert into
+		app_authentication
+		(createDate,modifyDate,isActive,token,userId,remoteIp) values
+		(NOW(),NOW(),1,#{token},#{user.id},#{remoteIp})
+	</insert>
+
+	<select id="searchAppAuth" parameterType="string"
+		resultMap="appAuthenticationMapper">
+		select * from app_authentication where token=#{token}
+	</select>
+
+	<update id="disableAllAuth" parameterType="int">
+		update
+		app_authentication set modifyDate=NOW(),isActive=0 where userId=#{userid} order by
+		createDate desc limit 1
+	</update>
+</mapper>

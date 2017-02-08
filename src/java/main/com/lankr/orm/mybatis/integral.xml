@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.IntegralMapper">
+
+	<resultMap type="com.lankr.tv_cloud.model.IntegralConfig" id="integralConfigMapper"
+		extends="base.baseModel">
+		<result property="action" column="action" />
+		<result property="value" column="value" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<resultMap type="com.lankr.tv_cloud.model.IntegralRecord" id="integralRecordMapper"
+		extends="base.baseModel">
+		<result property="action" column="action" />
+		<result property="value" column="value" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="consume" column="integralConsumeId"
+			select="com.lankr.orm.mybatis.mapper.IntegralConsumeMapper.getIntegralConsumeById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+		<association property="fromUser" column="fromUserId"
+			select="user.getUserById" />
+	</resultMap>
+
+	<resultMap type="com.lankr.tv_cloud.model.IntegralWeekReport"
+		id="integralWeekReportMapper">
+		<result property="current" column="current" />
+		<result property="history" column="history" />
+		<result property="maxCreateDate" column="maxCreateDate" />
+		<result property="userId" column="userId" />
+	</resultMap>
+
+	<select id="getIntegralConfigs" resultMap="integralConfigMapper">
+		select * from
+		base_integral where isActive=1 and status=1;
+	</select>
+
+	<insert id="addIntegralRecord" parameterType="com.lankr.tv_cloud.model.IntegralRecord">
+		insert into
+		integral_record
+		(uuid,createDate,modifyDate,userId,action,value,resourceId,fromUserId,status,isActive,mark,integralConsumeId)
+		values
+		(#{uuid},NOW(),NOW(),#{user.id},#{action},#{value},#{resource.id},#{fromUser.id},#{status},1,#{mark},#{consume.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="fetchUserIntegralRecords" resultMap="integralRecordMapper">
+		select * from
+		integral_record where isActive=1 and userId=#{0} and mark like
+		"%"#{1}"%" order by createDate
+		desc limit #{2},#{3}
+	</select>
+
+	<select id="fetchUserIntegralConsumeRecords" resultMap="integralRecordMapper">
+		select *
+		from
+		integral_record where isActive=1 and action &lt; 0 and userId=#{0}
+		order by createDate
+		desc limit #{1},#{2}
+	</select>
+
+	<select id="fetchAllIntegralFetchRecords" resultMap="integralRecordMapper">
+		select *
+		from integral_record ir
+		left join user u on ir.userId = u.id
+		left join integral_consume ic on ir.integralConsumeId = ic.id
+		where ir.isActive=1 and ir.action &lt; 0
+		and ((u.nickname like "%"#{0}"%") or (u.pinyin like "%"#{0}"%") or
+		(ic.name like "%"#{0}"%") or (ic.pinyin like "%"#{0}"%"))
+		order by
+		ir.createDate desc
+		limit #{1},#{2}
+	</select>
+
+
+	<select id="fetchUserIntegralFetchRecords" resultMap="integralRecordMapper">
+		select *
+		from
+		integral_record where isActive=1 and action &gt; 0 and userId=#{0}
+		order by createDate
+		desc limit #{1},#{2}
+	</select>
+
+	<select id="getIntegralRecordByUuid" resultMap="integralRecordMapper">
+		select * from
+		integral_record
+		where uuid=#{0} and isActive=1
+	</select>
+
+	<update id="updateCertificationStatus" parameterType="com.lankr.tv_cloud.model.IntegralRecord">
+		UPDATE
+		integral_record SET
+		modifyDate=NOW(),status=#{status}
+		WHERE uuid=#{uuid}
+	</update>
+
+	<select id="userExchangeIntegralWx" resultMap="integralRecordMapper">
+		select * from
+		integral_record where isActive=1 and action=-1 and userId=#{0} and
+		createDate &lt; #{1} order by createDate
+		desc limit #{2}
+	</select>
+
+	<select id="userIntegralDetailWx" resultMap="integralRecordMapper">
+		select * from
+		integral_record where isActive=1 and userId=#{0} and createDate &lt;
+		#{1} order by createDate
+		desc limit #{2}
+	</select>
+
+	<select id="userIntegralWeekReportWx" resultMap="integralWeekReportMapper">
+		select
+		sum(value) as current ,
+		sum(GREATEST(value,0)) as history,
+		max(createDate) as maxCreateDate,
+		sum(case when createDate &gt; #{0} and createDate &lt; #{1} then value else 0
+		end) as addition,
+		#{0} as stateStart,
+		#{1} as stateEnd,
+		userId
+		from integral_record group by userId order by history desc
+	</select>
+
+	<select id="getUserMaxAndHisRecordByUserId" resultMap="integralWeekReportMapper">
+		SELECT
+		SUM(value) AS current,
+		SUM(GREATEST(value, 0)) AS history,
+		MAX(createDate) AS maxCreateDate,
+		userId
+		FROM
+		integral_record
+		where userId = #{0}
+		GROUP BY userId
+		ORDER BY history DESC
+	</select>
+
+	<select id="getIntegralRecordById" parameterType="int"
+		resultMap="integralRecordMapper">
+		select * from integral_record
+		where id=#{id} and isActive=1
+	</select>
+
+	<select id="userIntegralWeekChange" resultType="java.lang.Integer">
+		select sum(value)
+		from integral_record where userId=#{0} and createDate &gt;#{1}
+	</select>
+
+	<select id="userIntegralOfDayByComment" resultType="java.lang.Integer">
+		select
+		sum(value) from integral_record where userId=#{userId} 
+		and action=#{action}
+		and createDate &gt; #{start} and createDate &lt; #{end}
+	</select>
+</mapper>
+

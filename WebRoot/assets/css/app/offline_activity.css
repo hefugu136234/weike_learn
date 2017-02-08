@@ -1,0 +1,34 @@
+/*activity detail styles*/
+.offline-activity-top-btn { position: absolute; z-index: 10; top: 8px; right: 8px; }
+.offline-activity-top-btn .btn { float: left; width: 40px; height: 40px; line-height: 40px; margin-left: 10px; border-radius: 50%; text-align: center; font-size: 24px; font-weight: bold; color: #fff; background-color: rgba(41, 29, 88, .7); }
+.offline-activity-banner { height: 136px; text-align: center; }
+.offline-activity-banner > img { max-width: 100%; height: 136px; }
+.offline-activity-desc { line-height: 20px; padding: 10px; }
+.offline-activity-desc .title { margin-bottom: 6px; font-size: 15px; font-weight: bold; }
+.offline-activity-desc .price { margin-bottom: 6px; font-size: 12px; }
+.offline-activity-desc .price .num { font-size: 15px; font-weight: bold; color: #fc8816; }
+.offline-activity-desc .status { display: -webkit-box; display: -moz-box; display: box; margin-bottom: 6px; }
+.offline-activity-desc .status .box { -webkit-box-flex: 1; -moz-box-flex: 1; box-flex: 1; width: 100%; text-align: center; font-size: 12px; }
+.offline-activity-desc .status .box:first-child { text-align: left; }
+.offline-activity-desc .status .box:last-child { text-align: right; }
+.offline-activity-desc .status .num { font-weight: bold; color: #fc8816; }
+.offline-activity-desc .date { font-size: 12px; }
+.offline-activity-tag { line-height: 20px; padding: 10px; background-color: #fff; }
+.offline-activity-tag .offline-apply { font-size: 12px; color: #fff; }
+.offline-activity-tag .offline-apply .num { font-size: 15px; font-weight: bold; color: #fc8816; }
+.offline-activity-intro { line-height: 1.8em; padding: 10px; margin-top: 1px; color: #666; background-color: #fff; }
+.offline-activity-intro > img { max-width: 100%; }
+.offline-activity-btns { position: fixed; bottom: 0; left: 0; z-index: 10; width: 100%; background-color: #f7f7f7; }
+.offline-activity-btns .btn { display: table-cell; width: 1%; height: 50px; border-right: 1px solid #ebf2f7; text-align: center; vertical-align: middle; font-size: 12px; color: #333; }
+.offline-activity-btns .btn:last-child { border-right: none; }
+.offline-activity-btns .btn .icon { display: inline-block; margin: -2px 4px 0 0; vertical-align: middle; font-size: 20px; }
+.offline-activity-btns .btn .icon-detail { color: #fc8816; }
+.offline-activity-btns .btn .icon-users { color: #64c486; }
+.offline-activity-btns .apply-btn { padding: 14px 20px; }
+
+/*activity apply styles*/
+.offline-apply-list li { display: table; width: 100%; height: 50px; margin-top: 1px; background-color: rgba(255, 255, 255, .2); }
+.offline-apply-list li .box { display: table-cell; height: 50px; line-height: 18px; padding: 0 10px; vertical-align: middle; font-size: 12px; color: #fff; }
+.offline-apply-list li .name { width: 30%; font-weight: bold; }
+.offline-apply-list li .date { width: 46%; color: #d9d9d9; }
+.offline-apply-list li .status { width: 24%; text-align: right; font-weight: bold; color: #64c486; }

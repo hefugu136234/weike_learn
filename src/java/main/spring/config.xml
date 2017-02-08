@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="     http://www.springframework.org/schema/aop     http://www.springframework.org/schema/aop/spring-aop.xsd     http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/context     http://www.springframework.org/schema/context/spring-context.xsd     http://www.springframework.org/schema/jee     http://www.springframework.org/schema/jee/spring-jee.xsd     http://www.springframework.org/schema/jdbc     http://www.springframework.org/schema/jdbc/spring-jdbc.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+	<bean class="com.lankr.tv_cloud.Config" init-method="init">
+		<!-- <property name="cc_key" value="RBYH5E1nfO8OQ7e5Yh1IVvIGIMkHSXPK" />
+		<property name="cc_user_id" value="87ACA21FD20C9C52" />
+		<property name="host" value="dd" />
+		<property name="host" value="http://www.z-box.com.cn" />
+
+		腾讯云的id
+		<property name="qq_secretId" value="AKIDvD0l7x3KjDWEQmQTONQbktvZDZCFR7Ms" />
+		<property name="qq_secretKey" value="Ekux3hUXxokxjtPaBwrYvgC2O1l1PD3W" />
+		腾讯云的id
+
+		微信 知了 测试 朗客微信的 id 密钥
+		<property name="wx_appid" value="wx8d9994439bc295c6" />
+		<property name="wx_appsecret" value="66a963b611ddac7891c3894e1260cf98" />
+		微信 知了 测试 朗客微信的 id 密钥
+
+		微信 测试 开放平台 朗客微信的 id 密钥
+		<property name="wx_open_appid" value="wx8a99fe828626f7af" />
+		<property name="wx_open_appsecret" value="d4624c36b6795d1d99dcf0547af5443d" />
+		微信 测试 开放平台 朗客微信的 id 密钥
+
+		微信 知了 正式 微信的 id 密钥> <property name="wx_appid" value="wxe5a0d37b7863f86b" 
+			/> <property name="wx_appsecret" value="487590f721a59dd96c13eb3d868cb3ea" 
+			/>
+		微信 知了 正式 微信的 id 密钥
+
+		微信 正式 开放平台 朗客微信的 id 密钥 <property name="wx_open_appid" value="wx1dc0f5228c683545" 
+			/> <property name="wx_open_appsecret" value="d4624c36b6795d1d99dcf0547af5443d" 
+			/>
+		微信 正式 开放平台 朗客微信的 id 密钥
+
+		<property name="qn_access_key" value="879DzN-b2m9LPSfp-oak1Es0K3bRAjo2c1edDozI" />
+		<property name="qn_secret_key" value="9PWtmpYVCf124HxwefUls_i_ni-3GFXxiMtGQ7C9" />
+		<property name="qn_cdn_host" value="http://7xo6el.com2.z0.glb.qiniucdn.com" />
+
+		RseEA3 为牙科宝短信验证模板
+		<property name="mysql_logger_enable" value="true" />
+		RseEA3 为牙科宝短信验证模板
+		QtXOY2 为知了短信验证模板
+		<property name="sms_template_code" value="QtXOY2" /> -->
+
+	</bean>
+
+
+</beans>

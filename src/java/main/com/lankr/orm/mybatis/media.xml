@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ClicinMediaMapper">
+	<resultMap type="com.lankr.tv_cloud.model.Media" id="clicinMediaMapper"
+		extends="base.baseModel">
+		<result column="taskId" property="taskId" />
+		<result column="type" property="type" />
+		<result column="clinicId" property="clinicId" />
+		<result column="description" property="description" />
+		<result column="originHost" property="originHost" />
+	</resultMap>
+
+	<select id="getClicinInfoById" parameterType="int" resultMap="clicinMediaMapper">
+		select * from media where clinicId=#{clinicId} and isActive=1 and
+		type='image'
+		union (select * from media where clinicId=#{clinicId} and
+		isActive=1 and type='video'
+		order by createDate desc limit 1)
+
+	</select>
+
+	<insert id="clinicUploadIamge" parameterType="com.lankr.tv_cloud.model.Media">
+		INSERT INTO media
+		(uuid,createDate,modifyDate,taskId,type,clinicId,description,originHost,isActive)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{taskId},#{type},#{clinicId},#{description},#{originHost},#{isActive})
+	</insert>
+
+	<select id="getMediaByUuid" parameterType="string" resultMap="clicinMediaMapper">
+		select * from media where uuid=#{uuid}
+	</select>
+
+	<update id="updateMedia" parameterType="com.lankr.tv_cloud.model.Media">
+		update media set
+		taskId=#{taskId},modifyDate=NOW(),description=#{description},isActive=#{isActive}
+		where
+		id=#{id}
+	</update>
+
+</mapper>

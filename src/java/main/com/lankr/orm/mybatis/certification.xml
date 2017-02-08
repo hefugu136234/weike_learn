@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.CertificationMapper">
+	<resultMap type="certification" id="certificationMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="status" column="status" />
+		<result property="imageUrl" column="imageUrl" />
+		<result property="credentials" column="credentials" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<select id="getCertificationById" parameterType="int"
+		resultMap="certificationMapper">
+		select * from certification where id=#{id} and
+		isActive = 1
+	</select>
+
+	<insert id="addCertification" parameterType="certification">
+		INSERT INTO certification
+		(createDate,modifyDate,uuid,name,pinyin,status,isActive,userId,imageUrl,mark,credentials)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{name},#{pinyin},#{status},#{isActive},#{user.id},#{imageUrl},#{mark},#{credentials})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="searchCertificationForTable" resultMap="certificationMapper">
+		select * from
+		certification where isActive=1 and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%")
+		<if test="state !=null and state != '' ">
+			and status = #{state}
+		</if>
+		 order by modifyDate desc limit #{1},#{2}
+	</select>
+
+
+	<update id="updateCertificationStatus" parameterType="certification">
+		UPDATE certification SET
+		modifyDate=NOW(),status=#{status},name=#{name},pinyin=#{pinyin},credentials=#{credentials},mark=#{mark}
+		WHERE id=#{id}
+	</update>
+	
+	<select id="getCertificationByUuid" parameterType="string"
+		resultMap="certificationMapper">
+		select * from certification where uuid=#{uuid} and
+		isActive = 1
+	</select>
+	
+	<select id="getCertificationByUserId" parameterType="int" resultMap="certificationMapper">
+	    select * from certification where userId=#{id} and
+		isActive = 1 order by modifyDate desc limit 1
+	</select>
+	
+	<select id="getCertifiActiveByUserId" parameterType="int" resultMap="certificationMapper">
+	    select * from certification where userId=#{id} and
+		isActive = 1 and status=1 order by modifyDate desc limit 1
+	</select>
+	
+	
+
+</mapper>

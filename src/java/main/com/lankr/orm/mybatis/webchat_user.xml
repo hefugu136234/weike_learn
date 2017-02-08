@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="webChat">
+	<resultMap type="webChatUser" id="webChatUserMapper" extends="base.baseModel">
+		<result property="openId" column="openId" />
+		<result property="status" column="status" />
+		<result property="wxlabel" column="wxlabel" />
+		<result property="nickname" column="nickname" />
+		<result property="photo" column="photo" />
+		<result property="wxinfo" column="wxinfo" />
+		<result property="unionid" column="unionid" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+	
+	<select id="searchWebChatUserById" parameterType="int"
+		resultMap="webChatUserMapper">
+		select * from webchat_user where id=#{id} and
+		isActive = 1
+	</select>
+
+	
+	<select id="searchWebChatUserByOpenid" parameterType="string"
+		resultMap="webChatUserMapper">
+		select * from webchat_user where openId=#{openId} and
+		isActive = 1 order by createDate desc limit 1
+	</select>
+	
+	<select id="searchWebChatUserCountByOpenid" parameterType="String"
+		resultType="int" >
+		select count(*) from webchat_user where openId=#{openId}
+	</select>
+
+	<!-- 查找出最新关联的一条数据 modify by kalean -->
+	<select id="searchWebChatUserByUserId" parameterType="int"
+		resultMap="webChatUserMapper">
+		select * from webchat_user where userId=#{userId} and
+		isActive = 1 order by createDate desc limit 1
+	</select>
+
+
+	<insert id="addWebChatUser" parameterType="webChatUser">
+		INSERT INTO
+		webchat_user
+		(createDate,modifyDate,uuid,openId,mark,userId,status,isActive,wxlabel,nickname,photo,wxinfo,unionid)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{openId},#{mark},#{user.id},#{status},#{isActive},#{wxlabel},#{nickname},#{photo},#{wxinfo},#{unionid})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateWebChatUserStatus" parameterType="webChatUser">
+		UPDATE
+		webchat_user SET
+		modifyDate=NOW(),
+		status=#{status},wxlabel=#{wxlabel} WHERE
+		openId=#{openId} and
+		isActive = 1
+	</update>
+
+	<update id="updateWebChatUser" parameterType="webChatUser">
+		UPDATE
+		webchat_user
+		SET
+		modifyDate=NOW(),
+		userId=#{user.id},nickname=#{nickname},photo=#{photo},wxinfo=#{wxinfo},unionid=#{unionid},isActive=#{isActive} WHERE openId=#{openId}
+	</update>
+	
+	<select id="allListData" resultMap="webChatUserMapper">
+		select * from webchat_user where isActive = 1 and unionid is null
+	</select>
+	
+	<select id="searchWebChatUserByUnionid" parameterType="string"
+		resultMap="webChatUserMapper">
+		select * from webchat_user where unionid=#{unionid} and
+		isActive = 1 order by createDate desc limit 1
+	</select>
+	
+	<select id="searchNoRegWechatUsers" parameterType="SubParams" resultMap="webChatUserMapper">
+		select * from webchat_user where userId is null and 
+		openId like "%"#{query}"%" order by createDate desc
+	</select>
+	
+	<select id="searchWebChatUserByUuid" parameterType="string"
+		resultMap="webChatUserMapper">
+		select * from webchat_user where uuid=#{uuid} order by createDate desc limit 1
+	</select>
+
+</mapper>

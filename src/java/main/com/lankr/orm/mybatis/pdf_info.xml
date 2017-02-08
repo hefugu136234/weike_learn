@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pdf_info">
+
+	<resultMap type="pdfInfo" id="pdfInfoMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="namePinyin" column="namePinyin" />
+		<result property="pdfsize" column="pdfsize" />
+		<result property="pdfnum" column="pdfnum" />
+		<result property="taskId" column="taskId" />
+		<result property="coverTaskId" column="coverTaskId" />
+		<result property="qrTaskId" column="qrTaskId" />
+		<result property="showType" column="showType" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+			
+		<!-- modified by mayuan -->
+		<association property="resource"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.findResourceByPdfId"
+			column="id" />
+	</resultMap>
+
+	<select id="getPdfInfoById" parameterType="int" resultMap="pdfInfoMapper">
+		select * from pdf_info where id=#{id}
+	</select>
+
+	<insert id="addPdfInfo" parameterType="pdfInfo">
+		insert into
+		pdf_info
+		(name,namePinyin,createDate,modifyDate,taskId,mark,uuid,pdfsize,pdfnum,status,isActive,categoryId,qrTaskId,coverTaskId,showType)
+		values
+		(#{name},#{namePinyin},NOW(),NOW(),#{taskId},#{mark},#{uuid},#{pdfsize},#{pdfnum},#{status},#{isActive},#{category.id},#{qrTaskId},#{coverTaskId},#{showType})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectPdfInfoList" parameterType="string" resultMap="pdfInfoMapper">
+		select * from pdf_info where isActive=1 and (name
+		like
+		"%"#{query}"%" or
+		namePinyin
+		like "%"#{query}"%") order by
+		createDate
+		desc
+	</select> 
+
+	<select id="selectPdfInfoByUuid" parameterType="string"
+		resultMap="pdfInfoMapper">
+		select * from pdf_info where uuid=#{uuid} and
+		isActive=1
+	</select>
+
+	<update id="updatePdfInfo" parameterType="pdfInfo">
+		update
+		pdf_info
+		set
+		modifyDate=NOW(),name=#{name},namePinyin=#{namePinyin},mark=#{mark},categoryId=#{category.id},qrTaskId=#{qrTaskId},coverTaskId=#{coverTaskId},showType=#{showType}
+		where id=#{id}
+	</update>
+
+	<update id="updatePdfInfoStatus" parameterType="pdfInfo">
+		update
+		pdf_info
+		set
+		modifyDate=NOW(),status=#{status},pdfnum=#{pdfnum},coverTaskId=#{coverTaskId}
+		where id=#{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.MessageMapper">
+	<!-- test -->
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+	<resultMap type="com.lankr.tv_cloud.model.Message" id="messageMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="body" column="body" />
+		<result property="referId" column="referId" />
+		<result property="referType" column="referType" />
+		<result property="parentId" column="parentId" />
+		<result property="type" column="type" />
+		<result property="sign" column="sign" />
+		<result property="status" column="status" />
+		<result property="praise" column="praise" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addMessage" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.lankr.tv_cloud.model.Message">
+		INSERT INTO message
+		(uuid,createDate,modifyDate,name,body,referId,referType,parentId,type,sign,status,praise,userId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{name},#{body},#{referId},#{referType},#{parentId},#{type},#{sign},#{status},0,#{user.id})
+	</insert>
+
+	<select id="selectMoreMessages" resultMap="messageMapper">
+		select * from message
+		where referId=#{0} and referType=#{1} and isActive=1 and createDate
+		&lt; #{2} order by
+		createDate desc limit #{3}
+	</select>
+
+	<select id="searchCountByResource" resultType="java.lang.Integer">
+		select count(id)
+		from message
+		where referId=#{0} and (referType=#{1} or referType=4) and
+		(type=1 or type=2) and isActive=1
+	</select>
+
+	<select id="searchCommentsForResource" resultMap="messageMapper">
+		select * from
+		message
+		where referId=#{0} and (referType=#{1} or referType=4) and (type=1
+		or type=2)
+		and isActive=1
+		order by createDate desc
+		limit #{3},#{4}
+	</select>
+
+	<select id="searchCommentsForWxResource" resultMap="messageMapper">
+		select * from
+		message
+		where referId=#{id} and (referType=#{referType} or referType=4) and (type=1
+		or type=2)
+		and isActive=1
+		and createDate &lt; #{createDate}
+		order by createDate
+		desc
+		limit #{size}
+	</select>
+
+	<select id="getMessageByUuid" resultMap="messageMapper">
+		select * from message
+		where isActive=1 and uuid=#{0}
+	</select>
+
+	<select id="getMessageById" resultMap="messageMapper">
+		select * from message
+		where isActive=1 and id=#{0}
+	</select>
+
+	<update id="updateMessage" parameterType="com.lankr.tv_cloud.model.Message">
+		update message set
+		modifyDate=NOW(),name=#{name},body=#{body},sign=#{sign},status=#{status},isActive=#{isActive},praise=#{praise}
+		where id=#{id}
+	</update>
+
+	<select id="searchActivitieMessageForDatatable" resultMap="messageMapper">
+		SELECT
+		*
+		FROM
+		message m LEFT JOIN user u on m.userId = u.id
+		WHERE
+		m.isActive = 1 and m.referType = 2 and m.sign = 0 and m.referId=#{0}
+		AND
+		(m.body like "%"#{1}"%" or u.nickname like "%"#{1}"%" or u.pinyin
+		like
+		"%"#{1}"%" or u.phone like "%"#{1}"%")
+		ORDER BY
+		m.createDate desc
+		LIMIT #{2},#{3}
+	</select>
+
+	<select id="getCommentUserRecord" resultMap="messageMapper">
+		select * from
+		message m left join user u on u.id=m.userId
+		where m.referId=#{0}
+		and
+		(m.referType=#{4} or m.referType=#{5}) and(m.type=#{6} or m.type=#{7})
+		and m.status=1 and m.isActive=1 and
+		(u.nickname like "%"#{1}"%" or
+		u.pinyin like "%"#{1}"%" or m.body like
+		"%"#{1}"%")
+		order by
+		m.createDate
+		desc limit #{2},#{3}
+	</select>
+
+	<select id="getSubMessages" resultMap="messageMapper">
+		select * from message
+		where isActive=1 and status=1 and referId=#{message.referId} and
+		referType=#{referType}
+		and type=#{type} and parentId=#{message.id}
+	</select>
+
+
+	<update id="removeResourceCommentByIds" parameterType="java.util.List">
+		update message set isActive=0 where id in
+		<foreach item="item" collection="list" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</update>
+
+	<select id="searchAllComments" resultMap="messageMapper">
+		select * from message left join user on message.userId = user.id left
+		join resource on message.referId = resource.id
+		where
+		((message.referType=#{referTypeResource} and
+		message.type=#{commentType}) or (message.referType=#{referTypeMessage}
+		and message.type=#{replyCommentType})) and message.isActive=1
+		<if test="params.target !=null and params.target != '' ">
+			and((resource.name like "%"#{params.target}"%") or
+			(user.nickname like "%"#{params.target}"%"))
+		</if>
+		<if test="params.content !=null and params.content != '' ">
+			and message.body like "%"#{params.content}"%"
+		</if>
+		<if
+			test="params.rangeStart !=null and params.rangeStart != '' ">
+			and message.createDate &gt;= #{params.rangeStart}
+		</if>
+		<if
+			test="params.rangeEnd !=null and params.rangeEnd != '' ">
+			and message.createDate &lt; #{params.rangeEnd}
+		</if>
+		order by message.createDate desc
+		limit #{params.start},#{params.size}
+	</select>
+
+	<select id="searchAllCommentsCount" resultType="int">
+		select count(*) from message left join user on message.userId =
+		user.id left join resource on message.referId = resource.id
+		where
+		((message.referType=#{referTypeResource} and
+		message.type=#{commentType}) or (message.referType=#{referTypeMessage}
+		and message.type=#{replyCommentType})) and message.isActive=1
+		<if test="params.target !=null and params.target != '' ">
+			and((resource.name like "%"#{params.target}"%") or
+			(user.nickname like "%"#{params.target}"%"))
+		</if>
+		<if test="params.content !=null and params.content != '' ">
+			and message.body like "%"#{params.content}"%"
+		</if>
+		<if
+			test="params.rangeStart !=null and params.rangeStart != '' ">
+			and message.createDate &gt;= #{params.rangeStart}
+		</if>
+		<if
+			test="params.rangeEnd !=null and params.rangeEnd != '' ">
+			and message.createDate &lt; #{params.rangeEnd}
+		</if>
+	</select>
+
+</mapper>

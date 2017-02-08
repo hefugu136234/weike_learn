@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.CommonPraiseMapper">
+	<!-- test -->
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+	<resultMap type="com.lankr.tv_cloud.model.CommonPraise" id="commonPraiseMapper"
+		extends="base.baseModel">
+		<result property="referId" column="referId" />
+		<result property="referType" column="referType" />
+		<result property="sign" column="sign" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="saveCommonPraise" parameterType="com.lankr.tv_cloud.model.CommonPraise">
+		INSERT INTO common_praise
+		(uuid,createDate,modifyDate,referId,referType,sign,status,isActive,userId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{referId},#{referType},#{sign},#{status},1,#{user.id})
+	</insert>
+
+	<select id="selectCommonPraiseByUuid" resultMap="commonPraiseMapper">
+		select * from common_praise
+		where uuid=#{0} and isActive=1
+	</select>
+
+	<select id="selectCommonPraiseById" resultMap="commonPraiseMapper">
+		select * from common_praise
+		where id=#{0} and isActive=1
+	</select>
+	
+	<select id="selectCommonPraiseByUser" resultMap="commonPraiseMapper">
+		select * from common_praise
+		where referType=#{0} and referId=#{1} and userId=#{2}
+	</select>
+
+	<select id="selectCountByReferId" resultMap="commonPraiseMapper">
+	    select count(*) from common_praise
+	    where referType=#{0} and referId=#{1}
+	    limit #{3},#{4}
+	</select>
+	
+	<update id="updateCommonPraise" parameterType="com.lankr.tv_cloud.model.CommonPraise">
+		update common_praise set
+		modifyDate=NOW(),sign=#{sign},status=#{status},isActive=#{isActive}
+		where id=#{id}
+	</update>
+
+	
+
+
+</mapper>

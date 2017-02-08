@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title></title>
+<link href="http://227.lankr.net/assets/css/app/default.css"
+	rel="stylesheet">
+<link href="http://227.lankr.net/assets/css/app/resource.css"
+	rel="stylesheet">
+<script type="text/javascript"
+	src="http://227.lankr.net/assets/js/wechat/base64.js"></script>
+<!--引入引导js 动态下载播放器-->
+<script language="javascript" type="text/javascript"
+	src="http://227.lankr.net/assets/player/UtoVRPlayerGuide.js"></script>
+</head>
+
+<body>
+	<div class="vr-video-container" id="panoDesk"></div>
+
+	<script language="javascript" type="text/javascript">
+	//获取连接参数
+		function getQueryString(name) {
+			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			var r = window.location.search.substr(1).match(reg);
+			if (r != null) {
+				return unescape(r[2]);
+			}
+			return null;
+		}
+		window.onload = function() {
+			var paly_url=getQueryString('playUrl');
+			if(!!paly_url){
+				paly_url=Base64.decode(paly_url);
+				initLoad({
+					container : document.getElementById("panoDesk"), //播放器容器Dom对象
+					name : "SceneViewer", //播放器名称
+					dragDirectionMode : true, //播放器拖动模式
+					dragMode : true,
+					isGyro : true, //默认开启陀螺仪功能  移动端支持陀螺仪设备有效
+					scenesArr : [ {
+						sceneId : "test1k",
+						sceneName : "测试",
+						sceneFilePath : paly_url,
+						sceneType : "Video",
+						isVideoAutoPlay : true
+					} ],
+					//播放器不支持全景播放回调
+					errorCallBack : function(e) {
+						console.log("错误状态：" + e);
+					},
+					//浏览器不支持全屏回调
+					fsCallBack : function(status, playObj) {
+						alert("浏览器不支持全屏！");
+					}
+				});
+			} 
+		};
+	</script>
+</body>
+</html>

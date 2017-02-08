@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.TvSubWidgetMapper">
+	<resultMap type="com.lankr.tv_cloud.model.TvLayout" id="tvLayoutMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="name" column="name" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="status" column="status" />
+		<result property="widgets" column="widgets" />
+		<result property="position" column="position" />
+		<result property="type" column="type" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="category" column="categoryId" select="asset.getCategoryById" />
+		<association property="project" column="projectId" select="project.getProjectById" />
+	</resultMap>
+
+	<insert id="addTvLayout" parameterType="com.lankr.tv_cloud.model.TvLayout">
+		insert into tv_layout
+		(createDate,modifyDate,name,mark,uuid,isActive,userId,categoryId,widgets,status,type,projectId,position)
+		values
+		(NOW(),NOW(),#{name},#{mark},#{uuid},1,#{user.id},#{category.id},#{widgets},#{status},#{type},#{project.id},#{position})
+	</insert>
+
+	<select id="selectTvLayoutsByCategoryId" resultMap="tvLayoutMapper"
+		parameterType="int">
+		select * from tv_layout where categoryId=#{categoryId}
+		and isActive=1 order by modifyDate desc
+	</select>
+
+	<select id="selectTvLayoutsUIData" resultMap="tvLayoutMapper"
+		parameterType="int">
+		select * from tv_layout where categoryId=#{categoryId}
+		and isActive=1 and status=1 order by modifyDate desc
+	</select>
+
+	<select id="getTvLayoutByUuid" resultMap="tvLayoutMapper"
+		parameterType="string">
+		select * from tv_layout where uuid=#{uuid} and
+		isActive=1
+	</select>
+
+	<update id="updateLayoutStatus">
+		update tv_layout set status = #{1},modifyDate=NOW()
+		where uuid = #{0} and isActive = 1
+	</update>
+
+	<update id="delLayout">
+		update tv_layout set isActive = 0,modifyDate=NOW()
+		where uuid = #{0} and status &lt;&gt; 1
+	</update>
+
+	<update id="updateSubTvLayout" parameterType="com.lankr.tv_cloud.model.TvLayout">
+		update tv_layout
+		set
+		modifyDate=NOW(),name=#{name},mark=#{mark},widgets=#{widgets},position=#{position},categoryId=#{category.id} where
+		id
+		= #{id}
+	</update>
+
+	<select id="selectAllTvHomeLayouts" resultMap="tvLayoutMapper">
+		select * from
+		tv_layout where isActive=1 and projectId=#{0} and type=1 order
+		by
+		position desc
+	</select>
+	
+	
+	<select id="selectSubTvHomeLayouts" resultMap="tvLayoutMapper">
+		select * from
+		tv_layout where isActive=1 and categoryId=#{0} and type=2 order
+		by
+		position desc
+	</select>
+	
+	<select id="selectAllTvWidgetLayouts" resultMap="tvLayoutMapper">
+		select * from
+		tv_layout where isActive=1 and projectId=#{0} and type=2  and categoryId = #{1} order
+		by
+		position desc
+	</select>
+
+</mapper>

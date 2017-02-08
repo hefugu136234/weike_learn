@@ -1,0 +1,24 @@
+/*certified styles*/
+.certified-status { padding: 14px; text-align: center; }
+.certified-status .tt { height: 34px; line-height: 34px; font-size: 18px; color: #333; }
+.certified-status .tt .icon { display: inline-block; width: 28px; height: 34px; margin: -4px 14px 0 0; vertical-align: middle; }
+.certified-status .tag, .certified-status .info { line-height: 30px; font-size: 15px; }
+.certified-status .info { margin-top: 8px; }
+.certified-status.success { background-color: #bcdfa7; }
+.certified-status.reject { background-color: #efdaac; }
+.certified-status.success .info { color: #333; }
+.certified-status.reject .info { color: #d26307; }
+.certified-status.ing { background-color: #b8d4ec; }
+.certified-photo { padding: 20px; background-color: #fff; }
+.certified-photo .area { position: relative; width: 112px; height: 82px; margin: 0 auto; border: 1px solid #2db9bd; border-radius: 8px; text-align: center; background-color: #fff; overflow: hidden; }
+.certified-photo .take-photo { position: absolute; top: 0; left: 0; width: 110px; height: 80px; border-radius: 8px; overflow: hidden; }
+.certified-photo .take-photo .img { width: 110px; height: 56px; }
+.certified-photo .take-photo .img .icon { font-size: 56px; color: #2db9bd; }
+.certified-photo .take-photo .tt { text-align: center; font-size: 12px; font-weight: bold; color: #2db9bd; }
+.certified-photo .result-photo {max-width: 100%; height: 80px; }
+.certificate-intro { padding: 12px; background-color: #fff; }
+.certificate-intro .img { float: left; width: 110px; border-radius: 6px; overflow: hidden; }
+.certificate-intro .info { padding-left: 120px; }
+.certificate-intro .info p { line-height: 18px; padding-left: 14px; font-size: 12px; background: url('/assets/img/app/dot_4x4.gif') no-repeat 6px 8px; background-size: 2px 2px; }
+.certificate-intro .info p .num { font-weight: bold; color: #2866b9; }
+#certified_feedback { display: none; z-index: 10; }

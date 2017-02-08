@@ -1,0 +1,82 @@
+/*元宵节抽奖*/
+.page.envelopes { background: #f6ebdc url("/assets/img/app/envelopes/bg_f.jpg") no-repeat center bottom; background-size: 100% auto; overflow: hidden; }
+.envelopes .content { background: url("/assets/img/app/envelopes/bg.jpg") no-repeat center top; background-size: 100% auto; }
+.envelopes .content.result { display: none; background-image: url("/assets/img/app/envelopes/bg_result.jpg"); }
+.envelopes .logo { position: absolute; z-index: 1; top: 10px; left: 8px; width: 28%; }
+.envelopes .index .title { width: 100%; margin-top: 50%; text-align: center; }
+.envelopes .result .title { width: 100%; margin-top: 40%; text-align: center; }
+.envelopes .start_img { position: absolute; z-index: 2; bottom: 15%; left: 0; width: 100%; text-align: center; }
+.envelopes .tips { position: absolute; bottom: 12%; left: 0; width: 100%; text-align: center; font-size: 14px; color: #7b008a; }
+.envelopes .btn_group { position: absolute; z-index: 2; bottom: 12px; left: 0; width: 100%; text-align: center; overflow: hidden; }
+.envelopes .btn_group .btn { display: inline-block; width: 32%; margin: 0 24px; }
+.envelopes .float_info { display: none; position: absolute; z-index: 2; bottom: 13%; left: 50%; width: 295px; height: 211px; padding: 16px 24px 0; margin: 0 0 0 -148px; box-shadow: 0 8px 8px rgba(51, 51, 51, .26); font-size: 15px; color: #fff; background: url("/assets/img/app/envelopes/bg_info.png") no-repeat center bottom; background-size: 100% auto; }
+.envelopes .float_info_my { display: none; position: absolute; z-index: 2; bottom: 13%; left: 50%; width: 310px; height: 211px; padding: 16px 24px 0; margin: 0 0 0 -148px; box-shadow: 0 8px 8px rgba(51, 51, 51, .26); font-size: 15px; color: #fff; background: url("/assets/img/app/envelopes/bg_info.png") no-repeat center bottom; background-size: 100% auto; }
+.envelopes .float_info .tt { margin-bottom: 4px; text-align: center; font-size: 24px; }
+.envelopes .float_info .info { height: 144px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.envelopes .float_info .record_list { height: 144px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.envelopes .float_info .record_list li .date { margin-right: 24px; }
+.envelopes .float_info .close { position: absolute; top: 16px; right: 16px; width: 16px; height: 16px; line-height: 16px; text-align: center; color: #fff; }
+.envelopes .result_tag { display: none; position: relative; z-index: 2; width: 296px; height: 66px; line-height: 66px; margin: 8px auto 0; text-align: center; font-size: 24px; color: #e81866; background: url("/assets/img/app/envelopes/result_tag.png") no-repeat center bottom; background-size: 100% auto; }
+.envelopes .result_tag .num { font-size: 30px; font-weight: bold; }
+.envelopes .float_intro { display: none; position: absolute; z-index: 2; bottom: 13%; left: 50%; width: 295px; height: 168px; padding: 20px; margin: 0 0 0 -148px; box-shadow: 0 8px 8px rgba(51, 51, 51, .26); font-size: 15px; color: #fff; background: url("/assets/img/app/envelopes/bg_intro.png") no-repeat center top; background-size: 100% 100%; }
+.envelopes .float_intro .tt { margin-bottom: 4px; text-align: center; font-size: 18px; }
+.envelopes .float_intro .info { height: 110px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/*摇一摇抽奖*/
+.page.shakeAward { background: url("/assets/img/app/shakeAward/bg.jpg") no-repeat center top; background-size: cover; overflow: hidden; }
+.page.shakeAward .content { overflow: hidden; }
+.shakeAward .logo { position: absolute; z-index: 1; top: 10px; left: 8px; width: 28%; }
+.shakeAward .index .title { position: relative; z-index: 1; width: 100%; margin-top: 10%; text-align: center; }
+.shakeAward .index .tag { width: 100%; margin-top: -12%; }
+.shakeAward .index .gift_box { position: absolute; z-index: 1; bottom: 64px; left: 0; width: 100%; text-align: center; }
+.shakeAward .index .title.active, .shakeAward .index .gift_box.active { -webkit-animation: hand-shake 0.5s linear infinite; -moz-animation: hand-shake 0.5s linear infinite; -o-animation: hand-shake 0.5s linear infinite; animation: hand-shake 0.5s linear infinite; }
+.shakeAward .result .tips { position: absolute; top: 12%; left: 0; width: 100%; text-align: center; }
+.shakeAward .result .tips .tt { position: absolute; top: 0; left: 0; width: 100%; line-height: 44px; font-size: 14px; color: #fff; }
+.shakeAward .result .gift_box { position: absolute; z-index: 1; bottom: 64px; left: 0; width: 100%; text-align: center; }
+.shakeAward .result .gift_box .img { position: absolute; z-index: 1; }
+.shakeAward .result #winning .img { bottom: 30%; left: 50%; width: 60%; margin-left: -34%; }
+.shakeAward .result #winning_no .img { bottom: 28%; left: 50%; width: 28%; margin-left: -20%; }
+.shakeAward .btn_group { position: absolute; z-index: 2; bottom: 12px; left: 0; width: 100%; text-align: center; overflow: hidden; }
+.shakeAward .btn_group .btn { display: inline-block; width: 32%; height: 40px; line-height: 40px; margin: 0 24px; border-radius: 6px; text-align: center; font-size: 16px; color: #fff; background-color: #d172aa; }
+.shakeAward .float_info { display: none; position: absolute; z-index: 2; bottom: 13%; left: 50%; width: 315px; height: 211px; padding: 16px 24px 0; margin: 0 0 0 -148px; border-radius: 6px; font-size: 14px; color: #fff; background-color: rgba(60, 70, 136, .8); }
+.shakeAward .float_info_my { display: none; position: absolute; z-index: 2; bottom: 13%; left: 50%; width: 315px; height: 211px; padding: 16px 24px 0; margin: 0 0 0 -148px; border-radius: 6px; font-size: 14px; color: #fff; background-color: rgba(60, 70, 136, .8); }
+.shakeAward .float_info .tt { margin-bottom: 4px; text-align: center; font-size: 24px; }
+.shakeAward .float_info .info { height: 144px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.shakeAward .float_info .record_list { height: 144px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.shakeAward .float_info_my .record_list { height: 144px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.shakeAward .float_info .record_list li .date { margin-right: 24px; }
+.shakeAward .float_info .close { position: absolute; top: 16px; right: 16px; width: 16px; height: 16px; line-height: 16px; text-align: center; color: #fff; }
+.shakeAward .float_info_my .close { position: absolute; top: 16px; right: 16px; width: 16px; height: 16px; line-height: 16px; text-align: center; color: #fff; }
+.shakeAward .float_intro { position: absolute; z-index: 2; top: 24%; left: 50%; width: 78%; height: 110px; line-height: 20px; padding: 16px; margin: 0 0 0 -39%; border-radius: 6px; font-size: 14px; color: #fff; background-color: rgba(60, 70, 136, .8); }
+.shakeAward .float_intro .tt { margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+.shakeAward .float_intro .info { height: 48px; line-height: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#bg_music { visibility: hidden; }
+
+/*hand shake keyframes*/
+@-webkit-keyframes hand-shake {
+  0% { -webkit-transform: rotate(0); }
+  50% { -webkit-transform: rotate(15deg); }
+  100% { -webkit-transform: rotate(0); }
+}
+@-moz-keyframes hand-shake {
+  0% { -moz-transform: rotate(0); }
+  50% { -moz-transform: rotate(15deg); }
+  100% { -moz-transform: rotate(0); }
+}
+@-o-keyframes hand-shake {
+  0% { -o-transform: rotate(0); }
+  50% { -o-transform: rotate(15deg); }
+  100% { -o-transform: rotate(0); }
+}
+@keyframes hand-shake {
+  0% { transform: rotate(0); }
+  50% { transform: rotate(15deg); }
+  100% { transform: rotate(0); }
+}
+
+/*adaptive styles*/
+@media screen and (max-height:480px) {
+  .envelopes .index .title { margin-top: 40%; }
+  .envelopes .result .title { margin-top: 20%; }
+  .envelopes .float_intro { height: 120px; }
+}

@@ -1,0 +1,45 @@
+/*package list styles*/
+.package-list { padding-bottom: 120px; }
+.package-list, .package-list .container { background-color: #fff; }
+.package-list .resource-list { margin-right: -12px; margin-left: -12px; padding: 16px 0; }
+.package-list .item { padding: 0 12px; }
+.package-list-status { color: #7f7f7f; }
+.package-list-status > .box { float: left; width: 33.33%; font-size: 14px; }
+.package-list-status > .box .icon { display: inline-block; margin: -2px 2px 0 0; vertical-align: middle; font-size: 18px; }
+.package-process { position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(234, 125, 4, .7); }
+.package-process .process-circle { position: absolute; z-index: 1; top: 50%; left: 50%; width: 100px; height: 100px; padding-top: 16px; margin: -50px 0 0 -50px; border: 1px solid #fff; border-radius: 50%; color: #fff; }
+.package-process .process { font-size: 14px; }
+.package-process .process .num { font-size: 30px; }
+.package-done { display: none; position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(75, 177, 97, .7); }
+.package-done .info { position: absolute; z-index: 1; top: 50%; left: 0; width: 100%; height: 64px; margin-top: -32px; text-align: center; font-size: 14px; color: #fff; }
+.package-done .info .icon { margin-bottom: 4px; font-size: 40px; }
+
+/*package show styles*/
+.package-detail-banner { height: 210px; background: #2a75b3 url('/assets/img/web/package/banner_bg.jpg') no-repeat center; }
+.package-detail-banner .container { position: relative; height: 210px; }
+.package-detail-banner .crumb-nav a, .package-detail-banner .crumb-nav .active, .package-detail-banner .crumb-nav > li + li:before { color: #fff; }
+.package-intro .title { margin-bottom: 10px; font-size: 24px; color: #fff; }
+.package-intro .intro { height: 72px; line-height: 24px; font-size: 14px; color: #fff; }
+.package-intro .status { font-size: 14px; color: #fff; }
+.package-intro .status span { margin-right: 40px; }
+.user-package-status .user-info .photo { float: left; width: 96px; height: 96px; margin-right: 14px; border: 2px solid #fff; border-radius: 50%; overflow: hidden; }
+.user-package-status .user-info .photo img { width: 92px; height: 92px; }
+.user-package-status .user-info .name { display: table-cell; height: 96px; vertical-align: middle; font-size: 24px; color: #fff; }
+.user-package-status .package-info .item { float: left; width: 120px; height: 120px; padding-top: 24px; margin-right: 24px; border: 2px solid #fff; border-radius: 50%; text-align: center; font-size: 14px; color: #fff; overflow: hidden; }
+.user-package-status .package-info .item:first-child { margin-left: 0; }
+.user-package-status .package-info .item .info { margin-bottom: 8px; }
+.user-package-status .package-info .item .num { font-size: 24px; }
+.package-show-status { position: absolute; right: 15px; bottom: 70px; width: 320px; color: #fff; }
+.package-show-status > .box { float: left; width: 33.33%; font-size: 18px; }
+.package-show-status > .box .icon { display: inline-block; margin: -2px 6px 0 0; vertical-align: middle; font-size: 24px; }
+.begin-package-btn { float: right; padding-right: 50px; padding-left: 50px; margin-top: 40px; }
+.category-list .item .info.middle { padding-right: 70px; }
+.category-list .media.with-icon .status-exam { position: absolute; top: 50%; right: 20px; height: 32px; line-height: 32px; margin-top: -16px; text-align: center; color: #9a9a9a; }
+
+/*package cover styles*/
+.package-cover-intro { line-height: 20px; padding: 0 20px 100px; font-size: 14px; color: #343434; }
+.package-cover-status { padding: 0 20px; }
+.package-cover-status .item { float: left; width: 33.33%; font-size: 14px; }
+.package-cover-status .item .icon { display: inline-block; margin: -2px 4px 0 0; vertical-align: middle; font-size: 24px; }
+.package-cover-status .item .icon-clock { font-size: 30px; }
+.package-cover-status .item .num { font-size: 18px; font-weight: bold; }

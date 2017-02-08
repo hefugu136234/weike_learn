@@ -1,0 +1,8 @@
+/*sign in styles*/
+.sign-in-container { width: 100%; padding: 4%; background-color: #fff; }
+.sign-in-container #canvas { position: relative; z-index: 10; width: 100%; border: 2px dashed #d2d2d2; }
+#imgPrev { display: none; position: fixed; z-index: 10; top: 0; bottom: 0; left: 0; width: 100%; height: 100%; background-color: #fff; }
+#imageitem { padding: 16px; }
+#signImg { max-width: 100%; }
+#imgPrev .btn-group { position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 8px 16px; }
+#imgPrev .btn-group .btn { float: left; width: 46%; height: 40px; line-height: 36px; margin: 0 2%; border-radius: 4px; border: none; text-align: center; color: #fff; background-color: #2866b9; }

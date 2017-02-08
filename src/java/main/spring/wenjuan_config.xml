@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="     http://www.springframework.org/schema/aop     http://www.springframework.org/schema/aop/spring-aop.xsd     http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/context     http://www.springframework.org/schema/context/spring-context.xsd     http://www.springframework.org/schema/jee     http://www.springframework.org/schema/jee/spring-jee.xsd     http://www.springframework.org/schema/jdbc     http://www.springframework.org/schema/jdbc/spring-jdbc.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<bean class="com.lankr.tv_cloud.WenJuanConfig" init-method="init">
+	    
+	     <!-- 问卷网测试本地 
+	    <property name="wenjuan_host" value="http://apitest.wenjuan.com:8000" />
+		<property name="wenjuan_site" value="99999" />
+		<property name="wenjuan_secret_key" value="9d15a674a6e621058f1ea9171413b7c0" />
+		<property name="wenjuan_user" value="zhiliaobendi" />
+		<property name="wenjuan_email" value="zhiliaobendi@lankr.cn" />
+		<property name="wenjuan_mobile" value="" />
+		-->
+		<!-- 问卷网测试本地 -->
+		
+	    <!-- 问卷网测试平台信息 
+	    <property name="wenjuan_host" value="http://apitest.wenjuan.com:8000" />
+		<property name="wenjuan_site" value="99999" />
+		<property name="wenjuan_secret_key" value="9d15a674a6e621058f1ea9171413b7c0" />
+		<property name="wenjuan_user" value="zhiliao_zbox_test" />
+		<property name="wenjuan_email" value="zhiliao.zbox.test@lankr.cn" />
+		<property name="wenjuan_mobile" value="" />
+		-->
+		<!-- 问卷网测试平台信息 -->
+		
+		<!-- 问卷网正式平台信息 
+		<property name="wenjuan_host" value="http://wenjuan.lankr.cn" />
+		<property name="wenjuan_site" value="354" />
+		<property name="wenjuan_secret_key" value="297eb5056a36d61855e94aaa2a22c65a" />
+		<property name="wenjuan_user" value="zhiliao_zbox_test" />
+		<property name="wenjuan_email" value="zhiliao.zbox.test@lankr.cn" />
+		<property name="wenjuan_mobile" value="" />
+		-->
+		<!-- 问卷网正式平台信息 -->
+
+	</bean>
+
+</beans>

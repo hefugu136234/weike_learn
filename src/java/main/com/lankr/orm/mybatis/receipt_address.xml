@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ReceiptAddressMapper">
+	<resultMap type="receiptAddress" id="receiptAddressMapper"
+		extends="base.baseModel">
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="name" column="name" />
+		<result property="phone" column="phone" />
+		<result property="address" column="address" />
+		<result property="postCode" column="postCode" />
+		<result property="defaultAddress" column="defaultAddress" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="city" column="cityId"
+			select="com.lankr.orm.mybatis.mapper.ProvinceMapper.selectCtiById" />
+		<association property="district" column="districtId"
+			select="com.lankr.orm.mybatis.mapper.ProvinceMapper.selectDisById" />
+	</resultMap>
+	
+	<resultMap type="logisticsInfo" id="logisticsInfoMapper"
+		extends="base.baseModel">
+		<result property="logistics" column="logistics" />
+		<result property="status" column="status" />
+		<association property="integralRecord" column="integralRecordId"
+			select="com.lankr.orm.mybatis.mapper.IntegralMapper.getIntegralRecordById" />
+	</resultMap>
+
+	<select id="getReceiptAddressById" parameterType="int"
+		resultMap="receiptAddressMapper">
+		select * from receipt_address where id=#{id} and
+		isActive = 1
+	</select>
+
+	<insert id="addReceiptAddress" parameterType="receiptAddress">
+		INSERT INTO receipt_address
+		(createDate,modifyDate,uuid,latitude,longitude,userId,name,phone,cityId,districtId,address,postCode,defaultAddress,status,isActive,mark)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{latitude},#{longitude},#{user.id},#{name},#{phone},#{city.id},#{district.id},#{address},#{postCode},#{defaultAddress},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+
+	<update id="updateReceiptAddress" parameterType="receiptAddress">
+		UPDATE
+		receipt_address SET
+		modifyDate=NOW(),latitude=#{latitude},longitude=#{longitude},name=#{name},phone=#{phone},cityId=#{city.id},districtId=#{district.id},address=#{address},postCode=#{postCode}
+		WHERE id=#{id}
+	</update>
+
+	<select id="getReceiptAddressByUuid" parameterType="string"
+		resultMap="receiptAddressMapper">
+		select * from receipt_address where uuid=#{uuid} and
+		isActive =1
+	</select>
+
+	<update id="updateReceiptAddressNoDefault" parameterType="receiptAddress">
+		UPDATE receipt_address set defaultAddress=0 where userId=#{user.id}
+	</update>
+
+	<update id="updateReceiptAddressDefault" parameterType="receiptAddress">
+		UPDATE receipt_address set defaultAddress=1 where id=#{id}
+	</update>
+
+	<select id="wxReceiptAddressPageLimit" resultMap="receiptAddressMapper">
+		select * from receipt_address where userId=#{0} and defaultAddress=0 and
+		isActive =1 and status=1 and createDate &lt; #{1} order by createDate desc limit #{2}
+	</select>
+	
+	<select id="getReceiptAddressDefault" resultMap="receiptAddressMapper">
+		select * from receipt_address where userId=#{0} and defaultAddress=1 and
+		isActive =1 and status=1 order by createDate desc limit 1
+	</select>
+	
+	<select id="getLogisticsInfoById" parameterType="int"
+		resultMap="logisticsInfoMapper">
+		select * from logistics_info where id=#{id} and
+		isActive = 1
+	</select>
+	
+	<select id="getLogisticsInfoByUuid" parameterType="string"
+		resultMap="logisticsInfoMapper">
+		select * from logistics_info where uuid=#{uuid} and
+		isActive = 1
+	</select>
+	
+	<insert id="addLogisticsInfo" parameterType="logisticsInfo">
+		INSERT INTO logistics_info
+		(createDate,modifyDate,uuid,logistics,integralRecordId,status,isActive,mark)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{logistics},#{integralRecord.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<update id="updateLogisticsInfo" parameterType="logisticsInfo">
+		UPDATE logistics_info set modifyDate=NOW(),logistics=#{logistics} where id=#{id}
+	</update>
+	
+	<select id="getLogisticsInfoByRecordId" parameterType="int"
+		resultMap="logisticsInfoMapper">
+		select * from logistics_info where integralRecordId=#{id} and
+		isActive = 1 order by createDate desc limit 1
+	</select>
+
+</mapper>

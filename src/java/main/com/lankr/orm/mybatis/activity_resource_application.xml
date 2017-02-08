@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ActivityApplicationMapper">
+	<resultMap type="activityapplication" id="activityapplicationMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="matchDate" column="matchDate" />
+		<result property="code" column="code" />
+		<result property="sendType" column="send_type" />
+		<result property="status" column="status" />
+		<association property="activity" column="activityId"
+			select="com.lankr.orm.mybatis.mapper.ActivityMapper.getActivityById" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+	</resultMap>
+	
+	
+
+	<select id="getApplicatById" parameterType="int"
+		resultMap="activityapplicationMapper">
+		select * from activity_resource_application where isActive =
+		1 and id=#{id};
+	</select>
+
+	<insert id="addActivityapplication" parameterType="activityapplication">
+		INSERT INTO
+		activity_resource_application
+		(uuid,name,createDate,modifyDate,matchDate,code,categoryId,userId,activityId,resourceId,status,isActive,mark,send_type)
+		VALUES
+		(#{uuid},#{name},NOW(),NOW(),#{matchDate},#{code},#{category.id},#{user.id},#{activity.id},#{resource.id},#{status},#{isActive},#{mark},#{sendType})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getApplicateByUuid" parameterType="string"
+		resultMap="activityapplicationMapper">
+		select * from activity_resource_application
+		where
+		uuid=#{uuid} and isActive=1
+	</select>
+
+	<select id="getApplicateByCode" parameterType="string"
+		resultMap="activityapplicationMapper">
+		select * from activity_resource_application
+		where
+		code=#{code} and isActive=1
+		limit 1
+	</select>
+
+	<select id="searchApplicateList" parameterType="int"
+		resultMap="activityapplicationMapper">
+		select * from
+		activity_resource_application where isActive =
+		1 and status = 1
+		and activityId=#{id} and resourceId is not null order
+		by modifyDate
+		desc
+		limit 30
+	</select>
+
+	<select id="searchApplicateByUserId" resultMap="activityapplicationMapper">
+		select * from
+		activity_resource_application where isActive =
+		1 and 
+		<if test="type==0">
+		status !=8
+		</if>
+		<if test="type==1">
+		   status =8
+		</if>
+		and userId=#{userId} and createDate &lt; #{startTime} order by createDate
+		desc
+		limit #{size}
+	</select>
+
+	<select id="maxOpusCode" resultType="java.lang.String">
+		select max(code) from activity_resource_application
+	</select>
+
+	<select id="oupsResCount" parameterType="int" resultType="java.lang.Integer">
+		select max(id) from activity_resource_application where resourceId=#{id} and
+		status=1 and isActive=1
+	</select>
+
+	<select id="relatedResOups" parameterType="int"
+		resultMap="activityapplicationMapper">
+		select * from activity_resource_application where resourceId=#{id} and isActive=1 limit 1
+	</select>
+
+	<update id="updateRelateOups" parameterType="activityapplication">
+		update activity_resource_application set
+		modifyDate=NOW(),matchDate=#{matchDate},resourceId=#{resource.id},status=#{status}
+		where id=#{id}
+	</update>
+	
+	<select id="selectOupsPage" parameterType="SubParams" resultMap="activityapplicationMapper">
+		select * from activity_resource_application where isActive=1 and (code
+		like
+		"%"#{query}"%"
+		or name like "%"#{query}"%") order by modifyDate desc limit #{start},#{size}
+	</select>
+	
+<!-- 	<update id="removeBinding" parameterType="activityapplication">
+		update activity_resource_application set
+		modifyDate=NOW(),matchDate=#{matchDate},resourceId=#{resource.id},status=#{status}
+		where id=#{id}
+	</update> -->
+	
+	<select id="getOupsByActivityId" parameterType="int" resultMap="activityapplicationMapper">
+		select * from activity_resource_application where isActive=1 and status=1 and activityId=#{id}
+		 order by modifyDate desc limit 30
+	</select>
+	
+	<select id="oupsRankingByActivityId" parameterType="int" resultMap="activityapplicationMapper">
+		select * from activity_resource_application as a left join resource as r on a.resourceId=r.id
+		where a.isActive=1 and a.status=1 and a.activityId=#{id} and r.status=1
+		order by r.viewCount desc limit 10
+	</select>
+	
+</mapper>

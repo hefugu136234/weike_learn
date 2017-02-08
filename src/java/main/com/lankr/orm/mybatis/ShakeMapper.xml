@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ShakeMapper">
+
+	<!-- <cache type="com.lankr.tv_cloud.cache.EhCache" /> -->
+
+	<resultMap type="com.lankr.tv_cloud.model.Shake" id="shakeMapper"
+													extends="base.baseModel">
+		<result property="money" column="money" />
+		<result property="status" column="status" />		
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+
+	<select id="searchExchangeRecordForDatatable" resultMap="shakeMapper">
+		select * from tmp_yuanxiao where isActive=1 
+		and (mark like "%"#{0}"%")
+		<if test="money !=null and money != '' ">
+			<choose>
+				<when test='money == "yes" '>
+					and money &gt; 0
+				</when>
+				<when test='money == "no" '>
+					and money = 0
+				</when>
+			</choose>
+		</if>
+		<if test="status !=null and status != '' ">
+			and status = #{status}
+		</if>
+		order by modifyDate desc limit #{1},#{2}
+	</select>
+	
+	<select id="selectShakeByUuid" resultMap="shakeMapper">
+		select * from tmp_yuanxiao where isActive=1 
+		and uuid=#{0}
+	</select>
+	
+	<update id="updateShakeStatus" parameterType="shake">
+		UPDATE tmp_yuanxiao SET status = #{status}, modifyDate = NOW()
+		where id=#{id}
+	</update>
+	
+</mapper>

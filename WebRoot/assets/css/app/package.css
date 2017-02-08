@@ -1,0 +1,73 @@
+/*package banner styles*/
+.package-banner { position: relative; height: 136px; text-align: center; }
+.package-banner > img { max-width: 100%; height: 136px; }
+.package-banner .logo { position: absolute; top: 6px; left: 12px; width: 70px; }
+.package-banner .logo img { width: 100%; }
+
+/*package list styles*/
+.package-list-status { display: -moz-box; display: -webkit-box; display: box; color: #999; }
+.package-list-status > .box { -moz-box-flex: 1; -webkit-box-flex: 1; box-flex: 1; display: block; width: 100%; font-size: 10px; }
+.package-list-status > .box .icon { display: inline-block; margin: -2px 2px 0 0; vertical-align: middle; font-size: 14px; }
+.package-process { position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(234, 125, 4, .7); }
+.package-process .process-circle { position: absolute; z-index: 1; top: 50%; left: 50%; width: 76px; height: 76px; padding-top: 16px; border: 1px solid #fff; border-radius: 50%; color: #fff; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); }
+.package-process .process { font-size: 12px; }
+.package-process .process .num { font-size: 24px; }
+.package-done { display: none; position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(75, 177, 97, .7); }
+.package-done .info { position: absolute; z-index: 1; top: 50%; left: 50%; font-size: 12px; color: #fff; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); }
+.package-done .info .icon { margin-bottom: 4px; font-size: 36px; }
+
+/*package user status styles*/
+.package-user-status { position: relative; height: 136px; background: url('/assets/img/app/package/user_bg.jpg'); background-size: cover; }
+.package-user-status .logo { position: absolute; top: 6px; left: 12px; width: 70px; }
+.package-user-status .logo img { width: 100%; }
+.package-user-status .user-photo { position: absolute; top: 50%; left: 14px; width: 60px; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-user-status .user-photo .photo { width: 60px; height: 60px; border: 2px solid #fff; border-radius: 50%; overflow: hidden; }
+.package-user-status .user-photo .photo img { width: 56px; height: 56px; }
+.package-user-status .user-info { position: absolute; top: 50%; left: 0; width: 100%; min-height: 60px; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-user-status .user-info > .box { display: table-cell; height: 60px; padding-left: 84px; vertical-align: middle; color: #fff; }
+.package-user-status .user-info .name { height: 20px; line-height: 20px; font-size: 15px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.package-user-status .status-box { position: absolute; top: 50%; right: 12px; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-user-status .status-box .box { float: left; width: 76px; height: 76px; padding-top: 20px; margin-left: 12px; border: 1px solid #fff; border-radius: 50%; text-align: center; font-size: 12px; color: #fff; }
+.package-user-status .status-box .box .info { height: 20px; margin-bottom: 6px; }
+.package-user-status .status-box .box .info .num { font-size: 20px; }
+.package-show-status { position: relative; padding: 12px; }
+.package-show-status .title { padding-right: 90px; }
+.package-show-status .title .tt { margin-bottom: 12px; font-size: 15px; font-weight: bold; color: #fff; }
+.package-show-status .package-list-status { width: 80%; }
+.package-show-status .more { position: absolute; top: 50%; right: 12px; text-decoration: underline; font-size: 12px; color: #fff; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-list-tab .icon-arr-r { -webkit-transition: .4s; -moz-transition: .4s; transition: .4s; }
+.package-list-tab.open .icon-arr-r { -webkit-transform: translateY(-50%) rotate(90deg); -moz-transform: translateY(-50%) rotate(90deg); transform: translateY(-50%) rotate(90deg); }
+.package-show-list { display: none; }
+.package-show-list.open { display: block; }
+.package-show-list .info { padding: 16px 16px 16px 144px; }
+.package-show-list .info.middle { padding-top: 30px; }
+.list-with-img.package-show-list .info { padding-right: 60px; }
+.list-with-img.package-show-list .info.middle { padding-right: 76px; }
+.package-show-list .exam-status { position: absolute; top: 50%; right: 30px; font-size: 14px; color: #b1b1b1; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-show-list .icon-round-check-fill { display: none; position: absolute; top: 50%; right: 30px; font-size: 24px; color: #65ba87; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.package-show-list > .box.done .icon-round-check-fill { display: block; }
+
+/*course package info styles*/
+.course-package-info { position: absolute; bottom: 14px; left: 12px; line-height: 20px; font-size: 12px; color: #fff; }
+.course-package-info .title { font-size: 15px; font-weight: bold; }
+.course-package-info .more { text-decoration: underline; color: #fff; }
+.course-package-info span { margin-right: 14px; }
+.package-go-btn { position: absolute; z-index: 1; bottom: 30px; right: 12px; }
+
+/*package cover styles*/
+.package-cover-bg { background: url('/assets/img/app/package/cover_bg.jpg') no-repeat center top; background-size: cover; }
+.package-cover-title { line-height: 20px; padding: 0 10px; margin-top: 20%; text-align: center; font-size: 18px; font-weight: bold; color: #fff; }
+.package-cover-intro { line-height: 18px; padding: 0 24px; margin-top: 10%; font-size: 13px; color: #fff; }
+.package-cover-status { width: 210px; margin: 10% auto 0; border-top: 1px solid rgba(255, 255, 255, .3); }
+.package-cover-status .box { height: 37px; line-height: 36px; padding: 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .3); font-size: 12px; font-weight: bold; color: #fff; }
+.package-cover-status .box .icon { display: inline-block; width: 30px; margin: -2px 2px 0 0; vertical-align: middle; font-size: 20px; }
+.package-cover-status .box .icon-clock { font-size: 24px; }
+.package-cover-status .box .num { font-size: 15px; }
+.package-cover-btns { margin-top: 20%; }
+
+/*adaptive styles*/
+@media screen and (max-width:320px) {
+  .package-user-status .status-box .box { width: 60px; height: 60px; padding-top: 12px; }
+  .package-user-status .status-box .box .info { margin-bottom: 4px; }
+  .package-user-status .status-box .box .info .num { font-size: 14px; }
+}

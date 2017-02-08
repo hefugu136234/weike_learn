@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.QrCodeMapper">
+	<resultMap type="qrcode" id="qrcodeMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="deadline" column="deadline" />
+		<result property="title" column="title" />
+		<result property="qrurl" column="qrurl" />
+		<result property="scancount" column="scancount" />
+		<result property="sceneid" column="sceneid" />
+	</resultMap>
+
+	<resultMap type="qrscene" id="qrsceneMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="sceneid" column="sceneid" />
+		<result property="type" column="type" />
+		<result property="reflectId" column="reflectId" />
+		<result property="limitType" column="limitType" />
+		<result property="businessId" column="businessId" />
+		<result property="message" column="message" />
+	</resultMap>
+
+	<resultMap type="qrcodeScanRecode" id="qrcodeScanRecodeMapper"
+		extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="scancount" column="scancount" />
+		<result property="viewcount" column="viewcount" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="qrScene" column="qrsceneId" select="selectQrSenceById" />
+	</resultMap>
+
+	<insert id="addQrScene" parameterType="qrscene">
+		INSERT INTO qrscene
+		(uuid,createDate,modifyDate,reflectId,name,sceneid,type,businessId,mark,status,isActive,limitType,message,pinyin)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{reflectId},#{name},#{sceneid},#{type},#{businessId},#{mark},#{status},#{isActive},#{limitType},#{message},#{pinyin})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<insert id="addQrCode" parameterType="qrcode">
+		INSERT INTO qrcode
+		(uuid,createDate,modifyDate,deadline,title,mark,qrurl,scancount,sceneid,status,isActive)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{deadline},#{title},#{mark},#{qrurl},#{scancount},#{sceneid},#{status},#{isActive})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectQrSenceById" parameterType="int" resultMap="qrsceneMapper">
+		select * from qrscene where id=#{id}
+	</select>
+
+	<select id="selectQrSenceByUuid" parameterType="string"
+		resultMap="qrsceneMapper">
+		select * from qrscene where isActive=1 and uuid=#{uuid}
+	</select>
+
+	<select id="selectMaxForeverSceneid" resultType="java.lang.Long">
+		select
+		max(sceneid) from qrscene where limitType=1
+	</select>
+
+	<select id="selectMaxTempSceneid" resultType="java.lang.Long">
+		select max(sceneid)
+		from qrscene where limitType!=1
+	</select>
+
+	<select id="getQrSceneByActivitId" parameterType="SubParams"
+		resultMap="qrsceneMapper">
+		select * from qrscene where isActive=1 and status=1
+		and
+		type=#{type} and reflectId=#{id} limit 1
+	</select>
+
+	<select id="selectQrSceneByScenId" resultMap="qrsceneMapper">
+		select * from
+		qrscene where isActive=1 and sceneid=#{0} limit 1
+	</select>
+
+	<select id="selectQrSceneByUuid" resultMap="qrsceneMapper">
+		select * from
+		qrscene where isActive=1 and uuid=#{0}
+	</select>
+
+	<select id="selectQrCodeByScenId" resultMap="qrcodeMapper">
+		select * from qrcode
+		where isActive=1 and
+		status=1 and sceneid=#{0} limit 1
+	</select>
+
+	<update id="updateQrSaoCount" parameterType="qrcode">
+		update qrcode set
+		scancount = Coalesce(scancount, 0) + 1 where id=#{id}
+	</update>
+
+	<select id="getQrSceneTemp" parameterType="SubParams" resultMap="qrsceneMapper">
+		select * from qrscene where isActive=1 and status=1
+		and type=#{type}
+		and reflectId=#{id} order by createDate desc limit 1
+	</select>
+
+	<select id="getQrSceneByCommonOups" resultMap="qrsceneMapper">
+		select * from
+		qrscene where isActive=1 and status=1
+		and type=#{0} order by createDate
+		desc limit 1
+	</select>
+
+	<update id="updateQrCodeNew" parameterType="qrcode">
+		update qrcode set
+		modifyDate=NOW(),deadline=#{deadline},qrurl=#{qrurl} where
+		id=#{id}
+	</update>
+
+	<select id="searchQrsenceForTable" resultMap="qrsceneMapper">
+		select * from qrscene where isActive = 1 
+		and (name like "%"#{0}"%" or pinyin like "%"#{0}"%") 
+		<if test="limitType != null and limitType != '' ">
+			and limitType = #{limitType}
+		</if>
+		<if test="judyType != null and judyType != '' ">
+			and type = #{judyType}
+		</if>
+		order by modifyDate desc limit #{1},#{2}
+	</select>
+
+	<select id="getQrSceneByTypeBuss" resultMap="qrsceneMapper">
+		select * from
+		qrscene where isActive = 1 and type=#{2} and reflectId=#{0} and
+		businessId=#{1}
+		limit 1
+	</select>
+
+	<insert id="addQrcodeScanRecode" parameterType="qrcodeScanRecode">
+		INSERT INTO qrcode_scan_recode
+		(uuid,createDate,modifyDate,userId,qrsceneId,scancount,viewcount,status,isActive)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{user.id},#{qrScene.id},#{scancount},#{viewcount},#{status},#{isActive})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateQrcodeScanRecode" parameterType="qrcodeScanRecode">
+		update qrcode_scan_recode set
+		modifyDate=NOW(),scancount=#{scancount},viewcount=#{viewcount} where
+		id=#{id}
+	</update>
+
+	<select id="selectRecodeByUser" resultMap="qrcodeScanRecodeMapper">
+		select * from qrcode_scan_recode where isActive=1 and userId=#{0} and
+		qrsceneId=#{1} limit 1
+	</select>
+	
+	<update id="updateQrScene" parameterType="qrscene">
+		update qrscene set
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},message=#{message} where
+		id=#{id}
+	</update>
+	
+	<select id="searchQrcodeScanRecodeForTable" resultMap="qrcodeScanRecodeMapper">
+		select q.* from
+		qrcode_scan_recode q left join user u on q.userId=u.id  where q.isActive = 1 and q.qrsceneId=#{0} and (u.username like
+		"%"#{1}"%"
+		or u.nickname
+		like
+		"%"#{1}"%" or u.phone like "%"#{1}"%") order by q.modifyDate desc limit #{2},#{3}
+	</select>
+
+
+</mapper>

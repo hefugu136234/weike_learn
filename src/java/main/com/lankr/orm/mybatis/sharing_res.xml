@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ShareGiftMpper">
+	<resultMap type="sharingRes" id="sharingResMapper" extends="base.baseModel">
+		<result property="approach" column="approach" />
+		<result property="shareCode" column="shareCode" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="oriUser" column="oriUserId" select="user.getUserById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+	</resultMap>
+
+	<resultMap type="viewSharing" id="viewSharingMapper" extends="base.baseModel">
+		<result property="openid" column="openid" />
+		<result property="status" column="status" />
+		<result property="viewCount" column="viewCount" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="shareUser" column="shareUserId"
+			select="user.getUserById" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+	</resultMap>
+	
+
+	<select id="selectShareResById" parameterType="int" resultMap="sharingResMapper">
+		select * from sharing_res where isActive=1 and id=#{id}
+	</select>
+
+
+	<insert id="addShareRes" parameterType="sharingRes">
+		INSERT INTO sharing_res
+		(uuid,createDate,modifyDate,userId,resourceId,approach,shareCode,status,isActive,mark,oriUserId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{user.id},#{resource.id},#{approach},#{shareCode},#{status},#{isActive},#{mark},#{oriUser.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectViewSharingExist" parameterType="SubParams"
+		resultMap="viewSharingMapper">
+		select * from view_sharing where isActive=1 and
+		resourceId=#{projectId} and
+		shareUserId=#{id} and userId=#{userId}
+		limit 1
+	</select>
+
+	<insert id="addViewSharing" parameterType="viewSharing">
+		INSERT INTO view_sharing
+		(uuid,createDate,modifyDate,resourceId,userId,openid,status,isActive,mark,shareUserId,viewCount)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{resource.id},#{user.id},#{openid},#{status},#{isActive},#{mark},#{shareUser.id},#{viewCount})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectSharingResExist" parameterType="SubParams"
+		resultMap="sharingResMapper">
+		select * from sharing_res where isActive=1 and
+		resourceId=#{projectId}
+		and
+		userId=#{id}
+		<choose>
+			<when test="userId==0">
+			    and oriUserId is null
+			</when>
+			<otherwise>
+			    and oriUserId=#{userId} 
+			</otherwise>
+		</choose>
+		limit 1
+	</select>
+
+	<select id="getShareGiftCount" parameterType="int" resultType="java.lang.Integer">
+		select count(id) from view_sharing
+		where isActive=1
+		and
+		resourceId=#{id}
+	</select>
+	
+
+	<update id="addViewShareCount" parameterType="viewSharing">
+	    update view_sharing set viewCount=Coalesce(viewCount, 0) + 1 where id=#{id}
+	</update>
+
+	<!-- modified by mayuan start -->
+	<select id="searchAllPagination" parameterType="SubParams" resultMap="viewSharingMapper">
+		select * from view_sharing vs left join resource re
+		on
+		vs.resourceId = re.id
+		where vs.isActive=1
+		and 
+		re.name like "%"#{query}"%" order by vs.modifyDate desc
+		limit #{start}, #{size}
+	</select>
+	<!-- modified by mayuan end -->
+
+</mapper>

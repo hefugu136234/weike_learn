@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+	<!-- "resultMap" 的内容必须匹配 "(constructor?,id*,result*,association*,collection*,discriminator?)" -->
+	<cache type="com.lankr.tv_cloud.cache.EhCache"></cache>
+	<resultMap type="User" id="userMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="username" column="username" />
+		<result property="nickname" column="nickname" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
+		<result property="pinyin" column="pinyin" />
+		<result property="password" column="password" />
+		<result property="company" column="company" />
+		<result property="address" column="address" />
+		<result property="avatar" column="avatar" />
+		<association property="mainRole" column="roleId" select="user.getRoleById" />
+		<association property="user_reference" column="id"
+			select="user.searchUserRefsByUserId" />
+		<association property="userExpand" column="id"
+			select="com.lankr.orm.mybatis.mapper.UserExpandMapper.selectUserExpandById" />
+	</resultMap>
+
+	<resultMap type="Role" id="roleMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="isActive" column="isActive" />
+		<result property="roleName" column="roleName" />
+		<result property="roleDesc" column="roleDesc" />
+		<result property="level" column="level" />
+	</resultMap>
+
+	<resultMap type="UserReference" id="userReferenceMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="isActive" column="isActive" />
+		<result property="validDate" column="validDate" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="project" column="projectId"
+			select="project.getProjectById" />
+		<association property="role" column="roleId" select="user.getRoleById" />
+	</resultMap>
+
+	<select id="searchUserRefsByUserId" resultMap="userReferenceMapper"
+		parameterType="int">
+		select * from user_reference where userId=#{userId}
+	</select>
+
+	<insert id="addUser" parameterType="User">
+		INSERT INTO
+		user(createDate,modifyDate,mark,uuid,isActive,username,nickname,phone,email,pinyin,password,company,address,roleId,avatar)
+		VALUES
+		(NOW(),NOW(),#{mark},#{uuid},#{isActive},#{username},#{nickname},#{phone},#{email},#{pinyin},#{password},#{company},#{address},#{mainRole.id},#{avatar})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="searchUserByUuid" resultMap="userMapper"
+		parameterType="string">
+		SELECT * FROM user WHERE uuid=#{uuid}
+	</select>
+
+	<select id="getUserById" resultMap="userMapper" parameterType="int">
+		SELECT * FROM user WHERE id=#{id}
+	</select>
+
+	<select id="getUserRefById" parameterType="int" resultMap="userReferenceMapper">
+		select * from user_reference where id=#{id}
+	</select>
+
+	<update id="increaseValidDate" parameterType="UserReference">
+		update user_reference set validDate=#{validDate} where id=#{id} and
+		isActive=1;
+	</update>
+
+	<select id="searchUserByUsername" resultMap="userMapper"
+		parameterType="string">
+		select * from user where username=#{username}
+	</select>
+
+	
+	<select id="searchUsers" parameterType="string" resultMap="userMapper">
+		select * from 
+			user 
+		where 
+			isActive = 1 
+		and 
+			username like "%"#{query}"%" 
+			or 
+			pinyin like "%"#{query}"%" 
+			or 
+			nickname like "%"#{query}"%" 
+			or 
+			phone like "%"#{query}"%" 
+		order by 
+			createDate desc
+	</select>
+
+	<select id="login" resultMap="userMapper" parameterType="User">
+		SELECT
+		*
+		FROM user WHERE isActive=1 and username=#{username} AND password=#{password}
+	</select>
+
+	<select id="searchAllUserPagination">
+		select * from user where isActive = 1
+	</select>
+
+	<select id="searchAllRoles" resultMap="roleMapper">
+		SELECT * FROM role WHERE
+		isActive = 1;
+	</select>
+
+	<select id="getRoleById" resultMap="roleMapper">
+		select * from role where
+		id=#{id}
+	</select>
+
+	<insert id="addUserReference" parameterType="UserReference">
+		INSERT INTO
+		user_reference
+		(uuid,createDate,modifyDate,isActive,userId,projectId,roleId,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{isActive},#{user.id},#{project.id},#{role.id},#{mark})
+	</insert>
+
+	<select id="searchUsersByProject" parameterType="SubParams"
+		resultMap="userMapper">
+		select * from user left join user_reference on
+		user.id=user_reference.userId
+		where user.isActive=1 and user_reference.projectId=#{id} and
+		user.roleId=2 and
+		(user.username like
+		"%"#{query}"%" or user.nickname
+		like
+		"%"#{query}"%" or
+		user.pinyin like
+		"%"#{query}"%")
+		order by
+		user.createDate
+		<!-- user.modifyDate -->
+		desc
+	</select>
+
+	<select id="searchProjectUserference" resultMap="userReferenceMapper"
+		parameterType="UserReference">
+		SELECT * FROM user_reference WHERE userId=#{user.id} and
+		projectId=#{project.id}
+	</select>
+
+	<select id="getRolesByUser" resultMap="roleMapper">
+		SELECT * FROM role WHERE
+		isActive = 1 and id>2
+	</select>
+
+	<update id="updateUser" parameterType="User">
+		UPDATE user SET
+		modifyDate=NOW(),
+		password=#{password},isActive=#{isActive} WHERE
+		id=#{id}
+	</update>
+
+	<resultMap type="com.lankr.tv_cloud.model.AppAuthentication"
+		id="appAuthenticationMapper" extends="base.baseModel">
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<insert id="addAppAuthentication" parameterType="com.lankr.tv_cloud.model.AppAuthentication">
+		insert into
+		app_authentication
+		(createDate,modifyDate,isActive,token,userId,remoteIp) values
+		(NOW(),NOW(),1,#{token},#{user.id},#{remoteIp})
+	</insert>
+
+	<update id="updateUserAvatar" parameterType="User">
+		UPDATE user SET
+		modifyDate=NOW(),
+		avatar=#{avatar} WHERE id=#{id}
+	</update>
+	
+	<update id="updateUserName" parameterType="User">
+		UPDATE user SET
+		modifyDate=NOW(),
+		nickname=#{nickname},pinyin=#{pinyin} WHERE id=#{id}
+	</update>
+	
+	<update id="updateUserRefInfoBySuperAdmin" parameterType="User">
+		UPDATE user_reference SET
+		modifyDate=NOW(),
+		roleId=#{role.id} WHERE id=#{id}
+	</update>
+	
+	<update id="updateUserInfoBySuperAdmin"	parameterType="User">
+		UPDATE user SET
+		modifyDate=NOW(),
+		username=#{username},mark=#{mark},
+		nickname=#{nickname},pinyin=#{pinyin} WHERE id=#{id}
+	</update>
+	
+</mapper>    

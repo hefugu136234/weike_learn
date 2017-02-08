@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ResourceMapper">
+
+	<!-- <cache type="com.lankr.tv_cloud.cache.RedisCache" /> -->
+	<cache type="com.lankr.tv_cloud.cache.EhCache" />
+
+	<resultMap type="com.lankr.tv_cloud.model.Resource" id="resourceMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="rate" column="rate" />
+		<result property="viewCount" column="viewCount" />
+		<result property="coverTaskId" column="coverTaskId" />
+		<result property="qrTaskId" column="qrTaskId" />
+		<result property="updated_at" column="updated_at" />
+		<association property="video" column="assetId" select="asset.getVideoById" />
+		<association property="pdf" column="pdfId"
+			select="pdf_info.getPdfInfoById" />
+		<association property="threeScreen" column="threeScreenId"
+			select="com.lankr.orm.mybatis.mapper.ThreeScreenMapper.getThreeScreenById" />
+		<association property="news" column="newsId"
+			select="com.lankr.orm.mybatis.mapper.NewsMaper.selectInfoById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+		<association property="collectionNum" column="id"
+			select="com.lankr.orm.mybatis.mapper.MyCollectionMapper.selectCountByReId" />
+		<association property="speaker"
+			select="com.lankr.orm.mybatis.mapper.SpeakerMapper.getUseableSpeakerById"
+			column="speakerId" />
+		<collection property="tags" column="id"
+			select="com.lankr.orm.mybatis.mapper.TagMapper.getTagsByResourceId" />
+	</resultMap>
+
+	<insert id="addResource" parameterType="com.lankr.tv_cloud.model.Resource"
+		flushCache="true">
+		insert into resource
+		(createDate,modifyDate,uuid,name,pinyin,coverTaskId,qrTaskId,assetId,pdfId,newsId,categoryId,status,isActive,mark,threeScreenId)
+		values
+		(#{createDate},#{modifyDate},#{uuid},#{name},#{pinyin},#{coverTaskId},#{qrTaskId},#{video.id},#{pdf.id},#{news.id},#{category.id},#{status},#{isActive},#{mark},#{threeScreen.id})
+	</insert>
+
+	<select id="getResourceByUuid" parameterType="string" resultMap="resourceMapper">
+		select * from resource where uuid = #{uuid}
+	</select>
+
+	<select id="getResourceById" parameterType="int" resultMap="resourceMapper">
+		select * from resource where id = #{id}
+	</select>
+
+	<select id="searchAPIResources" resultMap="resourceMapper">
+		SELECT * FROM resource
+		WHERE isActive=1 AND status=1 AND modifyDate &lt; #{0} AND
+		categoryId=#{1} order by modifyDate desc limit #{2}
+	</select>
+
+	<select id="searchAPIResourcesSpread" resultMap="resourceMapper">
+		SELECT * FROM resource
+		WHERE isActive=1 AND status=1 AND modifyDate
+		&lt; #{0} AND
+		categoryId in
+		<foreach item="item" collection="ids" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+		order by modifyDate desc limit #{2}
+	</select>
+
+	<select id="findResourceByVideoId" resultMap="resourceMapper"
+		parameterType="int">
+		select * from resource where
+		assetId=#{videoId}
+		limit 1
+	</select>
+
+	<select id="findResourceByPdfId" resultMap="resourceMapper"
+		parameterType="int">
+		select * from resource where
+		pdfId=#{pdfId} limit 1
+	</select>
+
+	<select id="findResourceByThreeScreenId" resultMap="resourceMapper"
+		parameterType="int">
+		select * from resource where
+		threeScreenId=#{threeScreenId} limit 1
+	</select>
+
+	<select id="findResourceByNewsId" resultMap="resourceMapper"
+		parameterType="int">
+		select * from resource where
+		newsId=#{newsId} limit 1
+	</select>
+
+	<select id="findUserFavorites" resultMap="resourceMapper">
+		SELECT r.*,m.createDate
+		updated_at FROM
+		my_collection m LEFT JOIN resource r ON
+		m.resourceId =
+		r.id WHERE m.userId =
+		#{0} AND
+		m.status=1 AND m.isActive=1 AND
+		r.status=1 and r.isActive=1 and m.createDate
+		&lt; #{1} ORDER BY
+		m.createDate DESC LIMIT #{2}
+	</select>
+
+	<select id="getResourcesByCateId" resultMap="resourceMapper"
+		parameterType="int">
+		select * from resource where isActive=1 and
+		categoryId=#{categoryId}
+	</select>
+
+	<update id="updateResourceSpeaker" flushCache="true">
+		update resource
+		set speakerId=#{1} where id=#{0}
+	</update>
+
+	<select id="findResouceRelated" resultMap="resourceMapper">
+		select * from resource
+		where status = 1 and isActive = 1
+		and id &lt;&gt;
+		#{0} and
+		categoryId=#{1} order by viewCount desc limit 10
+	</select>
+
+	<select id="getResources" parameterType="subParams" resultMap="resourceMapper">
+		select * from resource r where 1=1
+		<if test="id > 0 ">
+			and r.categoryId = #{id}
+		</if>
+		<if test="state !=null and state != '' ">
+			and r.status = #{state}
+		</if>
+		<if test="resourceType !=null and resourceType !='' ">
+			<choose>
+				<when test='resourceType == "VIDEO" '>
+					and assetId &gt; 0
+				</when>
+				<when test='resourceType == "PDF" '>
+					and pdfId &gt; 0
+				</when>
+				<when test='resourceType == "NEWS" '>
+					and newsId &gt; 0
+				</when>
+				<when test='resourceType == "THREESCREEN" '>
+					and threeScreenId &gt; 0
+				</when>
+			</choose>
+		</if>
+		and (r.name like "%"#{query}"%" or r.pinyin like "%"#{query}"%")
+		limit
+		#{start}, #{size}
+	</select>
+
+	<select id="searchResourceListByQ" parameterType="string"
+		resultMap="resourceMapper">
+		<!-- select * from resource where isActive=1 and status=1 and (name like 
+			"%"#{query}"%" or pinyin like "%"#{query}"%") order by createDate -->
+		SELECT resource.* FROM resource LEFT JOIN speaker ON
+		resource.speakerId = speaker.id WHERE resource.isActive = 1 AND
+		resource.status = 1 AND (resource.name LIKE "%"#{query}"%" OR
+		resource.pinyin LIKE "%"#{query}"%" OR resource.mark LIKE
+		"%"#{query}"%" OR speaker.name LIKE "%"#{query}"%" OR speaker.name
+		LIKE "%"#{query}"%") limit 30;
+	</select>
+
+	<!-- select resource.name from resource left join speaker on resource.speakerId 
+		= speaker.id where resource.isActive = 1 and status = 1 and (resource.name 
+		like "%"#{query}"%" or resource.pinyin like "%"#{query}"%" or speaker.name 
+		like "%"#{quer}"%" or speaker.name like "%"#{quer}"%"); -->
+
+	<select id="getTagsByResourceUuid" resultType="tagChild">
+		SELECT
+		tc.name,
+		tc.uuid
+		FROM
+		tags_child tc
+		LEFT JOIN
+		tags_resource tr ON tc.id = tr.tagsId
+		LEFT JOIN
+		resource r ON r.id = tr.resourceId
+		where
+		r.uuid=#{resourceUuid} and tc.isActive=1 and r.isActive=1 and
+		tr.isActive=1
+	</select>
+
+	<insert id="resAddLabels" parameterType="com.lankr.tv_cloud.model.TagsResource">
+		insert into
+		tags_resource
+		(uuid, createDate, modifyDate, tagsId,
+		resourceId, status,
+		isActive, mark)
+		values
+		(#{uuid}, NOW(), NOW(),
+		#{tagsId}, #{resourceId},
+		#{status}, #{isActive}, #{mark})
+	</insert>
+
+	<select id="getTagsResourceByResourceId" resultType="com.lankr.tv_cloud.model.TagsResource">
+		SELECT
+		tags_resource.uuid, tags_resource.tagsId
+		FROM tags_resource
+		where
+		tags_resource.resourceId=#{id} and isActive=1
+	</select>
+
+	<!-- <update id="delResTagByResourceIdAndTagId" > update tags_resource set 
+		isActive=0 where resourceId=#{0} and tagsId=#{1} </update> -->
+
+	<delete id="delResTagByResourceIdAndTagId">
+		delete from
+		tags_resource
+		where
+		tagsId=#{tagId}
+		<if test="resId > 0 and resId != null">
+			and resourceId=#{resId}
+		</if>
+	</delete>
+
+	<select id="searchAPIResourcesAllLatest" resultMap="resourceMapper">
+		SELECT * FROM
+		resource
+		WHERE isActive=1 AND status=1 AND modifyDate &lt; #{0}
+		and
+		newsId is null order by
+		modifyDate
+		desc limit #{1}
+	</select>
+
+	<select id="searchAPIResourcesLatest" resultMap="resourceMapper">
+		SELECT * FROM
+		resource
+		WHERE isActive=1 AND status=1 AND modifyDate &lt; #{0} AND
+		categoryId=#{1} and (assetId is not null or threeScreenId is not null)
+		order by modifyDate desc limit #{2}
+	</select>
+
+	<select id="searchActivityRecommend" resultMap="resourceMapper">
+		SELECT r.* FROM
+		resource r
+		RIGHT JOIN activity_resource ar ON r.id=ar.resourceId
+		WHERE
+		activityId=#{0} AND r.isActive=1 AND ar.isActive=1 AND r.status=1 AND
+		ar.status=1 AND ar.recommendDate is NOT null
+		ORDER BY ar.recommendDate
+		DESC
+		LIMIT 10
+	</select>
+
+	<select id="searchActivityResouces" resultMap="resourceMapper">
+		SELECT r.* ,
+		ar.createDate updated_at FROM
+		resource r
+		RIGHT JOIN activity_resource ar
+		ON r.id=ar.resourceId
+		WHERE
+		activityId=#{0} AND r.isActive=1 AND
+		ar.isActive=1 AND r.status=1 AND
+		ar.status=1 AND ar.createDate &lt;
+		#{1}
+		AND ar.recommendDate is null
+		ORDER BY ar.createDate DESC
+		LIMIT #{2}
+	</select>
+
+	<select id="searchActivityReports" resultMap="resourceMapper">
+		SELECT
+		r.*,r.createDate updated_at FROM
+		resource r
+		RIGHT JOIN category c ON
+		r.categoryId=c.id
+		WHERE c.name=#{0}
+		and r.isActive=1 and r.status=1 and
+		r.createDate &lt; #{1}
+		ORDER BY
+		createDate desc
+		limit #{2}
+	</select>
+
+	<select id="searchActivityRankResources" resultMap="resourceMapper">
+		SELECT r.*
+		FROM resource r
+		RIGHT JOIN activity_resource ar ON r.id=ar.resourceId
+		WHERE r.isActive=1 AND ar.isActive=1 AND r.status=1 AND ar.status=1
+		AND
+		ar.activityId=#{0}
+		ORDER BY r.viewCount DESC
+		LIMIT 10
+	</select>
+
+	<select id="getWebCastInitList" resultMap="resourceMapper">
+		select * from resource
+		where isActive=1 and status=1 and (assetId is not null or
+		threeScreenId is not null)
+		order by
+		modifyDate desc limit 10
+	</select>
+
+	<select id="getWebCastSearchList" resultMap="resourceMapper">
+		select r.* from
+		resource r left join speaker s on r.speakerId=s.id
+		where r.isActive=1
+		and r.status=1 and (r.assetId is not null or r.threeScreenId is not
+		null) and (r.name
+		like "%"#{0}"%"
+		or
+		r.pinyin like "%"#{0}"%" or s.name
+		like "%"#{0}"%" or s.pinyin like
+		"%"#{0}"%")
+		order by
+		r.modifyDate desc
+		limit 15
+	</select>
+
+	<select id="searchResourceByQrSence" resultMap="resourceMapper">
+		select r.* from
+		resource r left join (select * from qrscene where type=6) q on
+		r.id=q.reflectId where r.isActive = 1 and r.status!=0 and q.id is null
+		and (r.name like
+		"%"#{0}"%"
+		or r.pinyin
+		like
+		"%"#{0}"%") order by
+		r.modifyDate desc limit 15
+	</select>
+
+	<select id="resourceCountByCategory" parameterType="java.util.List"
+		resultType="java.lang.Integer">
+		SELECT count(id) FROM resource
+		WHERE isActive=1 AND status=1 AND
+		categoryId in
+		<foreach collection="list" item="item" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="resourceLatestByCategory" resultMap="resourceMapper">
+		SELECT * FROM resource
+		WHERE isActive=1 AND status=1 AND
+		categoryId in
+		<foreach collection="list" item="item" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+		order by modifyDate desc limit #{size}
+	</select>
+
+	<select id="resourceCountByCateId" resultType="java.lang.Integer">
+		SELECT count(id)
+		FROM resource
+		WHERE isActive=1 AND status=1 AND
+		categoryId=#{0}
+	</select>
+
+	<select id="resourceFrontPage" resultMap="resourceMapper">
+		SELECT * FROM resource
+		WHERE isActive=1 AND status=1 AND
+		categoryId=#{0}
+		order by createDate
+		desc limit #{1},#{2}
+	</select>
+
+	<select id="resourceActivityFrontPage" resultMap="resourceMapper">
+		SELECT r.* FROM
+		resource r
+		RIGHT JOIN activity_resource ar
+		ON r.id=ar.resourceId
+		WHERE
+		activityId=#{0} AND r.isActive=1 AND
+		ar.isActive=1 AND r.status=1 AND
+		ar.status=1
+		AND ar.recommendDate is null
+		ORDER BY ar.createDate DESC
+		LIMIT #{1},#{2}
+	</select>
+
+	<select id="resourceBySpeakerWxPage" resultMap="resourceMapper">
+		SELECT * FROM
+		resource
+		WHERE isActive=1 AND status=1 AND
+		speakerId=#{0} AND createDate
+		&lt; #{1} order by createDate
+		desc limit #{2}
+	</select>
+
+	<select id="resourceWxPage" resultMap="resourceMapper">
+		SELECT * FROM resource
+		WHERE isActive=1 AND status=1 AND
+		categoryId=#{0} AND createDate &lt;
+		#{1} order by createDate
+		desc limit #{2}
+	</select>
+
+</mapper>

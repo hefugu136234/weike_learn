@@ -1,0 +1,45 @@
+/*comments list styles*/
+.comments-list { padding: 30px 30px 0; margin-top: 30px; }
+.comments-list > .comments-item { padding-bottom: 30px; margin-bottom: 30px; border-bottom: 1px solid #eee; }
+.comments-list > .comments-item:last-child { border-bottom: none; }
+.comments-list > .comments-item, .comments-list > .comments-item .media-body { overflow: inherit; }
+.comments-list > .comments-item > .photo { padding-right: 20px; }
+.comments-list .photo .media-object { width: 60px; height: 60px; }
+.comments-list .name { font-size: 15px; }
+.comments-list .date { font-size: 14px; color: #929292; }
+.comments-list .date .icon { display: inline-block; margin: -2px 4px 0 0; vertical-align: middle; font-size: 20px; }
+.comment-detail { line-height: 20px; margin-bottom: 20px; font-size: 14px; word-break: break-all; }
+.comment-operation { font-size: 12px; }
+.comment-operation > .item { padding: 0 10px; border-right: 1px solid #ccc; cursor: pointer; }
+.comment-operation > .item:hover { text-decoration: underline; }
+.comment-operation > .item:last-child { padding-right: 0; border-right: none; }
+.comment-operation .icon { display: inline-block; margin: -2px 4px 0 0; vertical-align: middle; font-size: 16px; color: #29abe0; }
+.comment-operation i { font-style: normal; }
+.comment-operation > .item.zan-btn:hover { text-decoration: none; }
+.reply-comments { display: none; padding-top: 20px; margin-top: 20px; border-top: 1px dashed #ccc; }
+.emoji-btn { padding: 4px; margin-top: 6px; font-size: 12px; cursor: pointer; }
+.emoji-btn.emoji-sm { padding: 0; margin-top: 0; }
+.emoji-btn .icon { display: inline-block; margin: -4px 4px 0 0; vertical-align: middle; font-size: 20px; }
+.qq-face { display: none; position: absolute; z-index: 1000; top: 0; left: 0; padding: 2px; border: 1px solid #eee; background-color: #fff; }
+.qq-face td { padding: 2px; cursor: pointer; }
+.qq-face td:hover { background-color: #eee; }
+
+/*dialog comments styles*/
+.dialog-comments-list { padding: 20px 10px; background: url('/assets/img/web/line2x10.gif') repeat-y 60px top; }
+.dialog-comments-list .item { margin-top: 14px; font-size: 14px; }
+.dialog-comments-list .time { float: left; width: 100px; line-height: 16px; padding: 2px 0; margin-right: 10px; text-align: center; font-size: 12px; color: #a5a8ae; background-color: #fff; }
+.dialog-comments-list .photo { float: left; width: 30px; height: 30px; margin-right: 8px; }
+.dialog-comments-list .photo img { width: 30px; height: 30px; }
+.dialog-comments-list .detail { line-height: 24px; padding: 4px 0 0 150px; }
+.dialog-comments-list .name { font-size: 14px; color: #29abe0; }
+.dialog-comments-list .operation { margin-top: 8px; }
+.dialog-comments-list .operation > .item { padding: 0 16px; border-right: 1px solid #ccc; font-size: 12px; cursor: pointer; }
+.dialog-comments-list .operation > .item:hover { text-decoration: underline; }
+.dialog-comments-list .operation > .item:last-child { padding-right: 0; border-right: none; }
+.dialog-comments-list .operation .icon { display: inline-block; margin: -2px 4px 0 0; vertical-align: middle; font-size: 16px; }
+.dialog-comments-list .reply-dialog { display: none; padding: 10px; margin-top: 10px; background-color: #eee; }
+.dialog-comments-list .reply-dialog .form-group:last-child { margin-bottom: 0; }
+
+/*comments form styles*/
+.comments-form { }
+.comments-form .control-label { font-size: 14px; }

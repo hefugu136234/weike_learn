@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.PageRemainMapper">
+	<resultMap type="pageRemain" id="pageRemainMapper" extends="base.baseModel">
+		<result property="status" column="status" />
+		<result property="accessUri" column="accessUri" />
+		<result property="plateform" column="plateform" />
+		<result property="referType" column="referType" />
+		<result property="referId" column="referId" />
+		<result property="ip" column="ip" />
+		<result property="openId" column="openId" />
+		<result property="unionid" column="unionid" />
+		<result property="userId" column="userId" />
+		<result property="firstView" column="firstView" />
+		<result property="lastView" column="lastView" />
+		<result property="remainTime" column="remainTime" />
+	</resultMap>
+
+	<insert id="addPageRemain" parameterType="pageRemain">
+		INSERT INTO page_remain
+		(createDate,modifyDate,uuid,mark,status,isActive,accessUri,plateform,referType,referId,ip,openId,unionid,userId,firstView,lastView,remainTime)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{mark},#{status},#{isActive},#{accessUri},#{plateform},#{referType},#{referId},#{ip},#{openId},#{unionid},#{userId},#{firstView},#{lastView},#{remainTime})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectPageRemainById" parameterType="int"
+		resultMap="pageRemainMapper">
+		select * from page_remain where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectPageRemainByUuid" parameterType="string"
+		resultMap="pageRemainMapper">
+		select * from page_remain where uuid=#{uuid} and
+		isActive=1
+	</select>
+
+	<update id="updatePageRemain" parameterType="pageRemain">
+		update
+		page_remain
+		set
+		modifyDate=NOW(),
+		lastView =#{lastView},remainTime=#{remainTime}
+		where id=#{id}
+	</update>
+
+	<select id="resViewTimeByUser" resultType="java.lang.Integer">
+		select sum(remainTime)
+		from page_remain where isActive=1 and referType=#{referType} and
+		referId=#{referId} and userId=#{userId}
+	</select>
+
+
+</mapper>

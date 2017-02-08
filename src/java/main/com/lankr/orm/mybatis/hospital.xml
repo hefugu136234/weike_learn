@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.HospitalMapper">
+
+	<resultMap type="hospital" id="hospitalMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="grade" column="grade" />
+		<result property="mobile" column="mobile" />
+		<result property="address" column="address" />
+		<association property="province" column="provinceId" select="com.lankr.orm.mybatis.mapper.ProvinceMapper.selectProById" />
+		<association property="city" column="cityId" select="com.lankr.orm.mybatis.mapper.ProvinceMapper.selectCtiById" />
+	</resultMap>
+
+
+	<resultMap type="departments" id="departmentsMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+	</resultMap>
+
+	<select id="selectAllHospital" resultMap="hospitalMapper">
+		select * from base_hospital where isActive=1
+	</select>
+
+	<select id="selectHospitalById" parameterType="int" resultMap="hospitalMapper">
+		select * from base_hospital where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectHospitalByUUid" parameterType="string" resultMap="hospitalMapper">
+		select * from base_hospital where uuid=#{uuid} and isActive=1
+	</select>
+	
+	<select id="selectHosListByCityId" parameterType="int" resultMap="hospitalMapper">
+	    select * from base_hospital where cityId=#{id} and isActive=1
+	</select>
+	
+	<select id="searctHospitalByName" parameterType="string" resultMap="hospitalMapper">
+		select * from base_hospital where name=#{name} and isActive=1
+	</select>
+	
+	<select id="selectDePatList"  resultMap="departmentsMapper">
+	    select * from base_departments where isActive=1
+	</select>
+
+	<select id="selectDePatByUuid" parameterType="string" resultMap="departmentsMapper">
+		select * from base_departments where uuid=#{uuid} and isActive=1
+	</select>
+	
+	<select id="selectDePatById" parameterType="int" resultMap="departmentsMapper">
+		select * from base_departments where id=#{id} and isActive=1
+	</select>
+	
+	<select id="searchDatatableHospitals" resultMap="hospitalMapper">
+		select * from
+		base_hospital where isActive=1 
+		and (name like "%"#{0}"%" or address like "%"#{0}"%") 
+		<if test="provinceId > 0">
+			and provinceId = #{provinceId}
+		</if>
+		<if test="cityId > 0">
+			and cityId = #{cityId}
+		</if>
+		order by modifyDate desc limit #{1},#{2}
+	</select>
+	
+	<insert id="saveHospital" parameterType="hospital">
+	    INSERT INTO base_hospital (uuid, name, grade, mobile, address, provinceId, cityId, createDate, modifyDate, isActive) 
+	    VALUES 
+	    (#{uuid}, #{name}, #{grade}, #{mobile}, #{address}, #{province.id}, #{city.id}, NOW(), NOW(), #{isActive} );
+	</insert>
+	
+	<update id="updateHospital" parameterType="hospital">
+		UPDATE base_hospital set name=#{name}, grade=#{grade}, address=#{address}, provinceId=#{province.id}, cityId=#{city.id}, mobile=#{mobile}, modifyDate=NOW()
+		WHERE id=#{id}
+	</update>
+	
+	<update id="removeHospital" parameterType="hospital">
+		UPDATE base_hospital set isActive=0, modifyDate=NOW()
+		WHERE id=#{id}
+	</update>
+	
+
+	<!--批量添加医院 -->
+	<insert id="batchAddHospital" parameterType="java.util.List">
+		INSERT INTO base_hospital
+		(uuid,name,provinceId,cityId,createDate,modifyDate,isActive,grade,mobile,address)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		    (#{item.uuid},#{item.name},#{item.province.id},#{item.city.id},NOW(),NOW(),#{item.isActive},#{item.grade},#{item.mobile},#{item.address})
+		</foreach>
+	</insert>
+	<!-- 批量添加医院 -->
+
+	<!--批量添加科室 -->
+	<insert id="batchAddDepartments" parameterType="java.util.List">
+	    INSERT INTO base_departments
+		(uuid,name,createDate,modifyDate,isActive)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		    (#{item.uuid},#{item.name},NOW(),NOW(),#{item.isActive})
+		</foreach>
+	</insert>
+	<!-- 批量添加科室 -->
+
+
+
+</mapper>

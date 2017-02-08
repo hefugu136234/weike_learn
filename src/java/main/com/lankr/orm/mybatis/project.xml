@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="project">
+	<resultMap type="Project" id="projectMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="projectName" column="projectName" />
+		<result property="pinyin" column="pinyin" />
+		<result property="apply" column="apply" />
+		<result property="status" column="status" />
+		<result property="logoUrl" column="logoUrl" />
+	</resultMap>
+
+	<insert id="addProject" parameterType="Project">
+		INSERT INTO project
+		(projectName,pinyin,apply,createDate,modifyDate,mark,isActive,logoUrl,status,uuid)
+		VALUES
+		(#{projectName},#{pinyin},#{apply},NOW(),NOW(),#{mark},#{isActive},#{logoUrl},#{status},#{uuid})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<select id="searchProject" parameterType="string" resultMap="projectMapper">
+		select * from project where isActive=1 and (projectName like
+		"%"#{query}"%" or pinyin like "%"#{query}"%") order by createDate desc
+	</select>
+
+	<select id="getProjectById" parameterType="int" resultMap="projectMapper">
+		select * from project where id = #{id} and isActive=1
+	</select>
+
+	<select id="getProjectByUuid" parameterType="string" resultMap="projectMapper">
+		select * from project where uuid=#{uuid}
+	</select>
+
+	<select id="searchReferenceProjectByUserId" parameterType="int"
+		resultMap="projectMapper">
+		select project.* from user left join user_reference on
+		user.id =
+		user_reference.userId left join project on project.id =
+		user_reference.projectId where user.id= #{id} order by
+		project.createDate
+		desc
+	</select>
+
+</mapper>    

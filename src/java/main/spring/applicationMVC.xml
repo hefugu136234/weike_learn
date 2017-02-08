@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/jee
+    http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:component-scan base-package="com.lankr.tv_cloud.web"/>
+	<context:component-scan base-package="com.lankr.tv_cloud.qr"/>
+	<mvc:resources location="/assets/**" mapping="/assets/**" />
+	<mvc:resources mapping="/error/*.html" location="/error/**" />
+	<mvc:resources mapping="/*.txt" location="/*.txt" />
+	<mvc:resources location="/tv/public/*.html" mapping="/tv/public/*.html" />
+	
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="mediaTypes">
+			<map>
+				<entry key="atom" value="application/atom+xml" />
+				<entry key="html" value="text/html" />
+				<entry key="json" value="application/json" />
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+			</list>
+		</property>
+	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/api/**" />
+			<mvc:exclude-mapping path="/f/**" />
+			<bean class="com.lankr.tv_cloud.web.AdminWebInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/f/**" />
+			<bean class="com.lankr.tv_cloud.web.front.FrontIntercepor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/tv/**" />
+			<bean class="com.lankr.tv_cloud.web.api.tv.TvAPIInterceptor" />
+		</mvc:interceptor>
+		<!-- <mvc:interceptor>
+			<mvc:mapping path="/api/app/**" />
+			<bean class="com.lankr.tv_cloud.web.api.app.AppAPIInterceptor" />
+		</mvc:interceptor> -->
+		<mvc:interceptor>
+			<mvc:mapping path="/api/webchat/**" />
+			<bean class="com.lankr.tv_cloud.web.api.webchat.WebChatInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<mvc:resources location="/ueditor/" mapping="/ueditor/**" />
+	<mvc:resources location="/webvr/**" mapping="/webvr/**" />
+	<mvc:resources location="/certification_file/" mapping="/certification_file/**" />
+	<mvc:resources location="/signimg/" mapping="/signimg/**" />
+	
+	<mvc:annotation-driven />
+	
+	<aop:aspectj-autoproxy />
+	
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="250000" />
+	</bean>
+</beans>

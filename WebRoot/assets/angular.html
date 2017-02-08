@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>
+</head>
+<style>
+table, th , td  {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+table tr:nth-child(odd)	{
+  background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+</style>
+<body>
+<div data-ng-app="myApp">
+
+<div ng-controller="myCtrl1">
+  <p>名字 : <input type="text" ng-model="name"></p>
+  <h1>Hello {{lastname}}</h1>	
+</div>
+
+<div ng-controller="myCtrl2">
+ <h1>{{lastname}} 家族成员:</h1>
+
+<ul>
+    <li ng-repeat="x in names">{{x.uuid}} {{x.name}}</li>
+</ul>
+
+<table>
+  <tr ng-repeat="x in names">
+    <td>{{ x.uuid }}</td>
+    <td>{{ x.name }}</td>
+  </tr>
+</table>
+</div>
+
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+
+app.controller('myCtrl2', function($scope, $rootScope,$http) {
+	$http.get("http://localhost:8080/api/webchat/city/51559f3d-fee6-4237-84de-765363d1b3ca")
+  .success(function (response) {$scope.names = response.itemList;});
+    $rootScope.lastname = "Refsnes";
+}).controller('myCtrl1',function($scope,$rootScope){
+	$scope.name="李磊";
+});
+</script>
+
+</body>
+</html>

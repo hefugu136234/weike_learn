@@ -1,0 +1,48 @@
+/*default form styles*/
+.default-form { width: 100%; }
+.default-form .form-group { display: -webkit-box; display: -moz-box; display: -webkit-flex; display: -moz-flex; display: -ms-flexbox; display: flex; position: relative; margin-bottom: 1px; background-color: #fff; }
+.default-form .form-group:after { display: table; content: " "; clear: both; }
+.default-form .form-group:last-child { margin-bottom: 0; }
+.default-form .form-group.required:before { position: absolute; z-index: 1; top: 50%; left: 4px; height: 14px; line-height: 14px; -webkit-transform: translateY(-50%); transform: translateY(-50%); content: '*'; font-size: 14px; color: #fa6233; }
+.default-form .form-label { height: 40px; line-height: 40px; padding: 0 0 0 10px; text-align: right; font-size: 12px; }
+.default-form .form-input { -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; }
+.default-form .form-control { width: 100%; height: 40px; line-height: 1.42857143; padding: 4px 10px; border: none; border-radius: 0; background-color: #fff; }
+.default-form .form-group.with-btn .form-input { padding-right: 110px; }
+.default-form .form-group.with-btn .form-control ~ .button { position: absolute; top: 0; right: 0; width: 110px; height: 40px; line-height: 38px; padding: 0; font-size: 12px; }
+.default-form .select-text { line-height: 32px; font-size: 12px; }
+.default-form .form-select { padding-right: 20px; }
+.default-form .form-select:after { position: absolute; top: 50%; right: 10px; -webkit-transform: translateY(-50%); -moz-transform: translateY(-50%); transform: translateY(-50%); line-height: 1; font-family: 'icomoon' !important; content: "\e902"; text-decoration: none; font-size: 12px; color: #999; -webkit-font-smoothing: antialiased; }
+.default-form .form-select select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; }
+.default-form textarea.form-control { height: auto; line-height: 20px; padding: 10px; font-size: 12px; }
+.default-form .protocol { display: block; line-height: 40px; padding: 0 8px; border: none; background-color: transparent; }
+.default-form .protocol .link { position: relative; z-index: 10; text-decoration: underline; }
+.default-form-tips { line-height: 20px; font-size: 12px; color: #216cc0; }
+
+/*transparent form styles*/
+.form-logo { margin-top: 16px; text-align: center; }
+.form-logo img { width: 44.8%; }
+.form-slogen { margin-top: 10px; text-align: center; }
+.form-slogen img { width: 49%; }
+.form-title { margin-top: 14px; text-align: center; font-size: 15px; color: #fff; }
+.default-form.transparent .form-group { margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 6px; color: #fff; background-color: rgba(0, 0, 0, .2); overflow: hidden; }
+.default-form.transparent .form-label { color: #fff; }
+.default-form.transparent .form-label .icon { line-height: 40px; font-size: 20px; }
+.default-form.transparent .form-control { color: #fff; background-color: transparent; }
+.default-form.transparent .form-select:after { color: #fff; }
+.default-form.transparent .default-form-tips { color: #fff; }
+.default-form.transparent .item-link { padding: 10px 0; }
+.default-form.transparent .item-link a { text-decoration: underline; font-size: 12px; color: #fff; }
+.default-form.transparent .btn-area { margin-right: -2%; margin-left: -2%; }
+.default-form.transparent .btn-area .button { float: left; width: 46%; margin: 0 2%; }
+.default-form.transparent .protocol .link { position: relative; z-index: 10; text-decoration: underline; vertical-align: top; font-size: 12px; color: rgba(255, 255, 255, .8); }
+.form-top-logo { position: absolute; top: 10px; left: 10px; width: 40px; height: 40px; line-height: 40px; text-align: center; color: #fff; }
+.form-top-logo .icon { line-height: 40px; font-size: 30px; }
+
+/*checkbox styles*/
+input[type=checkbox], input[type=radio] { display: inline-block; width: 24px; height: 24px; border: 0; outline: 0 !important; background-color: transparent; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; box-sizing: border-box; padding: 0; margin: 0; }
+input[type=checkbox]:before, input[type=radio]:before { font-family: 'icomoon' !important; font-size: 24px; font-weight: 400; line-height: 1; text-decoration: none; color: #aaa; border-radius: 0; background: 0 0; -webkit-font-smoothing: antialiased; }
+input[type=checkbox]:checked:before, input[type=radio]:checked:before { color: #796aaf; }
+input[type=checkbox]:before { content: "\e948"; }
+input[type=checkbox]:checked:before { content: "\e947"; }
+input[type=radio]:before { content: "\e941"; }
+input[type=radio]:checked:before { content: "\e93f"; }

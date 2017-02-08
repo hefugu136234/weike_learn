@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.QrAuthMapper">
+	<resultMap type="com.lankr.tv_cloud.model.TvQrAuth" id="qrAuthMapper"
+		extends="base.baseModel">
+		<result property="authDate" column="authDate" />
+		<result property="key" column="key" />
+		<result property="ip" column="ip" />
+		<result property="device" column="device" />
+		<result property="qrUrl" column="qrUrl" />
+		<result property="status" column="status" />
+		<association property="user" column="userId" select="user.getUserById" />
+
+	</resultMap>
+
+	<insert id="addQrAuth" parameterType="com.lankr.tv_cloud.model.TvQrAuth">
+		insert into
+		qr_auth
+		(uuid,createDate,modifyDate,authDate,`key`,ip,`device`,qrUrl,status,isActive)
+		values
+		(#{uuid},#{createDate},#{modifyDate},#{authDate},#{key},#{ip},#{device},#{qrUrl},#{status},#{isActive})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<select id="getByUuid" parameterType="string" resultMap="qrAuthMapper">
+		select *
+		from qr_auth where
+		isActive=1 and uuid=#{0}
+	</select>
+
+	<select id="getAuthByTicket" parameterType="string" resultMap="qrAuthMapper">
+		select * from qr_auth where
+		isActive=1 and `key`=#{0}
+	</select>
+
+	<update id="updateQrAuth" parameterType="com.lankr.tv_cloud.model.TvQrAuth">
+		update qr_auth set
+		modifyDate=NOW(),status=#{status},lastScanDate=#{lastScanDate},userId=#{user.id},authDate=#{authDate},isActive=#{isActive}
+		where id=#{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.GameMgrMapper">
+
+	<resultMap type="com.lankr.tv_cloud.model.LotteryRecord" id="lotteryRecordMapper"
+													extends="base.baseModel">
+		<result property="type" column="type" />
+		<result property="ticket" column="ticket" />											
+		<result property="amount" column="amount" />
+		<result property="status" column="status" />		
+		
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="lottery" column="lotteryId" select="com.lankr.orm.mybatis.mapper.GameMgrMapper.selectLotteryById" />
+		<association property="award" column="awardId" select="com.lankr.orm.mybatis.mapper.GameMgrMapper.queryAwardById" />
+	</resultMap>
+	
+	<resultMap type="com.lankr.tv_cloud.model.LotteryRecord" id="lotteryRecordMapperForRecord"
+													extends="base.baseModel">
+		<result property="type" column="type" />
+		<result property="ticket" column="ticket" />											
+		<result property="amount" column="amount" />
+		<result property="status" column="status" />		
+		
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="lottery" column="lotteryId" select="com.lankr.orm.mybatis.mapper.GameMgrMapper.selectLotteryById" />
+		<association property="award" column="awardId" select="com.lankr.orm.mybatis.mapper.GameMgrMapper.queryAwardByIdForRecord" />
+	</resultMap>
+
+
+	<insert id="saveLottery" parameterType="lottery" >
+		INSERT INTO tmp_lottery
+		(uuid, name, pinyin, createDate, modifyDate, beginDate,
+		endDate, joinTimes, status, isActive, mark, templateId, rules)
+		VALUES
+		(#{uuid}, #{name}, #{pinyin}, NOW(), NOW(), #{beginDate}, #{endDate}, #{joinTimes}, #{status}, 
+			#{isActive}, #{mark}, #{templateId}, #{rules} )
+	</insert>
+
+	<insert id="saveAward" parameterType="award">
+		INSERT INTO
+		tmp_award
+		(uuid, name, lotteryId, createDate, modifyDate, number,
+		maxWinTimes, status, isActive, mark, conditional)
+		VALUES
+		(#{uuid},
+		#{name}, #{lottery.id}, NOW(), NOW(), #{number}, #{maxWinTimes},
+		#{status}, #{isActive}, #{mark}, #{conditional})
+	</insert>
+
+	<select id="queryGamesByUuid" resultType="lottery">
+		select * from
+		tmp_lottery
+		where tmp_lottery.uuid=#{0} and tmp_lottery.isActive=1
+	</select>
+
+	<!-- <select id="selectLotteryById" resultType="lottery">
+		select * from
+		tmp_lottery inner join tmp_award on tmp_lottery.id =
+		tmp_award.lotteryId
+		where tmp_lottery.id=#{0} and
+		tmp_lottery.isActive=1
+	</select> -->
+	
+	<select id="selectLotteryById" resultType="lottery">
+		select * from
+		tmp_lottery 
+		where tmp_lottery.id=#{0} and
+		tmp_lottery.isActive=1
+	</select>
+
+	<select id="searchGameListForTable" resultType="lottery">
+		select * from
+		tmp_lottery where isActive = 1
+		and
+		(name like "%"#{0}"%" or mark like "%"#{0}"%")
+		order by modifyDate desc limit #{1},#{2}
+	</select>
+
+	
+	<update id="updateLottery">
+		UPDATE tmp_lottery 
+		SET 
+		name = #{name}, pinyin = #{pinyin}, modifyDate = NOW(), beginDate = #{beginDate}, endDate = #{endDate}, 
+		joinTimes = #{joinTimes}, page = #{page}, mark = #{mark}, isActive=#{isActive}, status = #{status},
+		templateId = #{templateId}, rules = #{rules} 
+		where uuid=#{uuid}
+
+	</update>
+
+	<update id="updateAward">
+		UPDATE tmp_award
+
+		SET 
+		name = #{name}, 
+		number = #{number}, maxWinTimes = #{maxWinTimes}, conditional = #{conditional}, modifyDate = NOW()
+		where uuid=#{uuid} and lotteryId = #{lottery.id}
+
+	</update>
+
+	<select id="queryAwardByUuid" resultType="award">
+		select * from tmp_award
+		where tmp_award.uuid=#{0} and tmp_award.isActive=1
+	</select>
+	
+	<select id="queryAwardById" resultType="award">
+		select * from tmp_award
+		where tmp_award.id=#{0} and tmp_award.isActive=1
+	</select>
+	
+	<select id="queryAwardByIdForRecord" resultType="award">
+		select * from tmp_award
+		where tmp_award.id=#{0} 
+	</select>
+	
+
+	<update id="removeAward">
+		UPDATE tmp_award SET isActive = 0, modifyDate = NOW()
+		where id=#{id}
+	</update>
+
+	<select id="queryAwardListByLotteryId" resultType="award">
+		select * from
+		tmp_award
+		where tmp_award.lotteryId = #{0} and tmp_award.isActive = 1
+	</select>
+
+	<insert id="addLotteryRecord" parameterType="com.lankr.tv_cloud.model.LotteryRecord">
+		INSERT INTO tmp_lottery_record
+		(uuid,createDate,modifyDate,userId,type,ticket,lotteryId,awardId,amount,status,isActive,mark)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{user.id},#{type},#{ticket},#{lottery.id},#{award.id},#{amount},#{status},1,#{mark})
+	</insert>
+	
+	<select id="searchGameList" resultType="lottery">
+		select * from
+		tmp_lottery
+		where tmp_lottery.isActive = 1
+	</select>
+	
+	<select id="getLotteryRecord" resultMap="lotteryRecordMapperForRecord">
+		SELECT 
+		    re.*
+		FROM
+		    tmp_lottery_record re
+		        LEFT JOIN
+		    tmp_lottery lo ON lo.id = re.lotteryId
+		WHERE
+			re.isActive=1 
+		AND 
+			((lo.name like "%"#{0}"%") or (lo.pinyin like "%"#{0}"%") or (lo.mark like "%"#{0}"%")
+				or (lo.rules like "%"#{0}"%") or (re.ticket like "%"#{0}"%"))   
+		
+		<if test="gameId != null and gameId != '' ">
+			and re.lotteryId = #{gameId}
+		</if>
+		<if test="isWiner !=null and isWiner != '' ">
+			<choose>
+				<when test='isWiner == "YES" '>
+					and re.awardId &gt; 0
+				</when>
+				<when test='isWiner == "NO" '>
+					and re.awardId is NULL
+				</when>
+			</choose>
+		</if>
+		<if test="isHandle != null and isHandle != '' ">
+			and re.status = #{isHandle}
+		</if>
+		<if test="exchangeCode != null and exchangeCode != '' ">
+			and re.ticket = #{exchangeCode}
+		</if>
+		order by re.modifyDate desc limit #{1},#{2}
+	</select>
+	
+	<select id="queryLotteryRecordByUuid" resultMap="lotteryRecordMapper">
+		select * from tmp_lottery_record
+		where tmp_lottery_record.uuid=#{0} and tmp_lottery_record.isActive = 1
+	</select>
+	
+	<update id="updateLotteryRecordStatus" parameterType="lotteryRecord">
+		UPDATE tmp_lottery_record SET status = #{status}, modifyDate = NOW()
+		where id=#{id}
+	</update>
+	
+	<select id="selectLotteryByQrsence" resultType="lottery">
+		select l.* from
+		tmp_lottery l left join (select * from qrscene where type=7) q on
+		l.id=q.reflectId  where l.isActive = 1 and  l.status!=0 and q.id is null and (l.name like
+		"%"#{0}"%"
+		or l.pinyin
+		like
+		"%"#{0}"%") order by l.modifyDate desc limit 15
+	</select>
+	
+	<select id="queryLotteryRecordByUserId" resultMap="lotteryRecordMapper">
+		select * from tmp_lottery_record
+		where tmp_lottery_record.userId=#{0} and tmp_lottery_record.lotteryId=#{1} and tmp_lottery_record.isActive = 1
+	</select>
+
+</mapper>

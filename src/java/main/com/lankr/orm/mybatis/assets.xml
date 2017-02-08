@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="asset">
+	<resultMap type="Category" id="categoryMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="sign" column="sign"/>
+		<result property="left" column="left"/>
+		<result property="right" column="right"/>
+		<result property="hierarchy" column="hierarchy"/>
+		<association property="project" column="projectId"
+			select="project.getProjectById" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="parent" column="parentId"
+			select="asset.getCategoryById" />
+		<association property="children" column="id"
+			select="asset.searchChildren" />
+		<association property="expand" column="id"
+			select="com.lankr.orm.mybatis.mapper.CategoryExpandMapper.selectExpandByCateId" />
+	</resultMap>
+
+	<resultMap type="Video" id="videoMapper">
+		<id property="id" column="id" />
+		<result property="createDate" column="createDate" />
+		<result property="modifyDate" column="modifyDate" />
+		<result property="mark" column="mark" />
+		<result property="uuid" column="uuid" />
+		<result property="isActive" column="isActive" />
+		<result property="title" column="title" />
+		<result property="pinyin" column="pinyin" />
+		<result property="duration" column="duration" />
+		<result property="thumbnailSmall" column="thumbnailSmall" />
+		<result property="thumbnailMiddle" column="thumbnailMiddle" />
+		<result property="thumbnailFarther" column="thumbnailFarther" />
+		<result property="status" column="status" />
+		<result property="ccVideoId" column="ccVideoId" />
+		<result property="assetUrl" column="assetUrl" />
+		<result property="need_price" column="need_price" />
+		<result property="price" column="price" />
+		<result property="fileId" column="fileId" />
+		<result property="size" column="size" />
+		<result property="plays_metainfo" column="plays_metainfo" />
+		<result property="videoType" column="videoType" />
+		<association property="project" column="projectId"
+			select="project.getProjectById" />
+		<association property="user" column="userId" select="user.getUserById" />
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+		<association property="resource"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.findResourceByVideoId"
+			column="id" />
+	</resultMap>
+
+	<resultMap type="com.lankr.tv_cloud.model.AssetPrice" id="assetPriceModel"
+		extends="base.baseModel">
+		<result property="price" column="price" />
+		<association property="video" column="assetId" select="asset.getVideoById" />
+	</resultMap>
+
+	<insert id="addAssetPrice" parameterType="com.lankr.tv_cloud.model.AssetPrice">
+		INSERT INTO asset_price
+		(createDate,modifyDate,isActive,assetId,price)
+		VALUES
+		(NOW(),NOW(),1,#{video.id},#{price})
+	</insert>
+
+	<select id="selectPriceByVideoId" resultMap="assetPriceModel"
+		parameterType="int">
+		select * from asset_price where isActive=1 and
+		assetId=#{id}
+	</select>
+
+
+	<insert id="addCategory" parameterType="Category">
+		INSERT INTO category
+		(name,pinyin,uuid,createDate,modifyDate,mark,isActive,parentId,projectId,userId)
+		VALUES
+		(#{name},#{pinyin},#{uuid},NOW(),NOW(),#{mark},1,#{parent.id},#{project.id},#{user.id})
+	</insert>
+
+	<update id="updateCategory" parameterType="Category">
+		update category set
+		modifyDate=NOW(),
+		mark=#{mark},name=#{name},pinyin=#{pinyin} where id =
+		#{id}
+	</update>
+
+	<update id="updateCategoryHieraychy" parameterType="Category">
+	    update category set modifyDate=NOW(),`left`=#{left},`right`=#{right},`hierarchy`=#{hierarchy} where id=#{id}
+	</update>
+	
+	<select id="getCategoryById" parameterType="int" resultMap="categoryMapper">
+		select * from category where isActive=1 and id=#{parentId}
+	</select>
+
+	<select id="getCategoryByName" parameterType="string" resultMap="categoryMapper">
+		select * from category where isActive=1 and name=#{name} limit 1
+	</select>
+
+	<select id="getCategoryByUuId" parameterType="String" resultMap="categoryMapper">
+		select * from category where isActive=1 and uuid=#{uuid}
+	</select>
+
+	<select id="searchChildren" parameterType="int" resultMap="categoryMapper">
+		select * from category where isActive=1 and parentId=#{id} order by id asc
+	</select>
+
+	<select id="fetchRootCategory" parameterType="int" resultMap="categoryMapper">
+		select * from category where isActive=1 and parentId is null and
+		projectId=#{projectId} order by id asc
+	</select>
+
+	<select id="fetchRootCategoryById" parameterType="Category"
+		resultMap="categoryMapper">
+		select * from category where isActive=1 and id=#{id} and
+		projectId=#{project.id} order by id asc
+	</select>
+
+	<insert id="addVideo" parameterType="Video">
+		<!-- <insert id="addVideo" parameterType="Video"> -->
+		INSERT INTO asset
+		(title,pinyin,createDate,modifyDate,mark,thumbnailSmall,thumbnailMiddle,thumbnailFarther,assetUrl,categoryId,isActive,status,ccVideoId,uuid,userId,projectId,duration,need_price,price,fileId,size,plays_metainfo,videoType)
+		VALUES
+		(#{title},#{pinyin},NOW(),NOW(),#{mark},#{thumbnailSmall},#{thumbnailMiddle},#{thumbnailFarther},#{assetUrl},#{category.id},1,#{status},#{ccVideoId},#{uuid},#{user.id},#{project.id},#{duration},#{need_price},#{price},#{fileId},#{size},#{plays_metainfo},#{videoType})
+
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateVideo" parameterType="Video">
+		update asset set
+		title=#{title},
+		pinyin=#{pinyin},modifyDate=NOW(),mark=#{mark},thumbnailSmall=#{thumbnailSmall},thumbnailMiddle=#{thumbnailMiddle},thumbnailFarther=#{thumbnailFarther},
+		assetUrl=#{assetUrl},categoryId=#{category.id},isActive=#{isActive},status=#{status},ccVideoId=#{ccVideoId},uuid=#{uuid},userId=#{user.id},projectId=#{project.id},duration=#{duration},need_price=#{need_price},price=#{price},fileId=#{fileId},size=#{size},plays_metainfo=#{plays_metainfo}
+		WHERE id=#{id} and isActive=1
+	</update>
+
+	<select id="getVideoByUuid" resultMap="videoMapper"
+		parameterType="string">
+		select * from asset where uuid=#{uuid}
+	</select>
+
+	<select id="getVideoById" resultMap="videoMapper" parameterType="int">
+		select * from asset where id=#{id}
+	</select>
+
+
+	<select id="searchVideos" parameterType="SubParams" resultMap="videoMapper">
+		select * from asset where isActive=1 and projectId=#{id} and (title
+		like
+		"%"#{query}"%" or pinyin like "%"#{query}"%")
+		<choose>
+			<when test="comlunName=='createDate'">
+				<if test="sortVlaue=='asc'">
+					order by createDate asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by createDate desc
+				</if>
+			</when>
+			<when test="comlunName=='modifyDate'">
+				<if test="sortVlaue=='asc'">
+					order by modifyDate asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by modifyDate desc
+				</if>
+			</when>
+
+			<when test="comlunName=='video_status'">
+				<if test="sortVlaue=='asc'">
+					order by status asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by status desc
+				</if>
+			</when>
+
+			<when test="comlunName=='price'">
+				<if test="sortVlaue=='asc'">
+					order by price asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by price desc
+				</if>
+			</when>
+
+		</choose>
+	</select>
+
+	<select id="getVideoBycateId" parameterType="SubParams"
+		resultMap="videoMapper">
+		select * from asset where isActive=1 and status=1 and
+		projectId=#{projectId} and categoryId=#{id}
+	</select>
+
+	<select id="searchApiVideos" parameterType="SubParams"
+		resultMap="videoMapper">
+		select * from asset where isActive=1
+		and status=1 and
+		categoryId=#{id} and
+		modifyDate > #{updated_at}
+	</select>
+
+	<delete id="deletecategory" parameterType="Category">
+		update category set
+		isActive=#{isActive}
+		WHERE id=#{id}
+	</delete>
+	
+	<!-- modified by mayuan start -->
+	<select id="searchVideosUseButton" parameterType="SubParams" resultMap="videoMapper">
+		select * from asset left join category on asset.categoryId = category.id 
+		where asset.isActive=1 
+		and asset.projectId = #{id}
+		<if test="categoryUuid !=null and categoryUuid != '' ">
+			and 
+			category.uuid = #{categoryUuid }
+		</if>
+		and (asset.title like "%"#{query}"%" or asset.pinyin like "%"#{query}"%")
+		<choose>
+			<when test="comlunName=='createDate'">
+				<if test="sortVlaue=='asc'">
+					order by asset.createDate asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by asset.createDate desc
+				</if>
+			</when>
+			<when test="comlunName=='modifyDate'">
+				<if test="sortVlaue=='asc'">
+					order by asset.modifyDate asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by asset.modifyDate desc
+				</if>
+			</when>
+			<when test="comlunName=='video_status'">
+				<if test="sortVlaue=='asc'">
+					order by asset.status asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by asset.status desc
+				</if>
+			</when>
+			<when test="comlunName=='price'">
+				<if test="sortVlaue=='asc'">
+					order by asset.price asc
+				</if>
+				<if test="sortVlaue=='desc'">
+					order by asset.price desc
+				</if>
+			</when>
+		</choose>
+	</select>
+	<!-- modified by mayuan end -->
+
+</mapper>
+    

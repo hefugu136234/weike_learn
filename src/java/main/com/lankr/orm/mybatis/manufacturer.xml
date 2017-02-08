@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manufact">
+	<resultMap type="manufacturer" id="manufacturerMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="status" column="status" />
+		<result property="address" column="address" />
+		<result property="taskId" column="taskId" />
+		<result property="serialNum" column="serialNum" />
+	</resultMap>
+
+	<resultMap type="progroup" id="progroupMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="status" column="status" />
+		<result property="serialNum" column="serialNum" />
+		<association property="manufacturer" column="manufacturerId"
+			select="manufact.selectManufacturerById" />
+	</resultMap>
+
+	<insert id="addManufacturer" parameterType="manufacturer">
+		INSERT INTO manufacturer
+		(uuid,createDate,modifyDate,name,pinyin,status,isActive,mark,address,taskId,serialNum)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{name},#{pinyin},#{status},#{isActive},#{mark},#{address},#{taskId},#{serialNum})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectManufacturerList" parameterType="string"
+		resultMap="manufacturerMapper">
+		select * from manufacturer where isActive=1 and (name
+		like
+		"%"#{query}"%" or
+		pinyin
+		like "%"#{query}"%") order by
+		createDate
+		desc
+	</select>
+	
+	<select id="selectManufacturer"
+		resultMap="manufacturerMapper">
+		select * from manufacturer where isActive=1 and status=1 order by
+		createDate limit 10
+	</select>
+	
+	<select id="selectManufacturerByQ"
+		resultMap="manufacturerMapper" parameterType="string">
+		select * from manufacturer where isActive=1 and status=1 and (name
+		like
+		"%"#{query}"%" or
+		pinyin
+		like "%"#{query}"%") order by
+		createDate limit 10
+	</select>
+	
+
+	<select id="selectManufacturerByUuid" parameterType="string"
+		resultMap="manufacturerMapper">
+		select * from manufacturer where isActive=1 and uuid=#{uuid}
+	</select>
+
+	<select id="selectManufacturerById" parameterType="int"
+		resultMap="manufacturerMapper">
+		select * from manufacturer where isActive=1 and id=#{id}
+	</select>
+	
+	<update id="updateManufacturerStatus" parameterType="manufacturer">
+		update
+		manufacturer set
+		modifyDate=NOW(),status=#{status}
+		where
+		id=#{id}
+	</update>
+
+	<update id="updateManufacturer" parameterType="manufacturer">
+		update
+		manufacturer set
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},address=#{address},taskId=#{taskId},serialNum=#{serialNum}
+		where
+		id=#{id}
+	</update>
+
+	<insert id="addProgroup" parameterType="progroup">
+		INSERT INTO product_group
+		(uuid,createDate,modifyDate,name,pinyin,status,isActive,mark,manufacturerId,serialNum)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{name},#{pinyin},#{status},#{isActive},#{mark},#{manufacturer.id},#{serialNum})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectProgroupList" parameterType="SubParams"
+		resultMap="progroupMapper">
+		select * from product_group where isActive=1 and
+		manufacturerId=#{id} and (name
+		like
+		"%"#{query}"%" or
+		pinyin
+		like
+		"%"#{query}"%") order by
+		createDate
+		desc
+	</select>
+
+	<select id="selectProgroupByUuid" parameterType="string"
+		resultMap="progroupMapper">
+		select * from product_group where isActive=1 and
+		uuid=#{uuid}
+	</select>
+
+	<select id="selectProgroupById" parameterType="int" resultMap="progroupMapper">
+		select * from product_group where isActive=1 and id=#{id}
+	</select>
+
+	<update id="updateProgroupStatus" parameterType="progroup">
+		update
+		product_group set modifyDate=NOW(),status=#{status} where
+		id=#{id}
+	</update>
+	
+	<update id="updateProgroup" parameterType="progroup">
+		update
+		product_group set modifyDate=NOW(),name=#{name},pinyin=#{pinyin},manufacturerId=#{manufacturer.id},serialNum=#{serialNum} where
+		id=#{id}
+	</update>
+	
+	<select id="getProductGroupListById" parameterType="int" resultMap="progroupMapper">
+		select * from product_group where isActive=1 and status=1 and manufacturerId=#{id}
+	</select>
+
+</mapper>

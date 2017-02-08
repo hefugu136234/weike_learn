@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ProvinceMapper">
+
+	<resultMap type="Province" id="proviceMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+	</resultMap>
+
+
+	<resultMap type="City" id="cityMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<association property="province" column="provinceId" select="selectProById" />
+	</resultMap>
+
+	<resultMap type="District" id="districtMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<association property="province" column="provinceId" select="selectProById" />
+		<association property="city" column="cityId" select="selectCtiById" />
+	</resultMap>
+
+	<select id="selectProById" parameterType="int" resultMap="proviceMapper">
+		select * from base_province where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectProByUUid" parameterType="string" resultMap="proviceMapper">
+		select * from base_province where uuid=#{uuid} and isActive=1
+	</select>
+	
+	<select id="selectProList" resultMap="proviceMapper">
+	    select * from base_province where isActive=1 order by modifyDate asc
+	</select>
+	
+	<select id="selectProByName" parameterType="string" resultMap="proviceMapper">
+	    select * from base_province where name=#{name} and isActive=1
+	</select>
+
+	<select id="selectCtiById" parameterType="int" resultMap="cityMapper">
+		select * from base_city where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectCtiByUUid" parameterType="string" resultMap="cityMapper">
+		select * from base_city where uuid=#{uuid} and isActive=1
+	</select>
+
+	<select id="selectCtiListById" parameterType="int" resultMap="cityMapper">
+		select * from base_city where provinceId=#{id} and isActive=1
+	</select>
+	
+	<select id="selectCtiByNameAndId" parameterType="SubParams" resultMap="cityMapper">
+		select * from base_city where name=#{query} and provinceId=#{id} and isActive=1
+	</select>
+	
+	<select id="selectCtiByName" parameterType="SubParams" resultMap="cityMapper">
+		select * from base_city where name=#{query} and isActive=1 order by modifyDate asc
+	</select>
+
+	<select id="selectDisById" parameterType="int" resultMap="districtMapper">
+		select * from base_district where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectDisListById" parameterType="int" resultMap="districtMapper">
+		select * from base_district where cityId=#{id} and isActive=1
+	</select>
+
+	<select id="selectDisByUUid" parameterType="string" resultMap="districtMapper">
+		select * from base_district where uuid=#{uuid} and isActive=1
+	</select>
+
+	<!--批量添加省 -->
+	<insert id="batchAddProvince" parameterType="java.util.List">
+		INSERT INTO base_province
+		(uuid,name,createDate,modifyDate,isActive)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		    (#{item.uuid},#{item.name},NOW(),NOW(),#{item.isActive})
+		</foreach>
+	</insert>
+	<!-- 批量添加省 -->
+
+	<!--批量添加市 -->
+	<insert id="batchAddCity" parameterType="java.util.List">
+	    INSERT INTO base_city
+		(uuid,name,createDate,modifyDate,provinceId,isActive)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		    (#{item.uuid},#{item.name},NOW(),NOW(),#{item.province.id},#{item.isActive})
+		</foreach>
+	</insert>
+	<!-- 批量添加市 -->
+
+	<!--批量添加区 -->
+	<insert id="batchAddDistrict" parameterType="java.util.List">
+	     INSERT INTO base_district
+		(uuid,name,createDate,modifyDate,provinceId,cityId,isActive)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		    (#{item.uuid},#{item.name},NOW(),NOW(),#{item.province.id},#{item.city.id},#{item.isActive})
+		</foreach>
+	</insert>
+	<!-- 批量添加区 -->
+
+
+
+</mapper>

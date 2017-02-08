@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.NewsMaper">
+	<resultMap type="NewsInfo" id="newsMapper" extends="base.baseModel">
+		<result property="title" column="title" />
+		<result property="content" column="content" />
+		<result property="label" column="label" />
+		<result property="author" column="author" />
+		<result property="qrTaskId" column="qrTaskId"/>
+		<association property="category" column="categoryId"
+			select="asset.getCategoryById" />
+	</resultMap>
+
+	<select id="selectInfoById" parameterType="int" resultMap="newsMapper">
+		select * from news_info where id=#{id}
+	</select>
+
+	<select id="selectInfoByUuid" parameterType="string" resultMap="newsMapper">
+		select * from news_info where uuid=#{uuid}
+	</select>
+
+	<insert id="addInfo" parameterType="NewsInfo">
+		insert into news_info
+		(uuid,createDate,modifyDate,title,summary,qrTaskId,content,label,author,status,isActive,categoryId)
+		VALUES
+		(#{uuid},NOW(),NOW(),#{title},#{summary},#{qrTaskId},#{content},#{label},#{author},#{status},#{isActive},#{category.id})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateInfo" parameterType="NewsInfo">
+		update news_info set
+		modifyDate=NOW(),title=#{title},summary=#{summary},content=#{content},categoryId=#{category.id},
+		label=#{label},author=#{author},qrTaskId=#{qrTaskId} where id=#{id}
+	</update>
+
+	<update id="updateInfoStatus" parameterType="NewsInfo">
+		update news_info set
+		status=#{status},modifyDate=NOW() where id=#{id}
+	</update>
+
+	<select id="selectInfoList" parameterType="string" resultMap="newsMapper">
+		select * from news_info where (title like "%"#{query}"%" or author
+		like
+		"%"#{query}"%") and isActive=1
+		order by createDate desc
+	</select>
+
+	<select id="searchAllNews" resultMap="newsMapper">
+		select * from news_info
+		where status=1 and isActive=1 order by createDate
+		desc
+	</select>
+	
+	<select id="searchAllNewsByName" resultMap="newsMapper" parameterType="int">
+		select * from news_info
+		where status=1 and isActive=1 and categoryId=#{categoryId} order by createDate
+		desc
+	</select>
+
+	<select id="selectInfoByUuidOfApp" parameterType="string"
+		resultMap="newsMapper">
+		select * from news_info where uuid=#{uuid} and status=1 and
+		isActive=1
+	</select>
+
+	<select id="selectListByCategoryId" parameterType="SubParams" resultMap="newsMapper">
+		select * from
+		news_info
+		where status=1 and isActive=1 and 
+		categoryId=#{id} and news_info.createDate &lt;#{updated_at} order
+		by createDate desc limit #{size}
+	</select>
+	
+	<select id="selectInfoWx" parameterType="int" resultMap="newsMapper">
+		select * from news_info where categoryId=#{categoryId} order
+		by createDate desc limit 1
+	</select>
+	
+	<select id="searchAllWx" resultMap="newsMapper">
+		select * from news_info
+		where status=1 and isActive=1 and categoryId=#{categoryId} order by createDate
+		desc limit 50
+	</select>
+</mapper>

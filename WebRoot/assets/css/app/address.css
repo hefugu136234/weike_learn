@@ -1,0 +1,14 @@
+/*address list styles*/
+.address-list li { border-bottom: 1px solid #e6e6e6; }
+.address-list li:last-child { border-bottom: none; }
+.address-list .box { position: relative; display: block; padding: 10px; color: #333; background-color: #fff; }
+.address-list .box.with-arr { padding-right: 50px; }
+.address-list .box.with-arr:after { position: absolute; top: 50%; right: 8px; line-height: 1; content: '\e902'; -webkit-transform: translateY(-50%); transform: translateY(-50%); text-decoration: none; font-family: 'icomoon'; font-size: 16px; color: #0079c9; -webkit-font-smoothing: antialiased; }
+.address-list .info { height: 20px; line-height: 20px; margin-bottom: 8px; font-size: 15px; }
+.address-list .name { float: left; }
+.address-list .name .tag { display: none; height: 20px; line-height: 20px; padding: 0 6px; margin: -2px 0 0 12px; border-radius: 4px; vertical-align: middle; font-size: 12px; font-weight: bold; color: #fff; background-color: #58c6f4; }
+.address-list li.current .name .tag { display: inline-block; }
+.address-list .tel { float: right; }
+.address-list .detail { line-height: 18px; font-size: 12px; }
+.set-address-default .icon { position: absolute; top: 50%; right: 12px; width: 20px; height: 20px; line-height: 20px; border-radius: 2px; margin-top: -10px; text-align: center; font-size: 20px; font-weight: bold; color: #d7dee8; background-color: #d7dee8; }
+.set-address-default.current .icon { color: inherit; }

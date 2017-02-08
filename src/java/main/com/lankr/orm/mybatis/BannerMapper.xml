@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.BannerMapper">
+	<cache type="com.lankr.tv_cloud.cache.EhCache" />
+	
+	<!-- 新增banner操作 -->
+	<insert id="saveBanner" parameterType="banner" >
+		insert into banner
+		(uuid, title, createDate, modifyDate, imageUrl, refUrl, type, position, state, isActive, mark, validDate, taskId)
+		values
+		(#{uuid}, #{title}, NOW(), NOW(), #{imageUrl}, #{refUrl}, #{type}, #{position}, #{state}, #{isActive}, #{mark}, #{validDate}, #{taskId})
+	</insert>
+	
+	<!-- 查询所有Banner -->
+	<select id="selectBannerList" parameterType="subParams" resultType="banner" >
+		select * from banner where isActive=1 
+		<if test="query !=null and query != '' ">
+			and (title like "%"#{query}"%" or mark like "%"#{query}"%")
+		</if>
+		<choose>
+			<when test="type == 1 ">
+				and (type=1 or type=0)
+			</when>
+			<when test="type == 2 ">
+				and (type=2 or type=0)
+			</when>
+			<when test="type == 3 ">
+				and (type=3 or type=0)
+			</when>
+			<when test="type == 4 ">
+				and (type=4 or type=0)
+			</when>
+		</choose>
+		<!-- 默认按修改时间排序 -->
+		order by modifyDate desc
+		limit #{start},#{size}
+	</select>
+
+	<!-- 根据 uuid 查询 Banner -->
+	<select id="selectBannerByUuid" parameterType="string" resultType="banner" >
+		select * from banner
+		where 
+		banner.uuid = #{uuid}
+		and
+		isActive = 1
+	</select>
+	
+	<!-- 更新banner状态 -->
+	<update id="updateBannerState" parameterType="banner">
+		update banner
+		set
+		modifyDate=NOW(), state=#{state}
+		where
+		id=#{id}
+	</update>
+	
+	<!-- 更新banner -->
+	<update id="updateBanner" parameterType="banner">
+		update banner
+		set
+		modifyDate=NOW(), title=#{title}, refUrl=#{refUrl}, type=#{type}, mark=#{mark}, validDate=#{validDate},position=#{position}
+		where
+		uuid=#{uuid}
+	</update>
+	
+	<!-- banner 软删除 -->
+	<update id="deleteBanner" parameterType="banner">
+		update banner
+		set isActive=0
+		where 
+		uuid=#{uuid}
+	</update>
+	
+	<select id="getWxBanner" resultType="banner" >
+		select * from banner
+		where 
+		state=1 and isActive=1
+		and type=#{0} and (position=0 or position=#{1}) order by modifyDate desc
+	</select>
+
+</mapper>

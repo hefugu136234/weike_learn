@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.IntegralConsumeMapper">
+	<resultMap type="integralConsume" id="integralConsumeMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="cover" column="cover" />
+		<result property="price" column="price" />
+		<result property="integral" column="integral" />
+		<result property="description" column="description" />
+		<result property="medias" column="medias" />
+		<result property="number" column="number" />
+		<result property="type" column="type" />
+		<result property="referId" column="referId" />
+		<result property="sign" column="sign"/>
+		<result property="status" column="status" />
+		<result property="userLimited" column="userLimited"/>
+	</resultMap>
+
+	<select id="getIntegralConsumeById" parameterType="int"
+		resultMap="integralConsumeMapper">
+		select * from integral_consume where id=#{id} and
+		isActive =1
+	</select>
+
+	<insert id="addIntegralConsume" parameterType="integralConsume">
+		INSERT INTO integral_consume
+		(createDate,modifyDate,uuid,name,pinyin,cover,price,integral,description,medias,number,type,status,isActive,mark,referId,userLimited,sign)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{name},#{pinyin},#{cover},#{price},#{integral},#{description},#{medias},#{number},#{type},#{status},1,#{mark},#{referId},#{userLimited},#{sign})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="getIntegralConsumeByUuid" parameterType="string"
+		resultMap="integralConsumeMapper">
+		select * from integral_consume where uuid=#{uuid} and
+		isActive = 1
+	</select>
+
+	<select id="searchIntegralConsumeList" resultMap="integralConsumeMapper">
+		select * from
+		integral_consume where (type=1 or type=3) and isActive = 1 and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by modifyDate desc limit
+		#{1},#{2}
+	</select>
+
+	<update id="updateIntegralConsumeStatus" parameterType="integralConsume">
+		UPDATE
+		integral_consume SET
+		modifyDate=NOW(),status=#{status}
+		WHERE id=#{id}
+	</update>
+
+	<update id="updateIntegralConsume" parameterType="integralConsume">
+		UPDATE
+		integral_consume SET
+		modifyDate=NOW(),name=#{name},pinyin=#{pinyin},cover=#{cover},price=#{price},integral=#{integral},
+		description=#{description},medias=#{medias},number=#{number},type=#{type},mark=#{mark},userLimited=#{userLimited},sign=#{sign}
+		WHERE id=#{id}
+	</update>
+
+	<select id="getLatestGoodsForWx" resultMap="integralConsumeMapper">
+		select * from
+		integral_consume where (type=1 or type=3) and isActive = 1 and status=1 order by
+		modifyDate
+		desc limit 10
+	</select>
+
+	<select id="getIntegralConsumeByType" resultMap="integralConsumeMapper">
+		select * from
+		integral_consume where type=#{0} and referId=#{1} and isActive = 1
+		order by id desc limit 1
+	</select>
+
+</mapper>

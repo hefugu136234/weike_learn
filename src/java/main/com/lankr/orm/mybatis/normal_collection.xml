@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.NormalCollectMapper">
+	<resultMap type="com.lankr.tv_cloud.model.NormalCollect" id="normalCollectMapper"
+		extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="description" column="description" />
+		<result property="level" column="level" />
+		<result property="sign" column="sign" />
+		<result property="status" column="status" />
+		<result property="version" column="version" />
+		<result property="passScore" column="passScore" />
+		<association property="speaker" column="speakerId"
+			select="com.lankr.orm.mybatis.mapper.SpeakerMapper.getSpeakerById" />
+		<association property="parent" column="parentId"
+			select="com.lankr.orm.mybatis.mapper.NormalCollectMapper.getNormalCollectById" />
+	</resultMap>
+
+	<select id="getNormalCollectById" parameterType="int"
+		resultMap="normalCollectMapper">
+		select * from normal_collect where id=#{id} and isActive=1
+	</select>
+
+	<select id="getNormalCollectByUuid" parameterType="string"
+		resultMap="normalCollectMapper">
+		select * from normal_collect where isActive=1 and
+		uuid=#{uuid}
+	</select>
+
+	<insert id="addNormalCollection" parameterType="com.lankr.tv_cloud.model.NormalCollect">
+		INSERT INTO
+		normal_collect
+		(uuid,name,pinyin,createDate,modifyDate,description,level,sign,status,speakerId,version,isActive,mark,passScore,parentId,recommendDate)
+		VALUES
+		(#{uuid},#{name},#{pinyin},NOW(),NOW(),#{description},#{level},#{sign},#{status},#{speaker.id},#{version},1,#{mark},#{passScore},#{parent.id},NOW())
+	</insert>
+
+	<update id="updateNormalCollection" parameterType="com.lankr.tv_cloud.model.NormalCollect">
+		UPDATE
+		normal_collect
+		<set>
+			name=#{name},pinyin=#{pinyin},modifyDate=NOW(),description=#{description},level=#{level},sign=#{sign},status=#{status},speakerId=#{speaker.id},
+			version=#{version},isActive=#{isActive},mark=#{mark},passScore=#{passScore},grade=#{grade},praise=#{praise},numbers=#{numbers},price=#{price},recommendDate=#{recommendDate}
+			<if test="parent != null">,parentId=#{parent.id}</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<select id="searchCollectionDatatablePagination" resultMap="normalCollectMapper">
+		select * from normal_collect where isActive = 1 and (sign &amp; #{0})
+		&lt;&gt; 0 and (name
+		like
+		"%"#{1}"%"
+		or pinyin like "%"#{1}"%") order by
+		createDate desc limit
+		#{2},#{3}
+	</select>
+
+	<select id="searchPaginationCourseChapters" resultMap="normalCollectMapper">
+		select *
+		from normal_collect where isActive = 1 and parentId =
+		#{0} and (name
+		like "%"#{1}"%" or pinyin like "%"#{1}"%") order by
+		recommendDate desc
+		limit
+		#{2},#{3}
+	</select>
+
+	<select id="wxCourseList" resultMap="normalCollectMapper">
+		select *
+		from normal_collect
+		where isActive = 1 and status = 1
+		and sign=#{sign} and createDate
+		&lt;#{startTime} order by
+		createDate desc
+		limit #{size}
+	</select>
+	
+	<select id="wxChapterList" resultMap="normalCollectMapper">
+		select *
+		from normal_collect
+		where isActive = 1 and status = 1
+		and parentId=#{parentId} order by
+		recommendDate desc
+	</select>
+	
+	<select id="getChapterListByParentId" resultMap="normalCollectMapper">
+		select *
+		from normal_collect
+		where isActive = 1 and parentId=#{0}
+	</select>
+	
+	<update id="normalCollectChapterTop" parameterType="com.lankr.tv_cloud.model.NormalCollect">
+		UPDATE
+		normal_collect
+		set recommendDate = NOW()
+		where id=#{id}
+	</update>
+	
+	<select id="webCourseList" resultMap="normalCollectMapper">
+		select *
+		from normal_collect
+		where isActive = 1 and status = 1
+		and sign=#{sign} order by
+		createDate desc
+		limit #{from},#{size}
+	</select>
+	
+	<update id="updateCollectionNums" parameterType="com.lankr.tv_cloud.model.NormalCollect">
+		UPDATE
+		normal_collect
+		set numbers = Coalesce(viewCount, 0) + 1
+		where id=#{id}
+	</update>
+
+</mapper>

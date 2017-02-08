@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.ResourceVoteMapper">
+
+	<resultMap type="com.lankr.tv_cloud.model.ResourceVoteSubject"
+		id="subjectMapper" extends="base.baseModel">
+		<result property="title" column="title" />
+		<result property="type" column="type" />
+		<result property="status" column="status" />
+		<association property="resource" column="resourceId"
+			select="com.lankr.orm.mybatis.mapper.ResourceMapper.getResourceById" />
+		<collection property="options" column="id"
+			select="getOptionsBySubjectId" />
+	</resultMap>
+
+	<resultMap type="com.lankr.tv_cloud.model.ResourceVoteOption"
+		id="optionMapper" extends="base.baseModel">
+		<result property="option" column="option" />
+		<result property="count" column="count" />
+		<result property="index" column="index" />
+		<association property="subject" column="voteSubjectId"
+			select="com.lankr.orm.mybatis.mapper.ResourceVoteMapper.getVoteSubjectById" />
+	</resultMap>
+
+	<resultMap type="com.lankr.tv_cloud.model.ResourceVoteAnswer"
+		id="answerMapper" extends="base.baseModel">
+		<result property="openId" column="openId" />
+		<result property="ip" column="ip" />
+		<result property="device" column="device" />
+		<association property="subject" column="voteSubjectId"
+			select="com.lankr.orm.mybatis.mapper.ResourceVoteMapper.getVoteSubjectById" />
+		<association property="option" column="voteOptionId"
+			select="com.lankr.orm.mybatis.mapper.ResourceVoteMapper.getVoteOptionById" />
+		<association property="user" column="userId" select="user.getUserById" />
+	</resultMap>
+
+	<!-- ======================================================== -->
+
+	<select id="getOptionsBySubjectId" resultMap="optionMapper"
+		parameterType="int">
+		select * from resource_vote_option where isActive=1 and
+		voteSubjectId=#{id}
+	</select>
+
+	<insert id="addVoteSubject" parameterType="com.lankr.tv_cloud.model.ResourceVoteSubject">
+		insert into resource_vote_subject
+		(createDate,modifyDate,uuid,title,type,status,resourceId,isActive)
+		values
+		(NOW(),NOW(),#{uuid},#{title},#{type},1,#{resource.id},1)
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<update id="updateVoteSubject" parameterType="com.lankr.tv_cloud.model.ResourceVoteSubject">
+		update
+		resource_vote_subject set
+		modifyDate=NOW(),title=#{title}
+		where
+		uuid=#{uuid}
+	</update>
+
+	<insert id="addVoteOption" parameterType="com.lankr.tv_cloud.model.ResourceVoteOption">
+		INSERT INTO
+		resource_vote_option (createDate,modifyDate,
+		uuid,`option`,voteSubjectId,isActive) VALUES
+		(NOW(),NOW(),#{uuid},#{option},#{subject.id},1)
+	</insert>
+
+	<update id="updateVoteOption" parameterType="com.lankr.tv_cloud.model.ResourceVoteOption">
+		update
+		resource_vote_option set modifyDate=NOW(),`option`=#{option} where
+		uuid=#{uuid} and voteSubjectId=#{subject.id}
+	</update>
+
+	<select id="getVoteSubjectByUuid" parameterType="string"
+		resultMap="subjectMapper">
+		select * from resource_vote_subject where uuid=#{uuid}
+	</select>
+
+	<select id="getVoteSubjectById" parameterType="int" resultMap="subjectMapper">
+		select * from resource_vote_subject where id=#{id}
+	</select>
+
+	<select id="getVotesByResourceId" parameterType="int" resultMap="subjectMapper">
+		select * from resource_vote_subject where isActive=1 and
+		resourceId=#{resId}
+	</select>
+
+	<update id="disableVote" parameterType="string">
+		UPDATE
+		resource_vote_subject s INNER JOIN resource_vote_option o ON
+		s.id=o.voteSubjectId SET s.isActive = 0
+		,o.isActive=0,s.modifyDate=NOW(),o.modifyDate=NOW() WHERE
+		s.uuid=#{uuid}
+	</update>
+
+	<update id="disableVoteOption" parameterType="string">
+		update
+		resource_vote_option set modifyDate=NOW(),isActive = 0 where
+		uuid=#{uuid}
+	</update>
+
+	<insert id="addResourceVoteAnswer" parameterType="com.lankr.tv_cloud.model.ResourceVoteAnswer">
+		insert into
+		resource_vote_answer
+		(createDate,modifyDate,uuid,userId,openId,ip,device,voteOptionId,voteSubjectId)
+		values
+		(NOW(),NOW(),#{uuid},#{user.id},#{openId},#{ip},#{device},#{option.id},#{subject.id})
+	</insert>
+
+	<update id="increaseOptionCount" parameterType="int">
+		update
+		resource_vote_option set count = Coalesce(count, 0) + 1 where id =
+		#{id}
+	</update>
+
+	<select id="getVoteOptionByUuid" resultMap="optionMapper">
+		select * from
+		resource_vote_option where isActive=1 and
+		uuid=#{uuid}
+	</select>
+
+	<select id="getVoteOptionById" resultMap="optionMapper">
+		select * from
+		resource_vote_option where isActive=1 and
+		id=#{id}
+	</select>
+
+	<select id="getUserListByOptionIdAndSubjectId" resultMap="answerMapper">
+		select
+		* from resource_vote_answer r left join user u on
+		r.userId = u.id
+		where r.voteOptionId = #{0}
+		and r.voteSubjectId = #{1}
+		and (
+		u.nickname like "%"#{2}"%" or
+		u.pinyin like "%"#{2}"%" )
+		limit #{3}, #{4}
+	</select>
+
+</mapper>

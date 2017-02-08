@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lankr.orm.mybatis.mapper.WxSubjectMapper">
+	<resultMap type="wxSubject" id="wxSubjectMapper" extends="base.baseModel">
+		<result property="name" column="name" />
+		<result property="pinyin" column="pinyin" />
+		<result property="rootType" column="rootType" />
+		<result property="reflectId" column="reflectId" />
+		<result property="typeProperty" column="typeProperty" />
+		<result property="isRoot" column="isRoot" />
+		<result property="status" column="status" />
+		<association property="parent" column="parentId"
+			select="com.lankr.orm.mybatis.mapper.WxSubjectMapper.selectwxSubjectById" />
+	</resultMap>
+
+
+	<insert id="addWxSubject" parameterType="wxSubject">
+		INSERT INTO wx_subject
+		(createDate,modifyDate,uuid,name,pinyin,rootType,reflectId,typeProperty,isRoot,parentId,status,isActive,mark)
+		VALUES
+		(NOW(),NOW(),#{uuid},#{name},#{pinyin},#{rootType},#{reflectId},#{typeProperty},#{isRoot},#{parent.id},#{status},#{isActive},#{mark})
+		<selectKey keyProperty="id" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+
+	<select id="selectwxSubjectById" parameterType="int" resultMap="wxSubjectMapper">
+		select * from wx_subject where id=#{id} and isActive=1
+	</select>
+
+	<select id="selectwxSubjectByUuid" parameterType="string"
+		resultMap="wxSubjectMapper">
+		select * from wx_subject where uuid=#{uuid} and isActive=1
+	</select>
+
+	<update id="updateWxSubject" parameterType="wxSubject">
+		update wx_subject set
+		modifyDate=NOW(),
+		name =
+		#{name},pinyin=#{pinyin},reflectId=#{reflectId},typeProperty=#{typeProperty}
+		where id=#{id}
+	</update>
+
+	<update id="updateWxSubjectStatus" parameterType="wxSubject">
+		update
+		wx_subject set
+		modifyDate=NOW(),
+		status=#{status} where id=#{id}
+	</update>
+
+	<update id="deteleWxSubject" parameterType="wxSubject">
+		update wx_subject set
+		modifyDate=NOW(),
+		isActive=0 where id=#{id}
+	</update>
+
+	<select id="searchWxSubjectForTable" resultMap="wxSubjectMapper">
+		select * from
+		wx_subject where isActive=1 and isRoot=#{1} and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by recommendDate desc limit #{2},#{3}
+	</select>
+
+	<select id="searchWxSubjectChildrenForTable" resultMap="wxSubjectMapper">
+		select *
+		from wx_subject where isActive=1 and rootType=#{4} and parentId=#{1}
+		and (name like
+		"%"#{0}"%"
+		or pinyin
+		like
+		"%"#{0}"%") order by
+		recommendDate
+		desc limit #{2},#{3}
+	</select>
+
+	<select id="searchWxSubjectByWx" resultMap="wxSubjectMapper">
+		select * from
+		wx_subject where isActive=1 and status=1 and isRoot=#{0}
+		and
+		rootType=#{1} order by recommendDate desc
+	</select>
+
+	<select id="searchWxSubjectChildrenByWx" resultMap="wxSubjectMapper">
+		select * from
+		wx_subject where isActive=1 and status=1 and
+		parentId=#{parentId}
+		and rootType=#{type}
+		<if test="level=='has_level'">
+			and typeProperty like '%"type":1%'
+		</if>
+		<if test="level=='no_level'">
+			and typeProperty like '%"type":2%'
+		</if>
+		<if test="level=='all_level'">
+
+		</if>
+		order by recommendDate desc
+	</select>
+
+	<select id="searchWxSubjectByreflectId" resultMap="wxSubjectMapper">
+		select * from
+		wx_subject where isActive=1 and status=1 and reflectId=#{0}
+		and
+		rootType=#{1} order by createDate desc limit 1
+	</select>
+
+	<update id="recommendSubject" parameterType="wxSubject">
+		update
+		wx_subject
+		set
+		recommendDate=NOW(), modifyDate=NOW()
+		where
+		id=#{id}
+	</update>
+
+	<select id="getAbledParentSubject" resultMap="wxSubjectMapper">
+		select * from
+		wx_subject where (isActive=1 and id=#{0}) or (isActive=1 and
+		parentId=#{0}
+		and rootType=1 and typeProperty like '%"type":1%')
+	</select>
+
+	<update id="updateSubjectParent" parameterType="wxSubject">
+		update
+		wx_subject
+		set
+		parentId=#{parent.id}, modifyDate=NOW()
+		where
+		id=#{id}
+	</update>
+
+</mapper>
